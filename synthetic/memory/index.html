@@ -19,6 +19,10 @@
     <input id="block-size" type="number" value="128" /><br />
     <label for="compression-percent">Compressibility percent</label>
     <input id="compression-percent" type="number" value="0" min="0" max="100" step="5" /><br />
+    <label for="prefill-constant">Prefill with constant</label>
+    <input id="prefill-constant" type="number" value="1" min="-1", max="127" step="1"/><br />
+    <label for="random-per-page"> Random at page level </label>
+    <input id="random-per-page" type="checkbox" checked/><br />
     <label for="total-slider">Total allocated</label>
     <input id="total-slider" type="range" min="0" max="4096" step="128" onchange="setSlider()" oninput="updateSlider()" />
     <input id="total-num" type="number" min="0" max="4096" step="128" oninput="setMemory()" /><br />
@@ -176,13 +180,19 @@
   function allocBuffer(sizeMiB) {
     buffer = new ArrayBuffer(sizeMiB * 1024 * 1024);
     allocatedBlocks.push(buffer);
-    fillBuffer(buffer);
+    const randomPerPage = document.getElementById('random-per-page');
+    if (randomPerPage.checked) {
+      fillBufferByPage(buffer);
+    } else {
+      fillBufferByType(buffer);
+    }
   }
 
-  // Fill a buffer with random data.
-  function fillBuffer(buffer) {
-    // Achieve requested compressibility by mixing random data with the initial
-    // zeroed buffer.
+  // Fill a buffer with random data and const data based on compressbility
+  // and given constant per buffer level.
+  function fillBufferByType(buffer) {
+    // Achieve requested compressibility by generating random data for
+    // buffer[0, randomLength).
     const ratio = document.getElementById('compression-percent').value / 100;
     const randomLength = buffer.byteLength * (1.0 - ratio);
 
@@ -193,6 +203,37 @@
       const viewSize = Math.min(bytesRemaining, maxBlockSize);
       const view = new Int8Array(buffer, i, viewSize);
       crypto.getRandomValues(view);
+    }
+    // Fill buffer[randomLength, byteLength) with the given constant.
+    // When it is -1, we don't fill with constant.
+    const prefillConstant = document.getElementById('prefill-constant').value;
+    if (prefillConstant >= 0) {
+      console.log(prefillConstant);
+      const view = new Int8Array(buffer, randomLength);
+      view.fill(prefillConstant);
+    }
+  }
+
+  // Fill buffer with random data and constant data based on compressiblity
+  // and given constant per page level.
+  function fillBufferByPage(buffer) {
+    const pageSize = 4 * 1024;
+    const ratio = document.getElementById('compression-percent').value / 100;
+    const randomLengthPerPage = pageSize * (1.0 - ratio);
+    const constLengthPerPage = pageSize - randomLengthPerPage;
+
+    for (let i = 0; i < buffer.byteLength; i += pageSize) {
+      // Fill each page with random data on [0, randomLengthPerPage),
+      // and constant data on [randomLengthPerPage, pageSize).
+      const viewRandom = new Int8Array(buffer, i, randomLengthPerPage);
+      crypto.getRandomValues(viewRandom);
+      // When it is -1, we don't fill with constant data.
+      const prefillConstant = document.getElementById('prefill-constant').value;
+      if (prefillConstant >= 0) {
+        console.log(prefillConstant);
+        const viewConstant = new Int8Array(buffer, i + randomLengthPerPage, constLengthPerPage);
+        viewConstant.fill(prefillConstant);
+      }
     }
   }
 
@@ -216,6 +257,12 @@
     }
     if (params.has('compress')) {
       document.getElementById('compression-percent').value = params.get('compress');
+    }
+    if (params.has("prefill")) {
+      document.getElementById('prefill-constant').value = params.get('prefill');
+    }
+    if (params.has("randomperpage")) {
+      document.getElementById('random-per-page').checked = params.get('randomperpage') === "true";
     }
     if (params.has('alloc')) {
       // Perform allocations.
