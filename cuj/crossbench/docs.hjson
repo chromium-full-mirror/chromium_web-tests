@@ -1,0 +1,76 @@
+{
+  "logins": ["google"],
+  "pages": {
+    "DocsCUJ": [
+      // Copy the shared doc.
+      {action: "get", url: "https://docs.google.com/document/d/11E6jzIVCyJwWQQdJaqKEPWxcdKt3_-GDoUOWi20Wy6g/edit?hl=en&tab=t.0#heading=h.khmqmf7bmw9z", ready_state: "complete"},
+      {action: "wait_for_element", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", timeout: "10s"},
+      {action: "click", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", required: true, source: "mouse"},
+      {action: "wait_for_element", selector: "[role='menuitem'][aria-disabled='false'] [aria-label='Make a copy c']", timeout: "10s"},
+      {action: "click", selector: "[role='menuitem'][aria-disabled='false'] [aria-label='Make a copy c']", required: true, source: "mouse"},
+      {action: "wait_for_element", selector: "[aria-modal='true'] input[type='text']:focus", timeout: "15s"},
+      {action: "text_input", text: "wbp-3", source: "keyboard"},
+      {action: "js", script: "performance.mark('setup-complete');"},
+      {action: "click", selector: "[data-mdc-dialog-action='ok']", required: true, source: "mouse"},
+
+      {action: "switch_tab", title: "^wbp-3"},
+      {action: "wait_for_ready_state", ready_state: "complete"}
+      {action: "wait", duration: "2s"},
+
+      // Make a comment
+      {action: "wait_for_element", selector: "[aria-label='Add comment (Ctrl+Alt+M)'][aria-disabled='false']", timeout: "30s"},
+      {action: "js", script: '''
+        // Before we click the comment button, set up an observer to log exactly
+        // when the commend window appears.
+        (new MutationObserver((mutationList, observer) => {
+          if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
+            performance.mark("comment-opened");
+            observer.disconnect();
+            requestAnimationFrame(() => {
+              performance.mark("comment-opened-next-frame");
+            });
+          } else {
+            performance.mark("comment-progress");
+          }
+        })).observe(
+          document.querySelector("#docos-stream-view"),
+          {subtree: true, attributes: true},
+        );
+
+        performance.mark('comment-click');
+      '''},
+      {action: "click", selector: "[aria-label='Add comment (Ctrl+Alt+M)'][aria-disabled='false']", required: true, source: "mouse"},
+      {action: "wait_for_element", selector: "[aria-label='Comment draft']:focus", timeout: "10s"},
+      {action: "text_input", text: "This document is the foundation of American Literature!", duration: "8s", source: "keyboard"},
+      {action: "click", selector: "[aria-label='Post Comment']", required: true, source: "mouse"},
+      // Wait for "Post Comment" UI to go away
+      {action: "wait_for_element", selector: "body:not(:has([aria-label='Post Comment']))", timeout: "3s"},
+
+      // Scroll
+      {action: "js", script: "performance.mark('scroll-begin');"},
+      {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
+      {action: "wait", duration: "0.5s"},
+      {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
+      {action: "wait", duration: "0.5s"},
+      {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
+      {action: "wait", duration: "0.5s"},
+      {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
+      {action: "wait", duration: "0.5s"},
+      {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
+      {action: "js", script: '''
+        performance.mark('scroll-end', {detail: document.querySelector('.kix-appview-editor').scrollTop});
+      '''},
+
+      {action: "wait", duration: "5s"},
+
+      // Delete the document we created
+      {action: "click", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", required: true, source: "mouse"},
+      {action: "wait_for_element", selector: "[aria-label='Move to trash t']", timeout: "3s"},
+      {action: "click", selector: "[role='menuitem'][aria-disabled='false'] [aria-label='Move to trash t']", required: true, source: "mouse"},
+      {action: "wait_for_element", selector: "[data-mdc-dialog-action='ok']", timeout: "10s"},
+      {action: "click", selector: "[data-mdc-dialog-action='ok']", required: true, source: "mouse"},
+      // Wait for the Docs homepage to load
+      {action: "wait_for_ready_state", ready_state: "complete"}
+    ],
+  },
+}
