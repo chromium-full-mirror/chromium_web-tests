@@ -42,7 +42,12 @@
         '''},
         {action: "click", selector: "[aria-label='Add comment (Ctrl+Alt+M)'][aria-disabled='false']", required: true, source: "mouse"},
         {action: "wait_for_element", selector: "[aria-label='Comment draft']:focus", timeout: "10s"},
+        {action: "js", script: "performance.mark('comment-type-begin');"},
         {action: "text_input", text: "This document is the foundation of American Literature!", duration: "8s", source: "keyboard"},
+        {action: "js", script: '''
+          performance.mark('comment-type-end');
+          performance.measure('comment-type', 'comment-type-begin', 'comment-type-end');
+        '''},
         {action: "click", selector: "[aria-label='Post Comment']", required: true, source: "mouse"},
         // Wait for "Post Comment" UI to go away
         {action: "wait_for_element", selector: "body:not(:has([aria-label='Post Comment']))", timeout: "3s"},
