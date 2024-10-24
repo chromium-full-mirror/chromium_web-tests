@@ -25,10 +25,11 @@
           // when the commend window appears.
           (new MutationObserver((mutationList, observer) => {
             if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
-              performance.mark("comment-opened");
+              performance.mark('comment-opened');
               observer.disconnect();
               requestAnimationFrame(() => {
-                performance.mark("comment-opened-next-frame");
+                performance.mark('comment-opened-next-frame');
+                performance.measure('comment', 'comment-click', 'comment-opened-next-frame');
               });
             } else {
               performance.mark("comment-progress");
@@ -65,6 +66,7 @@
         {action: "scroll", source: "touch", selector: "#kix-appview", distance: 512, duration: "0.3s"},
         {action: "js", script: '''
           performance.mark('scroll-end', {detail: document.querySelector('.kix-appview-editor').scrollTop});
+          performance.measure('scroll', 'scroll-begin', 'scroll-end');
         '''},
 
         {action: "wait", duration: "5s"},
