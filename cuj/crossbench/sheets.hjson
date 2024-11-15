@@ -1,86 +1,12 @@
 {
-  "pages": {
-    "SheetsCUJ": {
-      "login": "google",
-      "actions": [
-        // Copy the shared sheet.
-        {action: "get", url: "https://docs.google.com/spreadsheets/d/1Acn9EMcQVTA5RFAFgSk9FXEGkHzcKO8-jSrym9XAEk0/edit?usp=sharing", ready_state: "complete"},
-        {action: "wait_for_element", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", timeout: "10s"},
-        {action: "click", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", required: true, source: "mouse"},
-        {action: "wait_for_element", selector: "[aria-label='Make a copy c']", timeout: "10s"},
-        {action: "wait", duration: "5s"},
-        {action: "click", selector: "[aria-label='Make a copy c']", required: true, source: "mouse"},
-        {action: "wait_for_element", selector: "[aria-modal='true'] input[type='text']:focus", timeout: "15s"},
-        {action: "text_input", text: "wbp-4", source: "keyboard"},
-
-        // Setup complete
-        {action: "js", script: "performance.mark('setup-complete');"},
-
-        // Click to make the copy
-        {action: "click", selector: "[data-mdc-dialog-action='ok']", required: true, source: "mouse", scroll_into_view: true},
-        {action: "switch_tab", title: "^wbp-4"},
-        {action: "wait_for_ready_state", ready_state: "complete"}
-        {action: "wait", duration: "2s"},
-
-        // Make a comment
-        {action: "wait_for_element", selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", timeout: "10s"},
-        {action: "js", script: '''
-          // Before we click the comment button, set up an observer to log exactly
-          // when the comment window appears.
-          (new MutationObserver((mutationList, observer) => {
-            if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
-              performance.mark("comment-opened");
-              observer.disconnect();
-              requestAnimationFrame(() => {
-                performance.mark("comment-opened-next-frame");
-              });
-            } else {
-              performance.mark("comment-progress");
-            }
-          })).observe(
-            document.querySelector("#docos-stream-view"),
-            {subtree: true, attributes: true},
-          );
-
-          performance.mark('comment-click');
-        '''},
-        {action: "click", selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", required: true, source: "mouse", scroll_into_view: true},
-        {action: "wait_for_element", selector: "[aria-label='Comment m']", timeout: "10s", scroll_into_view: true},
-        {action: "click", selector: "[aria-label='Comment m']", required: true, source: "mouse", scroll_into_view: true},
-        {action: "wait_for_element", selector: "[aria-label='Comment draft']:focus", timeout: "10s"},
-        {action: "text_input", text: "Ontario sure has a lot of public employees!", duration: "8s", source: "keyboard"},
-        {action: "click", selector: "[aria-label='Post Comment']", required: true, source: "mouse"},
-        // Wait for "Post Comment" UI to go away
-        {action: "wait_for_element", selector: "body:not(:has([aria-label='Post Comment']))", timeout: "3s"},
-
-        // Scroll
-        {action: "js", script: "performance.mark('scroll-begin');"},
-        {action: "scroll", source: "touch", selector: "[class='goog-inline-block grid4-inner-container']", distance: 512, duration: "0.3s"},
-        {action: "wait", duration: "0.5s"},
-        {action: "scroll", source: "touch", selector: "[class='goog-inline-block grid4-inner-container']", distance: 512, duration: "0.3s"},
-        {action: "wait", duration: "0.5s"},
-        {action: "scroll", source: "touch", selector: "[class='goog-inline-block grid4-inner-container']", distance: 512, duration: "0.3s"},
-        {action: "wait", duration: "0.5s"},
-        {action: "scroll", source: "touch", selector: "[class='goog-inline-block grid4-inner-container']", distance: 512, duration: "0.3s"},
-        {action: "wait", duration: "0.5s"},
-        {action: "scroll", source: "touch", selector: "[class='goog-inline-block grid4-inner-container']", distance: 512, duration: "0.3s"},
-        {action: "js", script: '''
-          performance.mark('scroll-end', {detail: document.querySelector('div[class="native-scrollbar native-scrollbar-ltr native-scrollbar-y"]').scrollTop});
-        '''},
-
-        {action: "wait", duration: "5s"},
-
-        // Delete the sheet we created
-        {action: "click", selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']", required: true, source: "mouse"},
-        {action: "wait_for_element", selector: "[aria-label='Move to trash t']", timeout: "3s"},
-        {action: "click", selector: "[class='goog-menuitem-label'][aria-label='Move to trash t']", required: true, source: "mouse"},
-
-        {action: "wait_for_element", selector: "[data-mdc-dialog-action='ok']", timeout: "10s"},
-        {action: "click", selector: "[data-mdc-dialog-action='ok']", required: true, source: "mouse"},
-        {action: "wait", duration: "1s"},
-        // Wait for the Sheets homepage to load
-        {action: "wait_for_ready_state", ready_state: "complete"}
-      ],
+    "template": "./templates/sheets-template.hjson",
+    "args": {
+        "TEST_NAME": "wbp-4",
+        "DOC_URL": "https://docs.google.com/spreadsheets/d/1Acn9EMcQVTA5RFAFgSk9FXEGkHzcKO8-jSrym9XAEk0/edit?usp=sharing",
+        "COMMENT_TEXT": "Ontario sure has a lot of public employees!",
+        "CLICK_INPUT_SOURCE": "touch",
+        "SCROLL_SELECTOR": "[class='goog-inline-block grid4-inner-container']",
+        "SCROLL_END_DISTANCE_SELECTOR": '''div[class="native-scrollbar native-scrollbar-ltr native-scrollbar-y"]''',
+        "ARIA_DISABLED": " ",
     },
-  },
 }
