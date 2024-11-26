@@ -1,0 +1,16 @@
+{
+  template: "./templates/probe-config.hjson",
+  args: {
+    "TRACE_PROCESSOR_QUERIES": [
+      {
+        name: "Graphics.Smoothness.PercentDroppedFrames3.AllSequences",
+        sql: '''
+              INCLUDE PERFETTO MODULE chrome.histograms;
+              select AVG(value) as 'avg_percent_dropped'
+              from chrome_histograms
+              where name = 'Graphics.Smoothness.PercentDroppedFrames3.AllSequences'
+        ''',
+      }
+    ]
+  },
+}

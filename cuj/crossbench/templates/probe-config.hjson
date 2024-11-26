@@ -2,6 +2,9 @@
   probes: {
     screenshot: {},
     dump_html: {},
+    trace_processor: {
+      queries: "$[TRACE_PROCESSOR_QUERIES]",
+    },
     perfetto: {
       // texproto can be directly copied from https://ui.perfetto.dev/#!/record?p=instructions
       // under the "recording command' settings.

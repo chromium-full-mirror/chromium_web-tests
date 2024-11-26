@@ -6,11 +6,11 @@
         // when the comment window appears.
         (new MutationObserver((mutationList, observer) => {
             if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
-            performance.mark("comment-opened");
+            performance.mark("comment-opened-dom");
             observer.disconnect();
             requestAnimationFrame(() => {
                 performance.mark("comment-opened-next-frame");
-                performance.measure('comment', 'comment-click', 'comment-opened-next-frame');
+                performance.measure('comment-opened', 'comment-click', 'comment-opened-next-frame');
             });
             } else {
             performance.mark("comment-progress");

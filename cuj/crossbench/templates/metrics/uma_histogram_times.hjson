@@ -1,0 +1,15 @@
+{
+  // Extracts metrics from one histogram logged with the UMA_HISTOGRAM_TIMES
+  // macro.
+  // Arguments:
+  //  NAME: Results will be saved to trace_processor/$[NAME].csv
+  //  UNITS_IN_MS: Conversion from the histogram's units to ms. E.g. if the
+  //    histogram logs in us, then 1000 because there are 1000 us in 1 ms.
+  name: "$[NAME]",
+  sql: '''
+    INCLUDE PERFETTO MODULE chrome.histograms;
+    SELECT AVG(value / $[UNITS_IN_MS]) AS 'avg_ms'
+    FROM chrome_histograms
+    WHERE name = '$[NAME]'
+  ''',
+}
