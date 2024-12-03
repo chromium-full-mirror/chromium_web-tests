@@ -1,0 +1,12 @@
+{
+  actions: [
+    {
+      action: "js"
+      script: "performance.mark('navigate_to_blank')"
+    }
+    {
+      action: "get"
+      url: "about:blank"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+    "page-load": {
+        actions: [
+            {
+                action: "get"
+                url: "$[PAGE_URL]"
+                ready_state: "complete"
+                timeout: "$[PAGE_LOAD_TIMEOUT]"
+                target: "$[TARGET]"
+            }
+        ]
+    }
+    "scroll": "./basic-action/scroll-no-selector.hjson"
+}
