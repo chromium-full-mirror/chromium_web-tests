@@ -1,0 +1,17 @@
+{
+    "template": "../../templates/slides-template.hjson",
+    "args": {
+        "TEST_NAME": "slide-test",
+        "DOC_URL": "https://docs.google.com/presentation/d/1ZG8bS0IlQyePSWlflh22_GJVrQsjMJntbL-oTz3crkM/edit#slide=id.g3182d87bbe9_0_0",
+        "COMMENT_TEXT": "Prototyping Presentation - The best marketing tool for your business!",
+        "CLICK_INPUT_SOURCE": "touch",
+        "SCROLL_SELECTOR":".punch-filmstrip-scroll",
+        "SCROLL_END_DISTANCE_SELECTOR":".punch-filmstrip-scroll",
+        "ARIA_DISABLED": "",
+        // number of the selected silide after scrolling
+        "SLIDE_NUM":"25",
+        //the text will be selected on the page "SLIDE_NUM", for example, there is testSlide on the page 25
+        // please make sure it is one word,because slide may split one sentence into different text tags.
+        "SELECTED_TEXT":"testSlide25"
+    },
+}

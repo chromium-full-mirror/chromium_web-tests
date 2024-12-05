@@ -1,0 +1,14 @@
+{
+  "pages": {
+    "SLIDES-CUJ": {
+      "login": "google",
+      "blocks": {
+        "copy-slides": "./action-blocks/slides-action/copy-slides.hjson",
+        "scroll": "./action-blocks/scroll.hjson"
+        "find-text":"./action-blocks/slides-action/find-text.hjson",
+        "comment": "./action-blocks/make-comment.hjson",
+        "cleanup": "./action-blocks/cleanup-doc.hjson",
+      },
+    },
+  },
+}
