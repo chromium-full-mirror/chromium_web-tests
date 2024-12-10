@@ -1,0 +1,36 @@
+{
+    "actions":[
+        // With the flag --use-fake-ui-for-media-stream=1, the camera would
+        // start by itself.
+        {
+            action: "wait_for_element"
+            selector: "video"
+        }
+        {
+            action: "js"
+            script: '''
+            let selfCamera = document.querySelector("div[aria-label='Video preview is ON'] video");
+            // Check if the camera stream is already started.
+            if (!selfCamera.paused) {
+                performance.mark("camera-start");
+            } else {
+                const cameraPromise = new Promise((resolve) => {
+                    selfCamera.addEventListener("playing", (event) => {
+                        performance.mark("camera-start");
+                        resolve();
+                    });
+                });
+                const cameraTimeout = $[CAMERA-TIMEOUT];
+                const timeoutExceed = "timeout exceed";
+                const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(timeoutExceed), cameraTimeout));
+                const result = await Promise.race([cameraPromise, timeoutPromise]);
+                if (result === timeoutExceed) {
+                    throw new Error(`camera stream does not start in ${cameraTimeout/1000}s`);
+                }
+            }
+            performance.measure("camera-ready", "meet-created", "camera-start");
+            '''
+            timeout: "30s"
+        }
+    ]
+}

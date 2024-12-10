@@ -1,0 +1,10 @@
+{
+  template: "../../templates/meet-template.hjson"
+  "args": {
+    "NUM-OF-BOTS": "4"
+    "TTL-SECS": "60"
+    // Timeout frow waiting camera to start in ms.
+    // The max timeout should not exceeds 5 mins.
+    "CAMERA-TIMEOUT": "20000"
+  }
+}
