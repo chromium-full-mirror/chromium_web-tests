@@ -1,0 +1,18 @@
+{
+  "args": {
+    "PAGE_URL": "https://www.youtube.com/watch?v=CQcYqNl_PM8"
+    "TIMEOUT": "2m"
+    "VIDEO_SELECTOR": "video:not(.ad-showing video):not(.unstarted-mode video):not(.buffering-mode video)"
+    // video run time, s=seconds,h=hours,m=minutes
+    "VIDEO_TIME": "120s"
+    // f is Full screen; t is theater mode
+    "CHANGE_SCREEN_INPUT": "f"
+
+    // switch resolution  e.g. 1080p 720p 480p 360p 240p 144p Auto
+    // Please check the supported resolutions of the video.
+    // The resolution of the sample may not be supported.
+    "RESOLUTION_TEXT": "1080p"
+
+  }
+  "template": "../../templates/youtube-template.hjson"
+}

@@ -1,0 +1,13 @@
+{
+  actions: [
+    {
+      action: "wait"
+      duration: "$[VIDEO_TIME]"
+    }
+    {
+      action: "wait_for_element"
+      selector: ".paused-mode video"
+      timeout: "5m"
+    }
+  ]
+}
