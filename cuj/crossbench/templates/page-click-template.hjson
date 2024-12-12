@@ -1,0 +1,249 @@
+{
+  "pages": {
+    "page-load-and-click-1": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_product.html"
+          TARGET:"_self"
+          CLICK_SELECTOR: "div[id='nav-progressive-subnav'] div[id='nav-subnav'] a[aria-label='Registry']"
+          VERIFY_SELECTOR: "xpath/(//div[@id='br-navigation-container']/div[1]/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-2": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'a-link-normal s-no-outline')])[1]"
+          VERIFY_SELECTOR: "xpath/(//span[@id='productTitle'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-3": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'unit-link')])[1]"
+          VERIFY_SELECTOR: "xpath/(//div[@id='page']/div[2]/div[3]/div)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-4": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/ebay.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//li[@class='vl-flyout-nav__js-tab' and @data-currenttabindex='0']//a[normalize-space(text())='Motors'])[1]"
+          VERIFY_SELECTOR: "xpath/(//html/body/div[2]/div[2]/section[1]/h1)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-5": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/google.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@data-hveid, 'CA0QAQ')])[1]"
+          VERIFY_SELECTOR: "xpath/(//a[@aria-current='page'])"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-6": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wattpad.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "a[title='Wattpad Home']"
+          VERIFY_SELECTOR: "xpath/(//button[text()='Start Reading'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-7": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[@href='https://www.bbc.com/news'])[1]"
+          VERIFY_SELECTOR: "xpath/(//button[@aria-label='Open menu'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-8": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[@href='https://finance.yahoo.com/'])[1]"
+          VERIFY_SELECTOR: "xpath/(//h1[text()='Yahoo Finance'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-9": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 's-topbar--logo js-gps-track')])[1]"
+          VERIFY_SELECTOR: "xpath/(//div[@id='left-sidebar']/div[1]/nav/ol/li[1]/ol/li[1]/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-10": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'mw-logo')])[1]"
+          VERIFY_SELECTOR: "xpath/(//li[@id='ca-nstab-main']/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-11": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_product.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "div[id='nav-progressive-subnav'] div[id='nav-subnav'] a[aria-label='Registry']"
+          VERIFY_SELECTOR: "xpath/(//div[@id='br-navigation-container']/div[1]/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-12": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'a-link-normal s-no-outline')])[1]"
+          VERIFY_SELECTOR: "xpath/(//span[@id='productTitle'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-13": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'unit-link')])[1]"
+          VERIFY_SELECTOR: "xpath/(//div[@id='page']/div[2]/div[3]/div)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-14": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/ebay.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//li[@class='vl-flyout-nav__js-tab' and @data-currenttabindex='0']//a[normalize-space(text())='Motors'])[1]"
+          VERIFY_SELECTOR: "xpath/(//html/body/div[2]/div[2]/section[1]/h1)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-15": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/google.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@data-hveid, 'CA0QAQ')])[1]"
+          VERIFY_SELECTOR: "xpath/(//a[@aria-current='page'])"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-16": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wattpad.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "a[title='Wattpad Home']"
+          VERIFY_SELECTOR: "xpath/(//button[text()='Start Reading'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-17": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[@href='https://www.bbc.com/news'])[1]"
+          VERIFY_SELECTOR: "xpath/(//button[@aria-label='Open menu'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-18": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[@href='https://finance.yahoo.com/'])[1]"
+          VERIFY_SELECTOR: "xpath/(//h1[text()='Yahoo Finance'])[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-19": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 's-topbar--logo js-gps-track')])[1]"
+          VERIFY_SELECTOR: "xpath/(//div[@id='left-sidebar']/div[1]/nav/ol/li[1]/ol/li[1]/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "page-load-and-click-20": {
+      blocks: {
+        "template": "./action-blocks/page-load-and-click.hjson"
+        "args": {
+          PAGE_URL: "https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html"
+          TARGET:"$[PAGE_TARGET]"
+          CLICK_SELECTOR: "xpath/(//a[contains(@class, 'mw-logo')])[1]"
+          VERIFY_SELECTOR: "xpath/(//li[@id='ca-nstab-main']/a)[1]"
+        }
+        "unbound_args": ["PAGE_LOAD_TIMEOUT"]
+      }
+    }
+    "navigate-to-blank": {
+      blocks: {
+        "navigate-to-blank": "./action-blocks/basic-action/navigate-to-blank.hjson"
+      }
+    }
+  }
+}
