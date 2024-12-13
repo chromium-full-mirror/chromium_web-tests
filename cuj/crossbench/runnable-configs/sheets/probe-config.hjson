@@ -1,0 +1,26 @@
+{
+  template: "../../templates/probe-config.hjson",
+  args: {
+    "TRACE_PROCESSOR_QUERIES": [
+      {
+        template: "../../templates/metrics/comment_opened.hjson",
+        args: {},
+      },
+      {
+        template: "../../templates/metrics/scroll.hjson",
+        args: {},
+      },
+      {
+        template: "../../templates/metrics/scroll_distance.hjson",
+        args: {},
+      },
+      {
+        template: "../../templates/metrics/uma_histogram_times.hjson",
+        args: {
+          NAME: "EventLatency.KeyPressed.TotalLatency",
+          UNITS_IN_MS: 1000,
+        },
+      },
+    ]
+  },
+}

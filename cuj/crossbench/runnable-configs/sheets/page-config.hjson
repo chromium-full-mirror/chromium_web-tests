@@ -1,5 +1,5 @@
 {
-    "template": "./templates/sheets-template.hjson",
+    "template": "../../templates/sheets-template.hjson",
     "args": {
         "TEST_NAME": "wbp-4",
         "DOC_URL": "https://docs.google.com/spreadsheets/d/1Acn9EMcQVTA5RFAFgSk9FXEGkHzcKO8-jSrym9XAEk0/edit?usp=sharing",
