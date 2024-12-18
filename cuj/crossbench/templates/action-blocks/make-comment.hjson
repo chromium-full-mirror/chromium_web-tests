@@ -22,9 +22,9 @@
 
         performance.mark('comment-click');
         '''},
-        {action: "click", selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", required: true, source: "$[CLICK_INPUT_SOURCE]", scroll_into_view: true},
-        {action: "wait_for_element", selector: "[aria-label='Comment m']", timeout: "10s", scroll_into_view: true},
-        {action: "click", selector: "[aria-label='Comment m']", required: true, source: "$[CLICK_INPUT_SOURCE]", scroll_into_view: true},
+        {action: "click", pos: {selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
+        {action: "wait_for_element", selector: "[aria-label='Comment m']", timeout: "10s"},
+        {action: "click", pos: {selector: "[aria-label='Comment m']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
         {action: "wait_for_element", selector: "[aria-label='Comment draft']:focus", timeout: "10s"},
         {action: "js", script: "performance.mark('comment-type-begin');"},
         {action: "text_input", text: "$[COMMENT_TEXT]", duration: "8s", source: "keyboard"},
@@ -32,7 +32,7 @@
             performance.mark('comment-type-end');
             performance.measure('comment-type', 'comment-type-begin', 'comment-type-end');
         '''},
-        {action: "click", selector: "[aria-label='Post Comment']", required: true, source: "$[CLICK_INPUT_SOURCE]"},
+        {action: "click", pos: {selector: "[aria-label='Post Comment']", required: true}, source: "$[CLICK_INPUT_SOURCE]"},
         // Wait for "Post Comment" UI to go away
         {action: "wait_for_element", selector: "body:not(:has([aria-label='Post Comment']))", timeout: "3s"},
     ]
