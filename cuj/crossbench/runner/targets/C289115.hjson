@@ -1,0 +1,13 @@
+{
+  flags: "$[FLAGS_DEFINITION]",
+  browsers: {
+    C289115: {
+      browser: "chrome",
+      flags: [ "flags" ],
+      driver: {
+        type: "adb",
+        device_id: "[2401:fa00:480:ee08:c68e:cc14:2832:a1b6]:5555"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  flags: "$[FLAGS_DEFINITION]",
+  browsers: {
+    C244591: {
+      browser: "/opt/google/chrome/chrome",
+      flags: [ "flags" ],
+      driver: {
+        type: "chromeos-ssh",
+        settings: {
+          host: "C289107",
+          ssh_port: 22,
+          ssh_user: "root",
+        }
+      }
+    }
+  }
+}

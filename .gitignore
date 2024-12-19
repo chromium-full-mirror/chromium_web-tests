@@ -1,2 +1,4 @@
 *.wprgo
 *.gstmp
+__pycache__
+.vscode

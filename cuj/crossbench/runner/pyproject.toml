@@ -1,0 +1,18 @@
+[tool.poetry]
+description = "Runs CUJs using crossbench and (optionally) uploads the results."
+authors = ["Kameron Lutes <kalutes@google.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+google = "^3.0.0"
+google-auth = "^2.37.0"
+google-auth-oauthlib = "^1.2.1"
+google-api-core = "^2.24.0"
+google-api-python-client = "^2.159.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
