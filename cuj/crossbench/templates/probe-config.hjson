@@ -29,6 +29,13 @@
           size_kb: 40960
           fill_policy: RING_BUFFER
         }
+        # Buffer dedicated for linux.ftrace. It's OK that the trace data is
+        # overwritten. If there are ftrace events that are of interest, use
+        # another dedicated buffer or increase this the size of this buffer.
+        buffers {
+          size_kb: 40960
+          fill_policy: RING_BUFFER
+        }
         data_sources {
           config {
           name: "android.packages_list"
@@ -85,7 +92,7 @@
         data_sources: {
           config {
             name: "linux.ftrace"
-            target_buffer: 4
+            target_buffer: 5
             ftrace_config {
               ftrace_events: "mm_event/mm_event_record"
               ftrace_events: "kmem/rss_stat"
