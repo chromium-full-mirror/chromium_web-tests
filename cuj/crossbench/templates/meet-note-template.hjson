@@ -1,0 +1,28 @@
+{
+  "pages": {
+    "Meet-Note": {
+      "login": "google",
+      "blocks": {
+        "start-new-meeting": "./action-blocks/meet-action/start-new-meeting.hjson"
+        "make-bot-present": {
+          actions: [{
+            action: "meet_script"
+            script: "@b1 start_presenting"
+          }]
+        }
+        "join-meeting-room": "./action-blocks/meet-action/join-meeting-room.hjson"
+        "switch-resolution": "./action-blocks/meet-action/switch-resolution.hjson"
+        "open-new-docs": {
+          actions: [{
+            action: "get"
+            url: "$[DOCS_URL]"
+            ready_state: "complete"
+            target: "_new_window"
+            timeout: "$[TIMEOUT]"
+          }]
+        }
+        "take-notes": "./action-blocks/meet-action/repeat-typing.hjson"
+      },
+    },
+  },
+}

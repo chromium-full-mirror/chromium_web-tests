@@ -1,0 +1,14 @@
+{
+    "actions": [
+        {
+            action: "click"
+            position: {
+                selector: "xpath///*[text()='Ask to join']",
+                required: "true",
+                wait: "true"
+            }
+            source: "$[CLICK_INPUT_SOURCE]"
+            verify: "button[aria-label='Leave call']"
+        }
+    ]
+}

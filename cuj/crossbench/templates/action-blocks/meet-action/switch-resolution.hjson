@@ -1,0 +1,92 @@
+{
+    "actions": [
+        {
+            action: "click"
+            position: {
+                selector: "button[aria-label='More options'][data-tooltip-classes]",
+                required: "true",
+                wait: "true"
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+            verify: "xpath///*[text()='Settings']"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "xpath///*[text()='Settings']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+            verify: "button[aria-label='Video']"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "button[aria-label='Video']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+        }
+        {
+            action: "click"
+            position: {
+                selector: "xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::div[@role='combobox']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+        }
+        // Wait for the dropdown combobox to finish the amination.
+        // TODO: Remove after click action supports waiting for stable position.
+        {
+            action: "wait"
+            duration: "0.5s"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::*[@aria-label='$[SEND_RESOLUTION]']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+            verify: "span[aria-label='$[SEND_RESOLUTION]']"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::div[@role='combobox']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+        }
+        // Wait for the dropdown combobox to finish the amination.
+        // TODO: Remove after click action supports waiting for stable position.
+        {
+            action: "wait"
+            duration: "0.5s"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::*[@aria-label='$[RECEIVE_RESOLUTION]']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+            verify: "body:not(:has(span[aria-label='Auto']))"
+        }
+        {
+            action: "click"
+            position: {
+                selector: "button[aria-label='Close dialog']",
+                required: true,
+                wait: true
+            }
+            source: "$[CLICK_INPUT_SOURCE]",
+        }
+    ]
+}
