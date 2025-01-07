@@ -12,6 +12,28 @@
           UNITS_IN_MS: 1000,
         },
       },
+      {
+        template: "../../templates/metrics/uma_histogram_times.hjson",
+        args: {
+          NAME: "PageLoad.InteractiveTiming.TimeToNextPaint",
+          UNITS_IN_MS: 1,
+        },
+      },
+      {
+        template: "../../templates/metrics/uma_histogram_count.hjson",
+        args: { NAME: "Browser.MainThreadsCongestion", }
+      },
+      {
+        template: "../../templates/metrics/uma_histogram_count.hjson",
+        args: { NAME: "Graphics.Smoothness.PercentDroppedFrames3.AllSequences", }
+      },
+      {
+        template: "../../templates/metrics/uma_histogram_enum.hjson",
+        args: {
+          NAME: "Viz.DisplayCompositor.OverlayStrategy",
+          TABLE: "('kUnknown', 0), ('kNoStrategyUsed', 1), ('kFullscreen', 2), ('kSingleOnTop', 3)",
+        },
+      },
     ]
   },
 }

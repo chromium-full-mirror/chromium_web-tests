@@ -1,0 +1,55 @@
+{
+  template: "./templates/probe-config.hjson",
+  args: {
+    "TRACE_PROCESSOR_QUERIES": [
+      {
+        template: "./templates/metrics/comment_opened.hjson",
+        args: {},
+      },
+      {
+        template: "./templates/metrics/scroll.hjson",
+        args: {},
+      },
+      {
+        template: "./templates/metrics/scroll_distance.hjson",
+        args: {},
+      },
+      {
+        template: "./templates/metrics/uma_histogram_times.hjson",
+        args: {
+          NAME: "EventLatency.KeyPressed.TotalLatency",
+          UNITS_IN_MS: 1000
+        },
+      },
+      {
+        template: "./templates/metrics/uma_histogram_times.hjson",
+        args: {
+          NAME: "EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency2",
+          UNITS_IN_MS: 1000
+        },
+      },
+      {
+        template: "./templates/metrics/uma_histogram_times.hjson",
+        args: {
+          NAME: "PageLoad.InteractiveTiming.TimeToNextPaint",
+          UNITS_IN_MS: 1
+        },
+      },
+      {
+        template: "./templates/metrics/uma_histogram_count.hjson",
+        args: { NAME: "Browser.MainThreadsCongestion" }
+      },
+      {
+        template: "./templates/metrics/uma_histogram_count.hjson",
+        args: { NAME: "Memory.Browser.PrivateMemoryFootprint" }
+      },
+      {
+        template: "./templates/metrics/uma_histogram_enum.hjson",
+        args: {
+          NAME: "Viz.DisplayCompositor.OverlayStrategy",
+          TABLE: "('kUnknown', 0), ('kNoStrategyUsed', 1), ('kFullscreen', 2), ('kSingleOnTop', 3)"
+        },
+      },
+    ]
+  },
+}
