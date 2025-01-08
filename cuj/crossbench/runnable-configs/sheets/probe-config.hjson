@@ -5,6 +5,7 @@
       "../../templates/metrics/comment_opened.hjson",
       "../../templates/metrics/scroll.hjson",
       "../../templates/metrics/scroll_distance.hjson",
+      "../../templates/metrics/cpu_usage_stat.hjson",
       {
         template: "../../templates/metrics/uma_histogram_times.hjson",
         args: {
