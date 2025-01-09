@@ -1,0 +1,59 @@
+{
+  actions: [
+    // The loading mechanism of Google Slides' thumbnails is lazy loading.
+    // In order to ensure that the expected elements can be loaded, js processing is used here.
+    {
+      action: "js"
+      script: '''
+              const slideIndex = $[SLIDE_INSERT_POSITION];
+              let currentIndex = 1;
+              const iterateAndScrollIntoView = async () => {
+                // This element gets all the superscript numbers of the slide thumbnails.
+                const element = document.evaluate("//*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and @x and @y]", document);
+                let lastTextNode = null;
+                for (let node = element.iterateNext(); node !== null; node = element.iterateNext()) {
+                  lastTextNode = node;
+                  if (slideIndex === Number(node.textContent)) {
+                      node.scrollIntoView();
+                      return;
+                    }
+                }
+                lastTextNode.scrollIntoView();
+                if(currentIndex === Number(lastTextNode.textContent)) {
+                  return;
+                }
+                currentIndex = Number(lastTextNode.textContent);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                await iterateAndScrollIntoView();
+              }
+
+              performance.mark("filmstrip-scroll-start");
+              await iterateAndScrollIntoView();
+              performance.mark("filmstrip-scroll-end");
+              performance.measure("filmstrip-scroll-duration", "filmstrip-scroll-start", "filmstrip-scroll-end");
+              '''
+    }
+    {
+      action: "click"
+      pos: {
+        selector: "xpath///*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and @x and @y and text()='$[SLIDE_INSERT_POSITION]']"
+        wait: true
+        scroll_into_view: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+    }
+    {
+      action: "click"
+      pos: {
+        selector: "#newSlideButton"
+        wait: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+      verify: "xpath/(//*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and @x and @y])[number($[SLIDE_INSERT_POSITION]) + number(1)]"
+    }
+    {
+      action: "js"
+      script: "performance.mark('new-slide-created');"
+    }
+  ]
+}

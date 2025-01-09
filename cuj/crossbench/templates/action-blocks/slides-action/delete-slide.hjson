@@ -1,0 +1,34 @@
+{
+    actions: [
+         // delete the new slide
+        {
+        action: "click"
+        pos: {
+            selector: "xpath/(//*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and @x and @y])[number($[SLIDE_INSERT_POSITION]) + number(1)]"
+        }
+        source: "$[CLICK_INPUT_SOURCE]"
+        }
+        {
+        action: "click"
+        pos: {
+            selector: "#docs-edit-menu[role='menuitem'][aria-disabled='false']"
+            required: true
+        }
+        verify: "[aria-label='Delete e']"
+        source: "$[CLICK_INPUT_SOURCE]"
+        }
+        {
+        action: "click"
+        pos: {
+            selector: "[aria-label='Delete e']"
+            required: true
+        }
+        source: "$[CLICK_INPUT_SOURCE]"
+        verify: "xpath///div[@id='punch-total-slide-count' and text()='$[SLIDE_INSERT_POSITION] total slides']"
+        }
+        {
+        action: "js"
+        script: "performance.mark('new-slide-deleted');"
+        }
+    ]
+}
