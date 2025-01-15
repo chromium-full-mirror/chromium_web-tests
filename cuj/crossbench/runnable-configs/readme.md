@@ -36,13 +36,12 @@ used.
 
 Args are optional single-line (no trailing newline) files that specify extra
 arguments to pass to Crossbench or the browser during a test run. There are two
-types of args files: `cb-args` and `browser-args`.
+types of args files: `cb-args` and `browser-flags.hjson`.
 
 `cb-args` and `<variant>.cb-args` files specify extra args to pass to
 Crossbench.
 
-`browser-args` and `<variant>.browser-args` files specify extra args to pass to
-the browser when running the test.
+`browser-flags.hjson` and `<variant>.browser-flags.hjson` files specify extra args to pass to the browser when running the test. This file should follow the crossbench definition for browser flags.
 
 Like Probe Configs, when running a variant if a variant specific args files
 doesn't exist but an unprefixed one does, the unprefixed file will be used.
