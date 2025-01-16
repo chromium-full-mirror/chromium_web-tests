@@ -1,0 +1,10 @@
+{
+    "pages": {
+        "WebRTC": {
+            blocks: {
+                "start-meeting": "./action-blocks/local-conference-action/start-meeting.hjson"
+                "measure-performance": "./action-blocks/local-conference-action/measure-webrtc-perf.hjson"
+            }
+        },
+    },
+}
