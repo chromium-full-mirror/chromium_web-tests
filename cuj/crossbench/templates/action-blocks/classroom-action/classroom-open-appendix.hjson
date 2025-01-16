@@ -1,0 +1,54 @@
+{
+  actions: [
+    {
+      action: "get"
+      url: "$[CLASS_URL]"
+      ready_state: "complete"
+      timeout: "$[TIMEOUT]"
+    }
+    {
+      action: "click"
+      position: {
+        selector: "xpath/(//button[span[text()='Join class']])"
+        required: false
+        wait: true
+      }
+      verify: "xpath/(//c-wiz[not(@aria-hidden='true')]//div[contains(@aria-label, 'Assignment')]/parent::div)"
+    }
+    {
+      action: "click"
+      position: {
+        selector: "xpath/(//c-wiz[not(@aria-hidden='true')]//div[contains(@aria-label, 'Assignment')]/parent::div)[$[ASSIGNMENT_CLICK_INDEX]]"
+        scroll_into_view: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+      verify: "xpath/(//c-wiz[not(@aria-hidden='true')]//a[@title])"
+    }
+    {
+      action: "click"
+      position: {
+        selector: "xpath/(//c-wiz[not(@aria-hidden='true')]//a[@title])[$[APPENDIX_CLICK_INDEX]]"
+        scroll_into_view: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+      verify: "[aria-label='More actions']"
+    }
+    {
+      action: "click"
+      position: {
+        selector: "[aria-label='More actions']"
+        scroll_into_view: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+      verify: "xpath///div[text() = 'Open in new window']"
+    }
+    {
+      action: "click"
+      position: {
+        selector: "xpath///div[text() = 'Open in new window']"
+        scroll_into_view: true
+      }
+      source: "$[CLICK_INPUT_SOURCE]"
+    }
+  ]
+}
