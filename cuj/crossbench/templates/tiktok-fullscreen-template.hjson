@@ -1,0 +1,30 @@
+{
+  "pages": {
+    "TikTok": {
+      "blocks": {
+        "tiktok-page-load": "action-blocks/tiktok-action/page-load.hjson"
+        "fullscreen": [
+          {
+            action: "click"
+            source: "touch"
+            pos: {
+              selector: "xpath///div[contains(@class, 'DivMoreMenuContainer')]"
+              wait: true
+            }
+            verify: "div[data-e2e='more-menu-popover_full-screen'] span"
+          }
+          {
+            action: "click"
+            source: "touch"
+            pos: {
+              selector: "div[data-e2e='more-menu-popover_full-screen'] span"
+              wait: true
+            }
+            verify: "xpath///div[contains(@class, 'DivVideoContainer') and contains(@style, 'position: absolute;')]"
+          }
+        ]
+        "watch-video": "action-blocks/tiktok-action/watch-video.hjson"
+      }
+    }
+  }
+}

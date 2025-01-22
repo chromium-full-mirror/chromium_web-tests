@@ -1,0 +1,10 @@
+{
+  "pages": {
+    "TikTok": {
+      "blocks": {
+        "tiktok-page-load": "action-blocks/tiktok-action/page-load.hjson"
+        "watch-video": "action-blocks/tiktok-action/watch-video.hjson"
+      }
+    }
+  }
+}
