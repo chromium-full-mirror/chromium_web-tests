@@ -1,1 +1,1 @@
---local-file-server=web-tests/cuj/crossbench/webrtc
+--local-file-server=$[WEB_TESTS]/cuj/crossbench/webrtc
