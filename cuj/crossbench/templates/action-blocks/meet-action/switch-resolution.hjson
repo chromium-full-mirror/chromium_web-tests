@@ -47,7 +47,7 @@
         {
             action: "click"
             position: {
-                selector: "xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::*[@aria-label='$[SEND_RESOLUTION]']",
+                selector: "xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::*[@aria-label='$[SEND_RESOLUTION]'][1]",
                 required: true,
                 wait: true
             }
@@ -72,7 +72,7 @@
         {
             action: "click"
             position: {
-                selector: "xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::*[@aria-label='$[RECEIVE_RESOLUTION]']",
+                selector: "xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::*[@aria-label='$[RECEIVE_RESOLUTION]'][1]",
                 required: true,
                 wait: true
             }

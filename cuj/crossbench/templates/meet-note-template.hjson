@@ -10,7 +10,7 @@
             script: "@b1 start_presenting"
           }]
         }
-        "join-meeting-room": "./action-blocks/meet-action/join-meeting-room.hjson"
+        "wait-camera-start": "./action-blocks/meet-action/wait-camera-start.hjson"
         "switch-resolution": "./action-blocks/meet-action/switch-resolution.hjson"
         "open-new-docs": {
           actions: [{

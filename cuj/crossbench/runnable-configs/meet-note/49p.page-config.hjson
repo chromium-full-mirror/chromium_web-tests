@@ -7,6 +7,7 @@
         "NOTE_TEXT": "the quick brown fox jumped over the lazy dogs. "
         "NOTE_DURATION": "20s"
         "NUM-OF-BOTS": "48"
+        "NUM-CAMERA-FEEDS": "5"
         "TTL-SECS": "180"
         "SEND_RESOLUTION": "High definition (720p)"
         "RECEIVE_RESOLUTION": "High definition (720p)"
