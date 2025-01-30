@@ -1,3 +1,3 @@
 {
-    flags: "--request-desktop-sites --use-fake-ui-for-media-stream=1 --enable-blink-features=RTCEncodedFrameSetMetadata,RTCEncodedVideoFrameAdditionalMetadata --enable-features=AllowRTCEncodedVideoFrameSetMetadataAllFields"
+    flags: "--request-desktop-sites --use-fake-ui-for-media-stream --enable-blink-features=RTCEncodedFrameSetMetadata,RTCEncodedVideoFrameAdditionalMetadata --enable-features=AllowRTCEncodedVideoFrameSetMetadataAllFields"
 }

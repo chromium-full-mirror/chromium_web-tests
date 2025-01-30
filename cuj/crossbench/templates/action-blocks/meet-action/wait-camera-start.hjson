@@ -1,6 +1,6 @@
 {
     "actions":[
-        // With the flag --use-fake-ui-for-media-stream=1, the camera would
+        // With the flag --use-fake-ui-for-media-stream, the camera would
         // start by itself.
         {
             action: "wait_for_element"
