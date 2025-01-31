@@ -4,7 +4,9 @@
         // start by itself.
         {
             action: "wait_for_element"
-            expected_count: "$[NUM-CAMERA-FEEDS]"
+            # At least self video and one bot should be visible before continuing.
+            expected_count: "2"
+            or_more: true,
             selector: "video:not([data-meet-pip-feed]):not([style*='display: none'])"
         }
         {
