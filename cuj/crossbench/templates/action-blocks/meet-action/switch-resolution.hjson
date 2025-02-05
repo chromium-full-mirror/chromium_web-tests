@@ -15,6 +15,7 @@
             position: {
                 selector: "xpath///*[text()='Settings']",
                 required: true,
+                scroll_into_view: true,
                 wait: true
             }
             source: "$[CLICK_INPUT_SOURCE]",
