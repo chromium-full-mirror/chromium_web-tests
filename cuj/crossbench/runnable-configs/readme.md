@@ -45,3 +45,7 @@ Crossbench.
 
 Like Probe Configs, when running a variant if a variant specific args files
 doesn't exist but an unprefixed one does, the unprefixed file will be used.
+
+## Setup
+
+For tests that use wpr the wpr archive must first be download. Run wpr/gsutil-setup.sh to populate the necessary wpr files.
