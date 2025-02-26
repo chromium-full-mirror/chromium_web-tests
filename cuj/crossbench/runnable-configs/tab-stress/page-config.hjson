@@ -1,0 +1,40 @@
+// Opens tabs, waits for ready-state complete, and then cycles through all the opened tabs.
+// To change the number of tabs that are opened, add additional open and cycle blocks.
+{
+  pages: {
+    open-0: {
+      blocks: {
+        template: ./open-10-tabs.hjson
+        args: {
+          ITER_COUNT: ""
+        }
+      }
+    }
+    open-1: {
+      blocks: {
+        template: ./open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "1"
+        }
+      }
+    }
+    cycle-0: {
+      blocks: {
+        template: ./cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: ""
+          CYCLE_DELAY: 1s
+        }
+      }
+    }
+    cycle-1: {
+      blocks: {
+        template: ./cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "1"
+          CYCLE_DELAY: 1s
+        }
+      }
+    }
+  }
+}

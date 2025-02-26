@@ -1,22 +1,4 @@
 {
-  page-load: {
-    actions: [
-      {
-        action: js
-        path: ./scripts/page-load.js
-      }
-      {
-        action: get
-        url: $[PAGE_URL]
-        ready_state: complete
-        timeout: $[PAGE_LOAD_TIMEOUT]
-        target: $[TARGET]
-      }
-      {
-        action: js
-        path: ./scripts/page-loaded.js
-      }
-    ]
-  }
-  click-link: action-blocks/basic-action/click-load-page.hjson
+  page-load: ./page-load.hjson
+  click-link: ./basic-action/click-load-page.hjson
 }
