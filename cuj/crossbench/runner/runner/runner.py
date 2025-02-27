@@ -31,7 +31,7 @@ def execute_crossbench(
 
         command = (
             f"poetry run cb loading --page-config {page_config}"
-            f"--probe-config {probe_config} --browser-config {browser_config_file.name}"
+            f" --probe-config {probe_config} --browser-config {browser_config_file.name}"
             f" --secrets {secrets_config} {additional_crossbench_args} {debug}"
         )
         print(f"Invoking crossbench: '{command}'")
