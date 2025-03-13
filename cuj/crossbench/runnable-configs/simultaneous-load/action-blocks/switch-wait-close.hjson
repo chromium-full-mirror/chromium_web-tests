@@ -1,0 +1,15 @@
+{
+  actions: [
+    {
+      action: switch_tab
+      url: $[PAGE_URL]
+    }
+    {
+      action: wait_for_ready_state
+      timeout: 120s
+    }
+    {
+      action: close_tab
+    }
+  ]
+}
