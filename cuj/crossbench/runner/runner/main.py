@@ -41,6 +41,9 @@ def run_and_upload(argv):
     parser.add_argument(
         "--tests", help="Glob to match tests to run.", type=str, default="*"
     )
+    parser.add_argument(
+        "--playback", help="Directly passed to crossbench as the --playback flag for the loading benchmark.", type=str, default="1x"
+    )
     parser.add_argument("--verbose", action="store_true", default=False)
     args = parser.parse_args()
 
@@ -51,6 +54,7 @@ def run_and_upload(argv):
     web_tests = args.web_tests.resolve()
     do_upload = args.upload
     tests_glob = args.tests
+    playback_flag = args.playback
     verbose = args.verbose
 
     for test in (web_tests / "cuj/crossbench/runnable-configs").glob(tests_glob):
@@ -71,6 +75,7 @@ def run_and_upload(argv):
                 secrets_config_file,
                 verbose,
                 do_upload,
+                playback_flag,
             )
         except Exception as e:
             print(f"Failed to run crossbench for test {test_name}: {e}")

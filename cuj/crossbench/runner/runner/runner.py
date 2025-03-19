@@ -19,6 +19,7 @@ def execute_crossbench(
     secrets_config,
     additional_crossbench_args,
     verbose,
+    playback_flag
 ):
     with tempfile.NamedTemporaryFile() as browser_config_file:
         browser_config_file.write(browser_config.encode("utf-8"))
@@ -32,7 +33,7 @@ def execute_crossbench(
         command = (
             f"poetry run cb loading --page-config {page_config}"
             f" --probe-config {probe_config} --browser-config {browser_config_file.name}"
-            f" --secrets {secrets_config} {additional_crossbench_args} {debug}"
+            f" --secrets {secrets_config} --playback {playback_flag} {additional_crossbench_args} {debug}"
         )
         print(f"Invoking crossbench: '{command}'")
         proc = subprocess.run(
@@ -87,6 +88,7 @@ def run_test(
     secrets_config,
     verbose,
     do_upload,
+    playback_flag
 ):
     for config_file in runnable_config_dir.glob("*"):
         filename = config_file.name
@@ -141,6 +143,7 @@ def run_test(
                 secrets_config=secrets_config,
                 additional_crossbench_args=additional_crossbench_args,
                 verbose=verbose,
+                playback_flag=playback_flag
             )
 
             full_test_name = test_name
