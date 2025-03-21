@@ -22,6 +22,10 @@ clean_git() {
 }
 
 clean_git $CROSSBENCH_DIR
+cd $CROSSBENCH_DIR
+poetry install
+cd -
+
 clean_git $WEB_TESTS_DIR
 
 adb kill-server
