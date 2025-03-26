@@ -1,0 +1,4 @@
+{
+  name: "scroll_duration",
+  sql: "./queries/scroll_duration.sql",
+}

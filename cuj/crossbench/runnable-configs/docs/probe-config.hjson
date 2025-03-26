@@ -3,7 +3,7 @@
   args: {
     "TRACE_PROCESSOR_QUERIES": [
       "../../templates/metrics/comment_opened.hjson",
-      "../../templates/metrics/scroll.hjson",
+      "../../templates/metrics/scroll_duration.hjson",
       "../../templates/metrics/scroll_distance.hjson",
       "../../templates/metrics/cpu_usage_stat.hjson",
       {

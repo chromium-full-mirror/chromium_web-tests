@@ -1,0 +1,12 @@
+SELECT
+  (
+    SELECT
+      CAST(string_value as float)
+    FROM
+      slice
+      JOIN args ON slice.arg_set_id = args.arg_set_id
+    WHERE
+      slice.name = 'scroll-end'
+      AND key = 'debug.data.detail'
+      AND value_type = 'string'
+  ) AS distance_px

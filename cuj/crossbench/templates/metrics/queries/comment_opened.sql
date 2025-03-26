@@ -1,0 +1,9 @@
+SELECT
+  (
+    SELECT
+      (dur / 1000000)
+    FROM
+      slice
+    WHERE
+      slice.name = 'comment-opened'
+  ) AS 'duration_ms'
