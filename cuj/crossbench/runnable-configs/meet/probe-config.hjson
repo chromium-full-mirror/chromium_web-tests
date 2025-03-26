@@ -1,6 +1,6 @@
 {
-  template: "../../templates/probe-config.hjson",
+  template: ../../templates/probe-config.hjson
   args: {
-    "TRACE_PROCESSOR_QUERIES": []
-  },
+    TRACE_PROCESSOR_QUERIES: []
+  }
 }

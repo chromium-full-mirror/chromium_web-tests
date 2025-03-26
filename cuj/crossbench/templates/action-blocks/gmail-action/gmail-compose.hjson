@@ -1,57 +1,63 @@
 {
   actions: [
-      {
-          action: "js"
-          script: '''
-                    performance.mark('compose-dialog-open');
-                    '''
-        },
+    {
+      action: js
+      script:
+        '''
+          performance.mark('compose-dialog-open');
+          
+        '''
+    }
         // click "Compose"
-        {
-          action: "click"
-          position: {selector: "xpath/(//div[text()='Compose'])"}
-          verify: "xpath/(//div[@role='dialog'])"
-        }
-        {
-          action: "js"
-          script: '''
-                    performance.mark('compose-dialog-loaded');
-                    performance.measure('compose-dialog-ready', 'compose-dialog-open', 'compose-dialog-loaded');
-                    '''
-        },
+    {
+      action: click
+      position: {
+        selector: xpath/(//div[text()='Compose'])
+      }
+      verify: xpath/(//div[@role='dialog'])
+    }
+    {
+      action: js
+      script:
+        '''
+          performance.mark('compose-dialog-loaded');
+          performance.measure('compose-dialog-ready', 'compose-dialog-open', 'compose-dialog-loaded');
+          
+        '''
+    }
         //input subject and body
-        {
-          action: "click",
-          position: {
-            selector: "input[name='subjectbox']",
-            wait: true
-          }
-          source: "$[CLICK_INPUT_SOURCE]",
-        },
-        {
-          action: "text_input"
-          text: "$[SUBJECT_TEXT]"
-          duration: "$[INPUT_TEXT_DURATION]"
-          source: "keyboard"
-        },
-        {
-          action: "click",
-          position: {
-            selector: "div[aria-label='Message Body']",
-            wait: true
-          }
-         source: "$[CLICK_INPUT_SOURCE]",
-        },
-        {
-          action: "text_input"
-          text: "$[BODY_TEXT]"
-          duration: "$[INPUT_TEXT_DURATION]"
-          source: "keyboard"
-        },
+    {
+      action: click
+      position: {
+        selector: input[name='subjectbox']
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: text_input
+      text: $[SUBJECT_TEXT]
+      duration: $[INPUT_TEXT_DURATION]
+      source: keyboard
+    }
+    {
+      action: click
+      position: {
+        selector: div[aria-label='Message Body']
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: text_input
+      text: $[BODY_TEXT]
+      duration: $[INPUT_TEXT_DURATION]
+      source: keyboard
+    }
         //wait *s to discard the draft email
-        {
-          action: "wait",
-          duration: "$[WAIT_DURATION]"
-        }
+    {
+      action: wait
+      duration: $[WAIT_DURATION]
+    }
   ]
 }

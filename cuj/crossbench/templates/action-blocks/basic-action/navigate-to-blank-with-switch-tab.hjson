@@ -1,12 +1,12 @@
 {
   actions: [
     {
-      action: "switch_tab"
-      tab_index: "$[TAB_INDEX]"
+      action: switch_tab
+      tab_index: $[TAB_INDEX]
     }
     {
-      action: "get"
-      url: "about:blank"
+      action: get
+      url: about:blank
     }
   ]
 }

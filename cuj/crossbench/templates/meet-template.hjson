@@ -1,11 +1,11 @@
 {
-  "pages": {
-    "Meet-Camera": {
-      "login": "google",
-      "blocks": {
-        "start-new-meeting": "./action-blocks/meet-action/start-new-meeting.hjson"
-        "wait-for-camera-start": "./action-blocks/meet-action/wait-camera-start.hjson"
-      },
-    },
-  },
+  pages: {
+    Meet-Camera: {
+      login: google
+      blocks: {
+        start-new-meeting: ./action-blocks/meet-action/start-new-meeting.hjson
+        wait-for-camera-start: ./action-blocks/meet-action/wait-camera-start.hjson
+      }
+    }
+  }
 }

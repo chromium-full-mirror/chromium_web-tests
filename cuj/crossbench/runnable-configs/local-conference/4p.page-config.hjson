@@ -1,6 +1,6 @@
 {
-  template: "../../templates/vc-5-template.hjson"
-  "args": {
-    "NUM_PEOPLE": "4"
+  template: ../../templates/vc-5-template.hjson
+  args: {
+    NUM_PEOPLE: "4"
   }
 }

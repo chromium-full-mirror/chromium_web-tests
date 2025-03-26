@@ -1,11 +1,13 @@
 {
-  flags: "$[FLAGS_DEFINITION]",
+  flags: $[FLAGS_DEFINITION]
   browsers: {
     C223713: {
-      browser: "chrome",
-      flags: [ "flags" ],
+      browser: chrome
+      flags: [
+        flags
+      ]
       driver: {
-        type: "adb",
+        type: adb
         device_id: "[2401:fa00:480:ee08:8672:515c:1107:42af]:5555"
       }
     }

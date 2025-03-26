@@ -1,25 +1,27 @@
 {
   actions: [
     {
-      action: "js"
-      script: '''performance.mark("click-link-on-page")'''
+      action: js
+      script: performance.mark("click-link-on-page")
     }
     {
-      action: "click"
-      position: {selector: "$[CLICK_SELECTOR]", scroll_into_view: true}
-      verify: "$[VERIFY_SELECTOR]"
+      action: click
+      position: {
+        selector: $[CLICK_SELECTOR]
+        scroll_into_view: true
+      }
+      verify: $[VERIFY_SELECTOR]
       // Generate a mouse event for getting input events in the trace.
-      source: "mouse"
+      source: mouse
     }
     {
-      action: "wait_for_ready_state"
-      ready_state: "complete"
-      timeout: "$[PAGE_LOAD_TIMEOUT]"
+      action: wait_for_ready_state
+      ready_state: complete
+      timeout: $[PAGE_LOAD_TIMEOUT]
     }
     {
-      action: "js"
-        script: '''performance.mark("click-link-on-page-loaded")'''
+      action: js
+      script: performance.mark("click-link-on-page-loaded")
     }
-
   ]
 }

@@ -1,62 +1,63 @@
 {
-  actions:[
+  actions: [
     // type text on the new slide page
-      {
-        action: "click"
-        pos: {
-          selector: "#textboxButton"
-          wait: true
-        }
-        source: "$[CLICK_INPUT_SOURCE]"
+    {
+      action: click
+      pos: {
+        selector: "#textboxButton"
+        wait: true
       }
-      {
-        action: "click"
-        pos: {
-          selector: "#canvas-container"
-          wait: true
-        }
-        source: "$[CLICK_INPUT_SOURCE]"
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: click
+      pos: {
+        selector: "#canvas-container"
+        wait: true
       }
-      {
-        action: "js"
-        script: "performance.mark('type-text-begin');"
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: js
+      script: performance.mark('type-text-begin');
+    }
+    {
+      action: text_input
+      text: $[NEW_SLIDE_TEXT_INPUT]
+      source: keyboard
+      duration: 8s
+    }
+    {
+      action: js
+      script:
+        '''
+        performance.mark('type-text-end');
+        performance.measure('type-text', 'type-text-begin', 'type-text-end');
+        '''
+    }
+    {
+      action: click
+      pos: {
+        selector: "#canvas-container"
+        wait: true
       }
-      {
-        action: "text_input"
-        text: "$[NEW_SLIDE_TEXT_INPUT]"
-        source: "keyboard"
-        duration: "8s"
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: click
+      pos: {
+        selector: "#selectButton"
+        wait: true
       }
-      {
-        action: "js"
-        script: '''
-                performance.mark('type-text-end');
-                performance.measure('type-text', 'type-text-begin', 'type-text-end');
-                '''
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: click
+      pos: {
+        selector: "#selectButton"
+        wait: true
       }
-      {
-        action: "click"
-        pos: {
-          selector: "#canvas-container"
-          wait: true
-        }
-        source: "$[CLICK_INPUT_SOURCE]"
-      }
-      {
-        action: "click"
-        pos: {
-          selector: "#selectButton"
-          wait: true
-        }
-        source: "$[CLICK_INPUT_SOURCE]"
-      }
-      {
-        action: "click"
-        pos: {
-          selector: "#selectButton"
-          wait: true
-        }
-        source: "$[CLICK_INPUT_SOURCE]"
-      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
   ]
 }

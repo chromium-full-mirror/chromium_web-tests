@@ -1,7 +1,7 @@
 {
   args: {
-    PAGE_LOAD_TIMEOUT: "3m"
-    PAGE_TARGET:"_new_tab"
-  },
-  template: "../../templates/page-click-multiple-template.hjson"
+    PAGE_LOAD_TIMEOUT: 3m
+    PAGE_TARGET: _new_tab
+  }
+  template: ../../templates/page-click-multiple-template.hjson
 }

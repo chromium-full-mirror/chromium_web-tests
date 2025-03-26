@@ -1,33 +1,34 @@
 {
   actions: [
     {
-      action: "wait_for_element"
-      selector: "div.html5-video-player"
-      timeout: "$[TIMEOUT]"
+      action: wait_for_element
+      selector: div.html5-video-player
+      timeout: $[TIMEOUT]
     }
     {
-      action: "js"
-      timeout: "5m"
-      script: '''
-              let observer = null
-              const skipAd = async () => {
-                const adVideo = document.querySelector(".ad-showing video")
-                if (adVideo) {
-                  if(adVideo.paused) {
-                    adVideo.play()
-                  }
-                  if (isFinite(adVideo.duration) && adVideo.currentTime != adVideo.duration) {
-                    adVideo.currentTime = adVideo.duration
-                    performance.mark("skip-ad-executed")
-                  }
-                } else if (document.querySelector("$[VIDEO_SELECTOR]")) {
-                  return
-                }
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                await skipAd()
-              }
-              await skipAd()
-              '''
+      action: js
+      timeout: 5m
+      script:
+        '''
+        let observer = null
+        const skipAd = async () => {
+          const adVideo = document.querySelector(".ad-showing video")
+          if (adVideo) {
+            if(adVideo.paused) {
+              adVideo.play()
+            }
+            if (isFinite(adVideo.duration) && adVideo.currentTime != adVideo.duration) {
+              adVideo.currentTime = adVideo.duration
+              performance.mark("skip-ad-executed")
+            }
+          } else if (document.querySelector("$[VIDEO_SELECTOR]")) {
+            return
+          }
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await skipAd()
+        }
+        await skipAd()
+        '''
     }
   ]
 }

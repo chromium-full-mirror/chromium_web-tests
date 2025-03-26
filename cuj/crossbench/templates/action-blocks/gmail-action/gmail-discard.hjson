@@ -1,13 +1,13 @@
 {
-    actions: [
-        {
-        action: "click",
-        position: {
-            selector: "div[data-tooltip*='Discard draft']",
-            wait: true
-        }
-        verify: "body:not(:has(div[aria-label='Message Body']))"
-        source: "$[CLICK_INPUT_SOURCE]",
-        }
-    ]
+  actions: [
+    {
+      action: click
+      position: {
+        selector: div[data-tooltip*='Discard draft']
+        wait: true
+      }
+      verify: body:not(:has(div[aria-label='Message Body']))
+      source: $[CLICK_INPUT_SOURCE]
+    }
+  ]
 }

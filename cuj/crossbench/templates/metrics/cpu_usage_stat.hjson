@@ -1,4 +1,4 @@
 {
-  name: "cpu_usage_stat",
-  sql: "./queries/cpu_usage_stat.sql",
+  name: cpu_usage_stat
+  sql: ./queries/cpu_usage_stat.sql
 }

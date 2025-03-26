@@ -1,43 +1,45 @@
 {
   actions: [
     {
-      action: "switch_tab"
-      url: "^https://drive.google.com"
+      action: switch_tab
+      url: ^https://drive.google.com
     }
     {
-      action: "wait_for_ready_state"
-      timeout: "$[TIMEOUT]"
+      action: wait_for_ready_state
+      timeout: $[TIMEOUT]
     }
     {
-      action: "js"
-      script: '''
-                performance.mark("download-click-start")
-                window.addEventListener('click', () => {
-                  const downloadButton = document.querySelector("$[DOWNLOAD_CLICK_SELECTOR]")
-                  if (downloadButton) {
-                    performance.mark('download-click-end')
-                    performance.measure(
-                      'download-click-duration',
-                      'download-click-start',
-                      'download-click-end'
-                    )
-                  }
-                })
-                '''
+      action: js
+      script:
+        '''
+          performance.mark("download-click-start")
+          window.addEventListener('click', () => {
+            const downloadButton = document.querySelector("$[DOWNLOAD_CLICK_SELECTOR]")
+            if (downloadButton) {
+              performance.mark('download-click-end')
+              performance.measure(
+                'download-click-duration',
+                'download-click-start',
+                'download-click-end'
+              )
+            }
+          })
+          
+        '''
     }
     {
-      action: "click"
+      action: click
       position: {
-        selector: "$[DOWNLOAD_CLICK_SELECTOR]"
+        selector: $[DOWNLOAD_CLICK_SELECTOR]
         scroll_into_view: true
         wait: true
       }
-      source: "$[CLICK_INPUT_SOURCE]"
+      source: $[CLICK_INPUT_SOURCE]
     }
     {
-      action: "wait_for_download"
-      timeout: "$[TIMEOUT]"
-      pattern: "$[DOWNLOAD_FILE_TYPE]"
+      action: wait_for_download
+      timeout: $[TIMEOUT]
+      pattern: $[DOWNLOAD_FILE_TYPE]
     }
   ]
 }

@@ -1,19 +1,20 @@
 {
-    "actions": [
-        {
-            action: "get"
-            url: "http://127.0.0.1:8000/video_conference.html"
-            ready_state: "complete"
-        }
+  actions: [
+    {
+      action: get
+      url: http://127.0.0.1:8000/video_conference.html
+      ready_state: complete
+    }
         // Start the meeting.
-        {
-            action: "js"
-            script: '''
-            await VC.startCamera();
-            await VC.micOn();
-            await VC.showCameraPreview();
-            await VC.holdCall($[NUM_PEOPLE], false);
-            '''
-        }
-    ]
+    {
+      action: js
+      script:
+        '''
+        await VC.startCamera();
+        await VC.micOn();
+        await VC.showCameraPreview();
+        await VC.holdCall($[NUM_PEOPLE], false);
+        '''
+    }
+  ]
 }

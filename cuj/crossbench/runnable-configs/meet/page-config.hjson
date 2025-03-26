@@ -1,7 +1,7 @@
 {
-  template: "../../templates/meet-template.hjson"
-  "args": {
-    "NUM-OF-BOTS": "4"
-    "TTL-SECS": "60"
+  template: ../../templates/meet-template.hjson
+  args: {
+    NUM-OF-BOTS: "4"
+    TTL-SECS: "60"
   }
 }

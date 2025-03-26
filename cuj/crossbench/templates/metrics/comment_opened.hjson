@@ -1,4 +1,4 @@
 {
-  name: "comment_opened",
-  sql: "./queries/comment_opened.sql",
+  name: comment_opened
+  sql: ./queries/comment_opened.sql
 }

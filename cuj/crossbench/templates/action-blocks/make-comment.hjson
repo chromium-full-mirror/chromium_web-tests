@@ -1,39 +1,95 @@
 {
-    "actions": [
-        {action: "wait_for_element", selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", timeout: "30s"},
-        {action: "js", script: '''
+  actions: [
+    {
+      action: wait_for_element
+      selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']"
+      timeout: 30s
+    }
+    {
+      action: js
+      script:
+        '''
         // Before we click the comment button, set up an observer to log exactly
         // when the comment window appears.
         (new MutationObserver((mutationList, observer) => {
-            if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
-            performance.mark("comment-opened-dom");
-            observer.disconnect();
-            requestAnimationFrame(() => {
-                performance.mark("comment-opened-next-frame");
-                performance.measure('comment-opened', 'comment-click', 'comment-opened-next-frame');
-            });
-            } else {
-            performance.mark("comment-progress");
-            }
+        if (document.querySelector("#docos-stream-view [aria-label='Comment draft']")) {
+        performance.mark("comment-opened-dom");
+        observer.disconnect();
+        requestAnimationFrame(() => {
+        performance.mark("comment-opened-next-frame");
+        performance.measure('comment-opened', 'comment-click', 'comment-opened-next-frame');
+        });
+        } else {
+        performance.mark("comment-progress");
+        }
         })).observe(
-            document.querySelector("#docos-stream-view"),
-            {subtree: true, attributes: true},
+        document.querySelector("#docos-stream-view"),
+        {subtree: true, attributes: true},
         );
 
         performance.mark('comment-click');
-        '''},
-        {action: "click", pos: {selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
-        {action: "wait_for_element", selector: "[aria-label='Comment m']", timeout: "10s"},
-        {action: "click", pos: {selector: "[aria-label='Comment m']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
-        {action: "wait_for_element", selector: "[aria-label='Comment draft']:focus", timeout: "10s"},
-        {action: "js", script: "performance.mark('comment-type-begin');"},
-        {action: "text_input", text: "$[COMMENT_TEXT]", duration: "8s", source: "keyboard"},
-        {action: "js", script: '''
-            performance.mark('comment-type-end');
-            performance.measure('comment-type', 'comment-type-begin', 'comment-type-end');
-        '''},
-        {action: "click", pos: {selector: "[aria-label='Post Comment']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
+        '''
+    }
+    {
+      action: click
+      pos: {
+        selector: "#docs-insert-menu[role='menuitem'][aria-disabled='false']"
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: wait_for_element
+      selector: "[aria-label='Comment m']"
+      timeout: 10s
+    }
+    {
+      action: click
+      pos: {
+        selector: "[aria-label='Comment m']"
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: wait_for_element
+      selector: "[aria-label='Comment draft']:focus"
+      timeout: 10s
+    }
+    {
+      action: js
+      script: performance.mark('comment-type-begin');
+    }
+    {
+      action: text_input
+      text: $[COMMENT_TEXT]
+      duration: 8s
+      source: keyboard
+    }
+    {
+      action: js
+      script:
+        '''
+        performance.mark('comment-type-end');
+        performance.measure('comment-type', 'comment-type-begin', 'comment-type-end');
+        '''
+    }
+    {
+      action: click
+      pos: {
+        selector: "[aria-label='Post Comment']"
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
         // Wait for "Post Comment" UI to go away
-        {action: "wait_for_element", selector: "body:not(:has([aria-label='Post Comment']))", timeout: "3s"},
-    ]
+    {
+      action: wait_for_element
+      selector: body:not(:has([aria-label='Post Comment']))
+      timeout: 3s
+    }
+  ]
 }

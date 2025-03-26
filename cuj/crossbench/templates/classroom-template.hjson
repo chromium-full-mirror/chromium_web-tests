@@ -1,10 +1,10 @@
 {
   pages: {
     Classroom: {
-      login: "google"
+      login: google
       blocks: {
-        open-appendix: "./action-blocks/classroom-action/classroom-open-appendix.hjson"
-        download: "./action-blocks/classroom-action/download.hjson"
+        open-appendix: ./action-blocks/classroom-action/classroom-open-appendix.hjson
+        download: ./action-blocks/classroom-action/download.hjson
       }
     }
   }

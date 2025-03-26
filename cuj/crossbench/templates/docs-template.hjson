@@ -1,13 +1,13 @@
 {
-  "pages": {
-    "DocsCUJ": {
-      "login": "google",
-      "blocks": {
-        "copy-doc": "./action-blocks/copy-doc.hjson",
-        "comment": "./action-blocks/make-comment.hjson",
-        "scroll": "./action-blocks/scroll.hjson",
-        "cleanup": "./action-blocks/cleanup-doc.hjson",
-      },
-    },
-  },
+  pages: {
+    DocsCUJ: {
+      login: google
+      blocks: {
+        copy-doc: ./action-blocks/copy-doc.hjson
+        comment: ./action-blocks/make-comment.hjson
+        scroll: ./action-blocks/scroll.hjson
+        cleanup: ./action-blocks/cleanup-doc.hjson
+      }
+    }
+  }
 }

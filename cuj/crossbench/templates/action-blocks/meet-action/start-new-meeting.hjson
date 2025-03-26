@@ -1,16 +1,15 @@
 {
-    "actions": [
-        {
-            action: "meet_create"
-            bots: {
-                num_of_bots: "$[NUM-OF-BOTS]"
-                ttl_secs: "$[TTL-SECS]"
-            }
-        }
-        {
-            action: "js"
-            script: '''performance.mark("meet-created")'''
-        }
-
-    ]
+  actions: [
+    {
+      action: meet_create
+      bots: {
+        num_of_bots: $[NUM-OF-BOTS]
+        ttl_secs: $[TTL-SECS]
+      }
+    }
+    {
+      action: js
+      script: performance.mark("meet-created")
+    }
+  ]
 }

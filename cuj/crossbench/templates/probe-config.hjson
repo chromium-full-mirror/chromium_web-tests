@@ -1,141 +1,142 @@
 {
   probes: {
-    screenshot: {},
-    dump_html: {},
+    screenshot: {}
+    dump_html: {}
     trace_processor: {
-      queries: "$[TRACE_PROCESSOR_QUERIES]",
-    },
+      queries: $[TRACE_PROCESSOR_QUERIES]
+    }
     perfetto: {
       // texproto can be directly copied from https://ui.perfetto.dev/#!/record?p=instructions
       // under the "recording command' settings.
-      textproto: '''
+      textproto:
+        '''
         buffers {
-          size_kb: 512
-          fill_policy: RING_BUFFER
+        size_kb: 512
+        fill_policy: RING_BUFFER
         }
         buffers {
-          size_kb: 4096
-          fill_policy: RING_BUFFER
+        size_kb: 4096
+        fill_policy: RING_BUFFER
         }
         buffers {
-          size_kb: 128
-          fill_policy: RING_BUFFER
+        size_kb: 128
+        fill_policy: RING_BUFFER
         }
         buffers {
-          size_kb: 128
-          fill_policy: RING_BUFFER
+        size_kb: 128
+        fill_policy: RING_BUFFER
         }
         buffers {
-          size_kb: 40960
-          fill_policy: RING_BUFFER
+        size_kb: 40960
+        fill_policy: RING_BUFFER
         }
         # Buffer dedicated for linux.ftrace. It's OK that the trace data is
         # overwritten. If there are ftrace events that are of interest, use
         # another dedicated buffer or increase this the size of this buffer.
         buffers {
-          size_kb: 40960
-          fill_policy: RING_BUFFER
+        size_kb: 40960
+        fill_policy: RING_BUFFER
         }
         data_sources {
-          config {
-          name: "android.packages_list"
-          target_buffer: 0
-          }
+        config {
+        name: "android.packages_list"
+        target_buffer: 0
+        }
         }
         data_sources: {
-          config {
-            name: "linux.process_stats"
-            target_buffer: 1
-            process_stats_config {
-                scan_all_processes_on_start: true
-                proc_stats_poll_ms: 1000
-            }
-          }
+        config {
+        name: "linux.process_stats"
+        target_buffer: 1
+        process_stats_config {
+        scan_all_processes_on_start: true
+        proc_stats_poll_ms: 1000
+        }
+        }
         }
         data_sources: {
-          config {
-            name: "linux.sys_stats"
-            target_buffer: 2
-            sys_stats_config {
-              meminfo_period_ms: 1000
-              cpufreq_period_ms: 1000
-              thermal_period_ms: 1000
-              diskstat_period_ms: 2000
-              psi_period_ms: 2000
-              stat_period_ms: 1000
-              stat_counters: STAT_CPU_TIMES
-              stat_counters: STAT_FORK_COUNT
-              vmstat_period_ms: 1000
-              vmstat_counters: VMSTAT_PGFAULT
-              vmstat_counters: VMSTAT_PGPGIN
-              vmstat_counters: VMSTAT_PGPGOUT
-              vmstat_counters: VMSTAT_PSWPIN
-              vmstat_counters: VMSTAT_PSWPOUT
-            }
-          }
+        config {
+        name: "linux.sys_stats"
+        target_buffer: 2
+        sys_stats_config {
+        meminfo_period_ms: 1000
+        cpufreq_period_ms: 1000
+        thermal_period_ms: 1000
+        diskstat_period_ms: 2000
+        psi_period_ms: 2000
+        stat_period_ms: 1000
+        stat_counters: STAT_CPU_TIMES
+        stat_counters: STAT_FORK_COUNT
+        vmstat_period_ms: 1000
+        vmstat_counters: VMSTAT_PGFAULT
+        vmstat_counters: VMSTAT_PGPGIN
+        vmstat_counters: VMSTAT_PGPGOUT
+        vmstat_counters: VMSTAT_PSWPIN
+        vmstat_counters: VMSTAT_PSWPOUT
+        }
+        }
         }
         data_sources: {
-          config {
-            name: "android.statsd"
-            target_buffer: 3
-            statsd_tracing_config {
-              push_atom_id: ATOM_LMK_KILL_OCCURRED
-            }
-          }
+        config {
+        name: "android.statsd"
+        target_buffer: 3
+        statsd_tracing_config {
+        push_atom_id: ATOM_LMK_KILL_OCCURRED
+        }
+        }
         }
         data_sources: {
-          config {
-            name: "android.surfaceflinger.frametimeline"
-            target_buffer: 4
-          }
+        config {
+        name: "android.surfaceflinger.frametimeline"
+        target_buffer: 4
+        }
         }
         data_sources: {
-          config {
-            name: "linux.ftrace"
-            target_buffer: 5
-            ftrace_config {
-              ftrace_events: "mm_event/mm_event_record"
-              ftrace_events: "kmem/rss_stat"
-              ftrace_events: "ion/ion_stat"
-              ftrace_events: "dmabuf_heap/dma_heap_stat"
-              ftrace_events: "kmem/ion_heap_grow"
-              ftrace_events: "kmem/ion_heap_shrink"
-              ftrace_events: "sched/sched_process_exit"
-              ftrace_events: "sched/sched_process_free"
-              ftrace_events: "task/task_newtask"
-              ftrace_events: "task/task_rename"
-              ftrace_events: "lowmemorykiller/lowmemory_kill"
-              ftrace_events: "oom/oom_score_adj_update"
-              ftrace_events: "ftrace/print"
-              atrace_apps: "lmkd"
-            }
-          }
+        config {
+        name: "linux.ftrace"
+        target_buffer: 5
+        ftrace_config {
+        ftrace_events: "mm_event/mm_event_record"
+        ftrace_events: "kmem/rss_stat"
+        ftrace_events: "ion/ion_stat"
+        ftrace_events: "dmabuf_heap/dma_heap_stat"
+        ftrace_events: "kmem/ion_heap_grow"
+        ftrace_events: "kmem/ion_heap_shrink"
+        ftrace_events: "sched/sched_process_exit"
+        ftrace_events: "sched/sched_process_free"
+        ftrace_events: "task/task_newtask"
+        ftrace_events: "task/task_rename"
+        ftrace_events: "lowmemorykiller/lowmemory_kill"
+        ftrace_events: "oom/oom_score_adj_update"
+        ftrace_events: "ftrace/print"
+        atrace_apps: "lmkd"
+        }
+        }
         }
         data_sources: {
-          config {
-            name: "track_event"
-            target_buffer: 4
-            chrome_config {
-              trace_config: "{\"histogram_names\":[\"Browser.Tabs.TabSwitchResult3\",\"Browser.Tabs.TabSwitchResult3.NoSavedFrames_Loaded\",\"Browser.Tabs.TabSwitchResult3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TabSwitchResult3.WithSavedFrames\",\"Browser.Tabs.TotalIncompleteSwitchDuration3\",\"Browser.Tabs.TotalIncompleteSwitchDuration3.NoSavedFrames_Loaded\",\"Browser.Tabs.TotalIncompleteSwitchDuration3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TotalSwitchDuration3\",\"Browser.Tabs.TotalSwitchDuration3.NoSavedFrames_Loaded\",\"Browser.Tabs.TotalSwitchDuration3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TotalSwitchDuration3.WithSavedFrames\",\"EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency\",\"PageLoad.InteractiveTiming.InputDelay3\",\"PageLoad.InteractiveTiming.TimeToNextPaint\",\"EventLatency.KeyPressed.TotalLatency\",\"EventLatency.MouseDragged.TotalLatency\",\"EventLatency.MouseMoved.TotalLatency\",\"EventLatency.MousePressed.TotalLatency\",\"EventLatency.MouseReleased.TotalLatency\",\"EventLatency.MouseWheel.TotalLatency\",\"Browser.MainThreadsCongestion\",\"Browser.MainThreadsCongestion.RunningOnly\",\"PageLoad.PaintTiming.NavigationToLargestContentfulPaint2\",\"PageLoad.PaintTiming.NavigationToFirstContentfulPaint\",\"PageLoad.Experimental.NavigationTiming.NavigationStartToFirstResponseStart\",\"EventLatency.TotalLatency\",\"Graphics.Smoothness.PercentDroppedFrames3.AllInteractions\",\"Graphics.Smoothness.PercentDroppedFrames3.AllSequences\",\"Memory.Browser.PrivateMemoryFootprint\",\"Compositing.Display.PendingSwaps\",\"Compositing.Display.OverlayProcessorUsingStrategy.NumOverlaysPromoted\",\"Viz.FrameSink.GpuBusyDuration\",\"Viz.DisplayCompositor.OverlayStrategy\"]}"
-              privacy_filtering_enabled: false
-              client_priority: USER_INITIATED
-            }
-            track_event_config {
-              disabled_categories: "*"
-              enabled_categories: "blink.user_timing"
-              enabled_categories: "input"
-              enabled_categories: "loading"
-              enabled_categories: "disabled-by-default-histogram_samples"
-              enabled_categories: "__metadata"
-              timestamp_unit_multiplier: 1000
-              filter_debug_annotations: false
-              enable_thread_time_sampling: true
-              filter_dynamic_event_names: false
-            }
-          }
+        config {
+        name: "track_event"
+        target_buffer: 4
+        chrome_config {
+        trace_config: "{\"histogram_names\":[\"Browser.Tabs.TabSwitchResult3\",\"Browser.Tabs.TabSwitchResult3.NoSavedFrames_Loaded\",\"Browser.Tabs.TabSwitchResult3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TabSwitchResult3.WithSavedFrames\",\"Browser.Tabs.TotalIncompleteSwitchDuration3\",\"Browser.Tabs.TotalIncompleteSwitchDuration3.NoSavedFrames_Loaded\",\"Browser.Tabs.TotalIncompleteSwitchDuration3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TotalSwitchDuration3\",\"Browser.Tabs.TotalSwitchDuration3.NoSavedFrames_Loaded\",\"Browser.Tabs.TotalSwitchDuration3.NoSavedFrames_NotLoaded\",\"Browser.Tabs.TotalSwitchDuration3.WithSavedFrames\",\"EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency\",\"PageLoad.InteractiveTiming.InputDelay3\",\"PageLoad.InteractiveTiming.TimeToNextPaint\",\"EventLatency.KeyPressed.TotalLatency\",\"EventLatency.MouseDragged.TotalLatency\",\"EventLatency.MouseMoved.TotalLatency\",\"EventLatency.MousePressed.TotalLatency\",\"EventLatency.MouseReleased.TotalLatency\",\"EventLatency.MouseWheel.TotalLatency\",\"Browser.MainThreadsCongestion\",\"Browser.MainThreadsCongestion.RunningOnly\",\"PageLoad.PaintTiming.NavigationToLargestContentfulPaint2\",\"PageLoad.PaintTiming.NavigationToFirstContentfulPaint\",\"PageLoad.Experimental.NavigationTiming.NavigationStartToFirstResponseStart\",\"EventLatency.TotalLatency\",\"Graphics.Smoothness.PercentDroppedFrames3.AllInteractions\",\"Graphics.Smoothness.PercentDroppedFrames3.AllSequences\",\"Memory.Browser.PrivateMemoryFootprint\",\"Compositing.Display.PendingSwaps\",\"Compositing.Display.OverlayProcessorUsingStrategy.NumOverlaysPromoted\",\"Viz.FrameSink.GpuBusyDuration\",\"Viz.DisplayCompositor.OverlayStrategy\"]}"
+        privacy_filtering_enabled: false
+        client_priority: USER_INITIATED
         }
-      ''',
-    },
+        track_event_config {
+        disabled_categories: "*"
+        enabled_categories: "blink.user_timing"
+        enabled_categories: "input"
+        enabled_categories: "loading"
+        enabled_categories: "disabled-by-default-histogram_samples"
+        enabled_categories: "__metadata"
+        timestamp_unit_multiplier: 1000
+        filter_debug_annotations: false
+        enable_thread_time_sampling: true
+        filter_dynamic_event_names: false
+        }
+        }
+        }
+        '''
+    }
     downloads: {}
-  },
+  }
 }

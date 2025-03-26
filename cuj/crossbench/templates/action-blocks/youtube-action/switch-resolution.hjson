@@ -4,81 +4,83 @@
     // Here we need to detect whether it is the target video
     // Pause here to bring up the drop-down box
     {
-      action: "wait_for_element"
-      selector: "$[VIDEO_SELECTOR]"
-      timeout: "$[TIMEOUT]"
+      action: wait_for_element
+      selector: $[VIDEO_SELECTOR]
+      timeout: $[TIMEOUT]
     }
     {
-      action: "js"
-      script: '''
-              const video = document.querySelector("$[VIDEO_SELECTOR]")
-              if (!video.paused) {
-                  video.currentTime = 0
-                  video.pause()
-              }
-              '''
+      action: js
+      script:
+        '''
+        const video = document.querySelector("$[VIDEO_SELECTOR]")
+        if (!video.paused) {
+            video.currentTime = 0
+            video.pause()
+        }
+        '''
     }
     {
-      action: "click"
+      action: click
       pos: {
-        selector: "button[title='Settings']"
+        selector: button[title='Settings']
         required: true
         wait: true
       }
-      source: "touch"
-      verify: "xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']"
+      source: touch
+      verify: xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']
     }
     // Wait for the element to finish animating.
     {
-      action: "wait"
-      duration: "0.5s"
+      action: wait
+      duration: 0.5s
     }
     {
-      action: "click"
+      action: click
       pos: {
-        selector: "xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']"
+        selector: xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']
         required: true
         wait: true
       }
-      source: "touch"
-      verify: "xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']"
+      source: touch
+      verify: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
     }
     // Wait for the element to finish animating.
     {
-      action: "wait"
-      duration: "0.5s"
+      action: wait
+      duration: 0.5s
     }
     {
-      action: "js"
-      script: '''
-              performance.mark("video-loaded-start")
-              performance.mark("switch-resolution-start")
-              // Add a one-time listener for the video canplay event,
-              // mark the resolution switching video loading time
-              const video = document.querySelector("video")
-              video.addEventListener("canplay", () => {
-                performance.mark("video-loaded-end")
-                performance.measure("video-ready", "video-loaded-start", "video-loaded-end")
-              }, { once: true });
-              '''
+      action: js
+      script:
+        '''
+        performance.mark("video-loaded-start")
+        performance.mark("switch-resolution-start")
+        // Add a one-time listener for the video canplay event,
+        // mark the resolution switching video loading time
+        const video = document.querySelector("video")
+        video.addEventListener("canplay", () => {
+          performance.mark("video-loaded-end")
+          performance.measure("video-ready", "video-loaded-start", "video-loaded-end")
+        }, { once: true });
+        '''
     }
     {
-      action: "click"
+      action: click
       pos: {
-        selector: "xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']"
+        selector: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
         required: true
         wait: true
       }
-      source: "touch"
-      verify: "$[VIDEO_SELECTOR]"
-
+      source: touch
+      verify: $[VIDEO_SELECTOR]
     }
     {
-      action: "js"
-      script: '''
-              performance.mark("switch-resolution-end")
-              performance.measure("switch-resolution-duration", "switch-resolution-start", "switch-resolution-end")
-              '''
+      action: js
+      script:
+        '''
+        performance.mark("switch-resolution-end")
+        performance.measure("switch-resolution-duration", "switch-resolution-start", "switch-resolution-end")
+        '''
     }
   ]
 }

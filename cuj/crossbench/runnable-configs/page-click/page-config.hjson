@@ -1,7 +1,7 @@
 {
   args: {
-    PAGE_LOAD_TIMEOUT: "3m"
-    PAGE_TARGET:"_self"
-  },
-  template: "../../templates/page-click-template.hjson"
+    PAGE_LOAD_TIMEOUT: 3m
+    PAGE_TARGET: _self
+  }
+  template: ../../templates/page-click-template.hjson
 }

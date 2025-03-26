@@ -1,40 +1,40 @@
 {
-    "actions": [
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-        {
-            action: "text_input"
-            text: "$[NOTE_TEXT]"
-            duration: "$[NOTE_DURATION]"
-            source: "keyboard"
-        }
-    ]
+  actions: [
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+    {
+      action: text_input
+      text: $[NOTE_TEXT]
+      duration: $[NOTE_DURATION]
+      source: keyboard
+    }
+  ]
 }

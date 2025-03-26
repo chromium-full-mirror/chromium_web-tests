@@ -1,20 +1,21 @@
 {
-    "actions":[
+  actions: [
         // With the flag --use-fake-ui-for-media-stream, the camera would
         // start by itself.
-        {
-            action: "wait_for_element"
+    {
+      action: wait_for_element
             # At least self video and one bot should be visible before continuing.
-            expected_count: "2"
-            or_more: true,
-            selector: "video:not([data-meet-pip-feed]):not([style*='display: none'])"
-        }
-        {
-            action: "js"
-            script: '''
-            performance.mark("camera-start");
-            performance.measure("camera-ready", "meet-created", "camera-start");
-            '''
-        }
-    ]
+      expected_count: "2"
+      or_more: true
+      selector: video:not([data-meet-pip-feed]):not([style*='display: none'])
+    }
+    {
+      action: js
+      script:
+        '''
+        performance.mark("camera-start");
+        performance.measure("camera-ready", "meet-created", "camera-start");
+        '''
+    }
+  ]
 }

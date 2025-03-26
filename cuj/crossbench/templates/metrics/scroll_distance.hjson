@@ -1,4 +1,4 @@
 {
-  name: "scroll_distance",
-  sql: "./queries/scroll_distance.sql",
+  name: scroll_distance
+  sql: ./queries/scroll_distance.sql
 }

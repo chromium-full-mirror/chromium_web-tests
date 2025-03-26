@@ -1,75 +1,81 @@
 {
-  "pages": {
-    "Meet-Note": {
-      "login": "google",
-      "blocks": {
-        "start-new-meeting": "./action-blocks/meet-action/start-new-meeting.hjson"
-        "make-bot-present": {
-          actions: [{
-            action: "meet_script"
-            script: "@b1 start_presenting"
-          }]
+  pages: {
+    Meet-Note: {
+      login: google
+      blocks: {
+        start-new-meeting: ./action-blocks/meet-action/start-new-meeting.hjson
+        make-bot-present: {
+          actions: [
+            {
+              action: meet_script
+              script: @b1 start_presenting
+            }
+          ]
         }
-        "wait-camera-start": "./action-blocks/meet-action/wait-camera-start.hjson"
-        "switch-resolution": "./action-blocks/meet-action/switch-resolution.hjson"
-        "open-new-docs": {
-          actions: [{
-              action: "get"
-              url: "$[DOCS_URL]"
-              ready_state: "complete"
-              target: "_new_window"
-              timeout: "$[TIMEOUT]"
-            }]
+        wait-camera-start: ./action-blocks/meet-action/wait-camera-start.hjson
+        switch-resolution: ./action-blocks/meet-action/switch-resolution.hjson
+        open-new-docs: {
+          actions: [
+            {
+              action: get
+              url: $[DOCS_URL]
+              ready_state: complete
+              target: _new_window
+              timeout: $[TIMEOUT]
+            }
+          ]
         }
         # Setting the title is not strictly necessary, but docs is picky about grabbing typing focus.
         # A reliable way to grab focus is to first enter the title and then click somewhere on the document.
-        "set-title": {
+        set-title: {
           actions: [
             {
-              action: "click",
+              action: click
               pos: {
-                selector: "input[class='docs-title-input']",
+                selector: input[class='docs-title-input']
                 required: true
-              },
-              verify: "input[class='docs-title-input']:focus",
-              source: "$[CLICK_INPUT_SOURCE]"
-            },
+              }
+              verify: input[class='docs-title-input']:focus
+              source: $[CLICK_INPUT_SOURCE]
+            }
             {
-                action: "text_input"
-                text: "My meeting notes"
-                duration: "2s"
-                source: "keyboard"
-            },
+              action: text_input
+              text: My meeting notes
+              duration: 2s
+              source: keyboard
+            }
             # Validate the title was entered properly.
             {
-              action: "wait_for_element"
-              selector: "xpath///span[contains(text(),'My meeting notes')]",
-              timeout: "3s",
+              action: wait_for_element
+              selector: xpath///span[contains(text(),'My meeting notes')]
+              timeout: 3s
             }
           ]
-        },
-        "focus-doc": {
+        }
+        focus-doc: {
           actions: [
             {
-                action: "click"
-                position: {
-                    selector: "div[class='kix-page-paginated canvas-first-page']",
-                    required: true,
-                    wait: true
-                }
-                source: "$[CLICK_INPUT_SOURCE]",
+              action: click
+              position: {
+                selector: div[class='kix-page-paginated canvas-first-page']
+                required: true
+                wait: true
+              }
+              source: $[CLICK_INPUT_SOURCE]
             }
           ]
         }
-        "take-notes": "./action-blocks/meet-action/repeat-typing.hjson"
-        "cleanup": {
-          template: "./action-blocks/cleanup-doc.hjson",
+        take-notes: ./action-blocks/meet-action/repeat-typing.hjson
+        cleanup: {
+          template: ./action-blocks/cleanup-doc.hjson
           args: {
-            "ARIA_DISABLED": "[aria-disabled='false']"
-          },
-          unbound_args: ["CLICK_INPUT_SOURCE"]
+            ARIA_DISABLED: "[aria-disabled='false']"
+          }
+          unbound_args: [
+            CLICK_INPUT_SOURCE
+          ]
         }
-      },
-    },
-  },
+      }
+    }
+  }
 }

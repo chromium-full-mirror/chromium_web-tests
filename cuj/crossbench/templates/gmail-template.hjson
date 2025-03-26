@@ -1,26 +1,26 @@
 {
-  "pages": {
-    "Gmail-Compose": {
-      login: "google",
+  pages: {
+    Gmail-Compose: {
+      login: google
       blocks: {
         //Load gmail home page.
         gmail-page-load: {
           actions: [
             {
-              action: "get"
-              url: "https://mail.google.com/"
-              ready_state: "complete"
-              timeout: "$[TIMEOUT]"
+              action: get
+              url: https://mail.google.com/
+              ready_state: complete
+              timeout: $[TIMEOUT]
             }
           ]
         }
         //When gmail page loded, two popup may appear in the bottom of the page, which need to be closed.
-        gmail-popup-close: "./action-blocks/gmail-action/gmail-popup-close.hjson"
+        gmail-popup-close: ./action-blocks/gmail-action/gmail-popup-close.hjson
         //Input text into subject and body of email.
-        gmail-compose: "./action-blocks/gmail-action/gmail-compose.hjson"
+        gmail-compose: ./action-blocks/gmail-action/gmail-compose.hjson
         //Click the 'trash bin' icon to discard the draft.
-        gmail-draft-discard: "./action-blocks/gmail-action/gmail-discard.hjson"    
+        gmail-draft-discard: ./action-blocks/gmail-action/gmail-discard.hjson
       }
-   }
+    }
   }
 }

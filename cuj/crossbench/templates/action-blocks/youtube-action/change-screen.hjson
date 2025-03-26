@@ -1,10 +1,10 @@
 {
   actions: [
     {
-      action: "text_input"
-      text: "$[CHANGE_SCREEN_INPUT]"
-      duration: "0.5s"
-      source: "keyboard"
+      action: text_input
+      text: $[CHANGE_SCREEN_INPUT]
+      duration: 0.5s
+      source: keyboard
     }
   ]
 }

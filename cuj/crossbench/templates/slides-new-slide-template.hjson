@@ -1,15 +1,15 @@
 {
-  "pages": {
-    "SLIDES-CUJ": {
-      "login": "google",
-      "blocks": {
-        "copy-slides": "./action-blocks/slides-action/copy-slides.hjson",
-        "scroll": "./action-blocks/scroll.hjson",
-        "new-slide": "./action-blocks/slides-action/new-slide.hjson",
-        "type-text": "./action-blocks/slides-action/type-text.hjson",
-        "delete-slide": "./action-blocks/slides-action/delete-slide.hjson",
-        "cleanup": "./action-blocks/cleanup-doc.hjson",
-      },
-    },
-  },
+  pages: {
+    SLIDES-CUJ: {
+      login: google
+      blocks: {
+        copy-slides: ./action-blocks/slides-action/copy-slides.hjson
+        scroll: ./action-blocks/scroll.hjson
+        new-slide: ./action-blocks/slides-action/new-slide.hjson
+        type-text: ./action-blocks/slides-action/type-text.hjson
+        delete-slide: ./action-blocks/slides-action/delete-slide.hjson
+        cleanup: ./action-blocks/cleanup-doc.hjson
+      }
+    }
+  }
 }

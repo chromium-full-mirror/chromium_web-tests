@@ -1,34 +1,53 @@
 {
-  "pages": {
-    "VideoCUJ": {
-      "actions": [
+  pages: {
+    VideoCUJ: {
+      actions: [
         // Launch Crosvideo test page
-        {action: "get", url: "https://crosvideo.appspot.com/?codec=vp9_60&resolution=1080&loop=true", ready_state: "complete"},
+        {
+          action: get
+          url: https://crosvideo.appspot.com/?codec=vp9_60&resolution=1080&loop=true
+          ready_state: complete
+        }
         // Element ready doesn't mean stream is ready, so wait for a bit
-        {action: "wait_for_element", selector: "video#video", timeout: "10s"},
-        {action: "wait", duration: "5s"},
+        {
+          action: wait_for_element
+          selector: video#video
+          timeout: 10s
+        }
+        {
+          action: wait
+          duration: 5s
+        }
         // Play for 1 minute (ish)
-        {action: "js", script: '''
-          performance.mark('page-loaded')
-          const testVideo = document.querySelector('video#video');
-          var finished = false;
+        {
+          action: js
+          script:
+            '''
+            performance.mark('page-loaded')
+            const testVideo = document.querySelector('video#video');
+            var finished = false;
 
-          testVideo.addEventListener('progress', (e) => {
+            testVideo.addEventListener('progress', (e) => {
             if (e.timeStamp > 70000) {
-              finished = true;
-              performance.mark('video-stop');
-              performance.measure('video-duration', 'video-start', 'video-stop');
+            finished = true;
+            performance.mark('video-stop');
+            performance.measure('video-duration', 'video-start', 'video-stop');
 
-              testVideo.pause();
+            testVideo.pause();
             }
-          });
+            });
 
-          testVideo.play().then(() => {
+            testVideo.play().then(() => {
             performance.mark('video-start');
             performance.measure('video-ready', 'page-loaded', 'video-start');
-          });'''},
-          {action: "wait", duration: "70s"},
-      ],
-    },
-  },
+            });
+            '''
+        }
+        {
+          action: wait
+          duration: 70s
+        }
+      ]
+    }
+  }
 }

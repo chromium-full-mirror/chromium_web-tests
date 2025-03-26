@@ -1,18 +1,72 @@
 {
-    "actions": [
-        {action: "get", url: "$[DOC_URL]", ready_state: "complete"},
-        {action: "wait_for_element", selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]", timeout: "10s"},
-        {action: "click", pos: {selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
-        {action: "wait_for_element", selector: "$[ARIA_DISABLED] [aria-label='Make a copy c']", timeout: "10s"},
-        {action: "click", pos: {selector: "$[ARIA_DISABLED] [aria-label='Make a copy c']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
-        {action: "wait_for_element", selector: "[aria-modal='true'] input[type='text']:focus", timeout: "15s"},
-        {action: "text_input", text: "$[TEST_NAME]", source: "keyboard"},
-
-        {action: "js", script: "performance.mark('setup-complete');"},
-
-        {action: "click", pos: {selector: "[data-mdc-dialog-action='ok']", required: true, scroll_into_view: true}, source: "$[CLICK_INPUT_SOURCE]"},
-        {action: "switch_tab", title: "^$[TEST_NAME]"},
-        {action: "wait_for_ready_state", ready_state: "complete"},
-        {action: "wait", duration: "2s"},
-    ]
+  actions: [
+    {
+      action: get
+      url: $[DOC_URL]
+      ready_state: complete
+    }
+    {
+      action: wait_for_element
+      selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]"
+      timeout: 10s
+    }
+    {
+      action: click
+      pos: {
+        selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]"
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: wait_for_element
+      selector: $[ARIA_DISABLED] [aria-label='Make a copy c']
+      timeout: 10s
+    }
+    {
+      action: click
+      pos: {
+        selector: $[ARIA_DISABLED] [aria-label='Make a copy c']
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: wait_for_element
+      selector: "[aria-modal='true'] input[type='text']:focus"
+      timeout: 15s
+    }
+    {
+      action: text_input
+      text: $[TEST_NAME]
+      source: keyboard
+    }
+    {
+      action: js
+      script: performance.mark('setup-complete');
+    }
+    {
+      action: click
+      pos: {
+        selector: "[data-mdc-dialog-action='ok']"
+        required: true
+        scroll_into_view: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: switch_tab
+      title: ^$[TEST_NAME]
+    }
+    {
+      action: wait_for_ready_state
+      ready_state: complete
+    }
+    {
+      action: wait
+      duration: 2s
+    }
+  ]
 }
