@@ -41,7 +41,7 @@ select
   (
     select
       dur / 1000000
-  from[]
+    from
       slice s
     where
       s.name = 'PageLoadMetrics.NavigationToLargestContentfulPaint'
