@@ -7,5 +7,6 @@
         sql: ./queries/lcp.sql
       }
     ]
+    TRACE_PROCESSOR_MODULE_PATHS: []
   }
 }

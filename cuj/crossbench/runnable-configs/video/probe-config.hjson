@@ -7,5 +7,6 @@
         sql: ./queries/dropped_frames.sql
       }
     ]
+    TRACE_PROCESSOR_MODULE_PATHS: []
   }
 }
