@@ -3,14 +3,7 @@
     actions: [
       {
         action: js
-        script:
-          '''
-          performance.mark("page-load", {
-          detail: {
-              url: document.URL
-          }
-          });
-          '''
+        path: ./scripts/page-load.js
       }
       {
         action: get
@@ -21,14 +14,7 @@
       }
       {
         action: js
-        script:
-          '''
-          performance.mark("page-loaded", {
-          detail: {
-              url: document.URL
-          }
-          });
-          '''
+        path: ./scripts/page-loaded.js
       }
     ]
   }

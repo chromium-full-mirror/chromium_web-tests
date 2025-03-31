@@ -2,11 +2,7 @@
   actions: [
     {
       action: js
-      script:
-        '''
-          performance.mark('compose-dialog-open');
-          
-        '''
+      script: performance.mark('compose-dialog-open');
     }
         // click "Compose"
     {
@@ -22,7 +18,6 @@
         '''
           performance.mark('compose-dialog-loaded');
           performance.measure('compose-dialog-ready', 'compose-dialog-open', 'compose-dialog-loaded');
-          
         '''
     }
         //input subject and body
