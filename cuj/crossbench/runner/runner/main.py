@@ -45,6 +45,7 @@ def run_and_upload(argv):
         "--playback", help="Directly passed to crossbench as the --playback flag for the loading benchmark.", type=str, default="1x"
     )
     parser.add_argument("--verbose", action="store_true", default=False)
+    parser.add_argument("--variants", type=str, default="*")
     args = parser.parse_args()
 
     device_id = args.device_id
@@ -54,6 +55,7 @@ def run_and_upload(argv):
     web_tests = args.web_tests.resolve()
     do_upload = args.upload
     tests_glob = args.tests
+    variants_glob = args.variants
     playback_flag = args.playback
     verbose = args.verbose
 
@@ -76,6 +78,7 @@ def run_and_upload(argv):
                 verbose,
                 do_upload,
                 playback_flag,
+                variants_glob,
             )
         except Exception as e:
             print(f"Failed to run crossbench for test {test_name}: {e}")

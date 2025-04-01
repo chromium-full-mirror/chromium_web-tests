@@ -88,9 +88,10 @@ def run_test(
     secrets_config,
     verbose,
     do_upload,
-    playback_flag
+    playback_flag,
+    variants_glob
 ):
-    for config_file in runnable_config_dir.glob("*"):
+    for config_file in runnable_config_dir.glob(variants_glob):
         filename = config_file.name
 
         if is_page_config(filename):
