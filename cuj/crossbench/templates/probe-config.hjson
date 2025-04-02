@@ -7,7 +7,7 @@
       module_paths: $[TRACE_PROCESSOR_MODULE_PATHS]
     }
     perfetto: {
-      textproto: ./trace-config.pbtxt
+      textproto: $[TRACE_CONFIG]
     }
     downloads: {}
   }

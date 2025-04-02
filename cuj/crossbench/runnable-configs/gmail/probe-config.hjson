@@ -3,5 +3,6 @@
   args: {
     TRACE_PROCESSOR_QUERIES: []
     TRACE_PROCESSOR_MODULE_PATHS: []
+    TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
 }
