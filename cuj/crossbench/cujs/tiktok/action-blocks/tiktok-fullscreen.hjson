@@ -1,0 +1,30 @@
+{
+  pages: {
+    TikTok: {
+      blocks: {
+        tiktok-page-load: ./page-load.hjson
+        fullscreen: [
+          {
+            action: click
+            source: touch
+            pos: {
+              selector: button[data-e2e='more-menu-icon']
+              wait: true
+            }
+            verify: div[data-e2e='more-menu-popover_full-screen'] span
+          }
+          {
+            action: click
+            source: touch
+            pos: {
+              selector: div[data-e2e='more-menu-popover_full-screen'] span
+              wait: true
+            }
+            verify: ":fullscreen"
+          }
+        ]
+        watch-video: ./watch-video.hjson
+      }
+    }
+  }
+}

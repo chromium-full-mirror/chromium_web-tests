@@ -1,0 +1,94 @@
+{
+  pages: {
+    Youtube: {
+      blocks: {
+        video-page-load: ../../../common-action-blocks/youtube/video-page-load.hjson
+        skip-ad-video: ../../../common-action-blocks/youtube/skip-ad.hjson
+        switch-resolution: ../../../common-action-blocks/youtube/switch-resolution.hjson
+        change-screen: ../../../common-action-blocks/youtube/change-screen.hjson
+        watch-video: ../../../common-action-blocks/youtube/watch-video.hjson
+        open-new-window: [
+          {
+            action: get
+            url: $[NEW_WINDOW_PAGE_URL]
+            target: _new_window
+            ready_state: complete
+            timeout: $[TIMEOUT]
+          }
+        ]
+        page-scroll-1: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+        page-scroll-2: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "-256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+        page-scroll-3: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+        page-scroll-4: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "-256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+        page-scroll-5: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+        page-scroll-6: {
+          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+          args: {
+            SCROLL_DISTANCE: "-256"
+          }
+          unbound_args: [
+            SCROLL_SOURCE
+            SCROLL_DURATION
+            SCROLL_MARK_NAME
+            SCROLL_END_DISTANCE_SELECTOR
+          ]
+        }
+      }
+    }
+  }
+}

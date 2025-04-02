@@ -1,0 +1,81 @@
+{
+  pages: {
+    Meet-Note: {
+      login: google
+      blocks: {
+        start-new-meeting: ../../../common-action-blocks/meet/start-new-meeting.hjson
+        make-bot-present: {
+          actions: [
+            {
+              action: meet_script
+              script: @b1 start_presenting
+            }
+          ]
+        }
+        wait-camera-start: ../../../common-action-blocks/meet/wait-camera-start.hjson
+        switch-resolution: ./switch-resolution.hjson
+        open-new-docs: {
+          actions: [
+            {
+              action: get
+              url: $[DOCS_URL]
+              ready_state: complete
+              target: _new_window
+              timeout: $[TIMEOUT]
+            }
+          ]
+        }
+        # Setting the title is not strictly necessary, but docs is picky about grabbing typing focus.
+        # A reliable way to grab focus is to first enter the title and then click somewhere on the document.
+        set-title: {
+          actions: [
+            {
+              action: click
+              pos: {
+                selector: input[class='docs-title-input']
+                required: true
+              }
+              verify: input[class='docs-title-input']:focus
+              source: $[CLICK_INPUT_SOURCE]
+            }
+            {
+              action: text_input
+              text: My meeting notes
+              duration: 2s
+              source: keyboard
+            }
+            # Validate the title was entered properly.
+            {
+              action: wait_for_element
+              selector: xpath///span[contains(text(),'My meeting notes')]
+              timeout: 3s
+            }
+          ]
+        }
+        focus-doc: {
+          actions: [
+            {
+              action: click
+              position: {
+                selector: div[class='kix-page-paginated canvas-first-page']
+                required: true
+                wait: true
+              }
+              source: $[CLICK_INPUT_SOURCE]
+            }
+          ]
+        }
+        take-notes: ./repeat-typing.hjson
+        cleanup: {
+          template: ../../../common-action-blocks/workspace/cleanup-doc.hjson
+          args: {
+            ARIA_DISABLED: "[aria-disabled='false']"
+          }
+          unbound_args: [
+            CLICK_INPUT_SOURCE
+          ]
+        }
+      }
+    }
+  }
+}

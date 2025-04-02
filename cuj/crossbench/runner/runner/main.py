@@ -59,7 +59,7 @@ def run_and_upload(argv):
     playback_flag = args.playback
     verbose = args.verbose
 
-    for test in (web_tests / "cuj/crossbench/runnable-configs").glob(tests_glob):
+    for test in (web_tests / "cuj/crossbench/cujs").glob(tests_glob):
 
         if not test.is_dir():
             continue

@@ -1,0 +1,12 @@
+{
+  template: ./action-blocks/page-scroll-multiple-tab.hjson
+  args: {
+    // SCROLL args
+    SCROLL_DISTANCE: "300"
+    SCROLL_DURATION: 0.5s
+    SCROLL_SOURCE: touch
+    // PAGE args
+    PAGE_TARGET: _new_tab
+    PAGE_LOAD_TIMEOUT: 2m
+  }
+}

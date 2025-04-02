@@ -1,0 +1,23 @@
+{
+  template: ../../probe-config.hjson
+  args: {
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        name: Total Load Duration
+        sql: ./queries/total_load_duration.sql
+      }
+      {
+        name: Tab Load Durations
+        sql: ./queries/tab_load_durations.sql
+      }
+      {
+        name: Tab Open Latency
+        sql: ./queries/tab_open_latency.sql
+      }
+    ]
+    TRACE_PROCESSOR_MODULE_PATHS: [
+      ./trace-processor-modules/ext
+    ]
+    TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+  }
+}

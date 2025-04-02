@@ -1,6 +1,0 @@
-{
-  template: ../../templates/vc-5-template.hjson
-  args: {
-    NUM_PEOPLE: "49"
-  }
-}

@@ -1,0 +1,8 @@
+{
+  args: {
+    PAGE_URL: https://www.tiktok.com/@alpnplab00/video/7451872152149593362
+    TIMEOUT: 2m
+    VIDEO_TIME: 50s
+  }
+  template: ./action-blocks/tiktok.hjson
+}

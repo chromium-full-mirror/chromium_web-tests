@@ -1,0 +1,14 @@
+{
+  pages: {
+    SLIDES-CUJ: {
+      login: google
+      blocks: {
+        copy-slides: ./copy-slides.hjson
+        scroll: ../../../common-action-blocks/basic/scroll.hjson
+        find-text: ./find-text.hjson
+        comment: ../../../common-action-blocks/workspace/make-comment.hjson
+        cleanup: ../../../common-action-blocks/workspace/cleanup-doc.hjson
+      }
+    }
+  }
+}

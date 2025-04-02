@@ -1,0 +1,4 @@
+{
+  page-load: ../../../common-action-blocks/basic/page-load.hjson
+  click-link: ./click-load-page.hjson
+}

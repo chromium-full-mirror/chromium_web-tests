@@ -1,0 +1,14 @@
+{
+  template: ./action-blocks/slides-new-slide.hjson
+  args: {
+    TEST_NAME: slide-test
+    DOC_URL: https://docs.google.com/presentation/d/1ZG8bS0IlQyePSWlflh22_GJVrQsjMJntbL-oTz3crkM/edit#slide=id.g3182d87bbe9_0_0
+    CLICK_INPUT_SOURCE: touch
+    SCROLL_SELECTOR: .punch-filmstrip-scroll
+    SCROLL_END_DISTANCE_SELECTOR: .punch-filmstrip-scroll
+    ARIA_DISABLED: ""
+        // This should be the last slide of the slides.
+    SLIDE_INSERT_POSITION: "50"
+    NEW_SLIDE_TEXT_INPUT: Prototyping Presentation - The best marketing tool for your business!
+  }
+}

@@ -1,0 +1,13 @@
+{
+  template: ../../probe-config.hjson
+  args: {
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        name: LCP for page load and link clicks
+        sql: ./queries/lcp.sql
+      }
+    ]
+    TRACE_PROCESSOR_MODULE_PATHS: []
+    TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
+  }
+}

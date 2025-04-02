@@ -1,0 +1,15 @@
+{
+  pages: {
+    SLIDES-CUJ: {
+      login: google
+      blocks: {
+        copy-slides: ./copy-slides.hjson
+        scroll: ../../../common-action-blocks/basic/scroll.hjson
+        new-slide: ./new-slide.hjson
+        type-text: ./type-text.hjson
+        delete-slide: ./delete-slide.hjson
+        cleanup: ../../../common-action-blocks/workspace/cleanup-doc.hjson
+      }
+    }
+  }
+}

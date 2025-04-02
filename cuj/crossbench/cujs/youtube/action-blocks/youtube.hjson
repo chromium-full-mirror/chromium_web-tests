@@ -1,0 +1,14 @@
+{
+  pages: {
+    Youtube: {
+      blocks: {
+        video-page-load: ../../../common-action-blocks/youtube/video-page-load.hjson
+        skip-ad-video: ../../../common-action-blocks/youtube/skip-ad.hjson
+        switch-resolution: ../../../common-action-blocks/youtube/switch-resolution.hjson
+        change-screen: ../../../common-action-blocks/youtube/change-screen.hjson
+        watch-video: ../../../common-action-blocks/youtube/watch-video.hjson
+        video-wait: ./video-wait.hjson
+      }
+    }
+  }
+}

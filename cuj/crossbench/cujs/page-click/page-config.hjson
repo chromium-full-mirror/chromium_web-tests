@@ -1,0 +1,7 @@
+{
+  args: {
+    PAGE_LOAD_TIMEOUT: 3m
+    PAGE_TARGET: _self
+  }
+  template: ./action-blocks/page-click.hjson
+}

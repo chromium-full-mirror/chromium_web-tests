@@ -1,0 +1,11 @@
+{
+  pages: {
+    Classroom: {
+      login: google
+      blocks: {
+        open-appendix: ./open-appendix.hjson
+        download: ./download.hjson
+      }
+    }
+  }
+}

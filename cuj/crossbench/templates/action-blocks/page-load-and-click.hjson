@@ -1,4 +1,0 @@
-{
-  page-load: ./page-load.hjson
-  click-link: ./basic-action/click-load-page.hjson
-}

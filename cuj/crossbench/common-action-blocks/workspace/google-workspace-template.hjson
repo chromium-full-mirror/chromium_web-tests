@@ -1,0 +1,13 @@
+{
+  pages: {
+    WorkspaceWorkflow: {
+      login: google
+      blocks: {
+        copy-doc: ./copy-doc.hjson
+        comment: ./make-comment.hjson
+        scroll: ../basic/scroll.hjson
+        cleanup: ./cleanup-doc.hjson
+      }
+    }
+  }
+}

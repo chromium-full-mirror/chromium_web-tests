@@ -1,0 +1,6 @@
+{
+  template: ./action-blocks/vc-5.hjson
+  args: {
+    NUM_PEOPLE: "16"
+  }
+}
