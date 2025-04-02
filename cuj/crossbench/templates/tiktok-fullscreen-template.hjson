@@ -8,7 +8,7 @@
             action: click
             source: touch
             pos: {
-              selector: xpath///div[contains(@class, 'DivMoreMenuContainer')]
+              selector: button[data-e2e='more-menu-icon']
               wait: true
             }
             verify: div[data-e2e='more-menu-popover_full-screen'] span
@@ -20,7 +20,7 @@
               selector: div[data-e2e='more-menu-popover_full-screen'] span
               wait: true
             }
-            verify: xpath///div[contains(@class, 'DivVideoContainer') and contains(@style, 'position: absolute;')]
+            verify: ":fullscreen"
           }
         ]
         watch-video: action-blocks/tiktok-action/watch-video.hjson

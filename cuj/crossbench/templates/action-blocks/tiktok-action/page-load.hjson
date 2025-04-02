@@ -6,50 +6,25 @@
       ready_state: any
     }
     {
-      action: js
-      timeout: $[TIMEOUT]
-      script:
-        '''
-        // If a bot verification pop-up box appears above the video, hide it
-        const popupObserver = new MutationObserver((mutationsList, popupObserver) => {
-        for (const mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-        const overlay = document.querySelector('.TUXModal-overlay');
-        if (overlay) {
-          overlay.style.display = 'none';
-          popupObserver.disconnect();
-          break;
-        }
-        }
-        }
-        });
-        popupObserver.observe(document.body, { childList: true, subtree: true });
-
-        // Wait for the video element to load, then add event listeners for the video.
-        const waitVideoElement = async () => {
-        const video = document.querySelector('video');
-        if (video) {
-        performance.mark('video-loaded-start');
-        return;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        await waitVideoElement();
-        }
-        await waitVideoElement();
-        const video = document.querySelector('video');
-        video.addEventListener('play', () => {
-        performance.mark('video-start');
-        }, { once: true });
-        video.addEventListener('canplay', () => {
-        performance.mark('video-loaded-end');
-        performance.measure('video-ready', 'video-loaded-start', 'video-loaded-end');
-        }, { once: true });
-        '''
-    }
-    {
       action: wait_for_ready_state
       ready_state: complete
       timeout: $[TIMEOUT]
+    }
+    {
+      // Sometimes when we dismiss the captcha while the page is still loading,
+      // another immediately opens. So wait a bit before trying to dismiss.
+      action: wait
+      duration: 5s
+    }
+    {
+      action: click
+      source: touch
+      pos: {
+        selector: "#captcha_close_button"
+        wait: true
+        required: false
+      }
+      timeout: 5s
     }
   ]
 }
