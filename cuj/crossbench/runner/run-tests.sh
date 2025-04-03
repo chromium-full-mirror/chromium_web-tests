@@ -22,6 +22,7 @@ clean_git() {
 }
 
 clean_git $CROSSBENCH_DIR
+rm -rf ${CROSSBENCH_DIR}/results
 cd $CROSSBENCH_DIR
 poetry install
 cd -
