@@ -1,0 +1,17 @@
+{
+  pages: {
+    CPU-Stress: {
+      blocks: {
+        startup: ./startup.hjson
+        wait: {
+          actions: [
+            {
+              action: wait
+              duration: 60s
+            }
+          ]
+        }
+      }
+    }
+  }
+}

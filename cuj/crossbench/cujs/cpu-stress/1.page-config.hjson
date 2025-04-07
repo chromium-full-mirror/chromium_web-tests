@@ -1,0 +1,7 @@
+{
+  template: ./action-blocks/page-config.hjson
+  args: {
+    NUM_TABS: 1
+    CPU_STRESS_STARTUP_TIMEOUT: 10s
+  }
+}

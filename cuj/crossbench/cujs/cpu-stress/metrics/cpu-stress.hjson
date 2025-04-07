@@ -1,0 +1,4 @@
+{
+  name: cpu_stress
+  sql: ./queries/cpu-stress.sql
+}
