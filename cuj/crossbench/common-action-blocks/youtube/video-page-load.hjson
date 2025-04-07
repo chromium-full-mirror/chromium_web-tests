@@ -9,6 +9,10 @@
     // Monitor page changes and close all pop-up windows in real time
     // The popup might appear in the middle of the test, so we make the observer running in background to hide it
     {
+      action: wait_for_element
+      selector: ytd-popup-container
+    }
+    {
       action: js
       path: ./scripts/dismiss-popup.js
     }
