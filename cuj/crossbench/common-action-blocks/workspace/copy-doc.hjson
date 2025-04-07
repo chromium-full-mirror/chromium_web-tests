@@ -59,6 +59,7 @@
     {
       action: switch_tab
       title: ^$[TEST_NAME]
+      timeout: 45s
     }
     {
       action: wait_for_ready_state

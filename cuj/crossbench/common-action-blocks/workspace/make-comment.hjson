@@ -63,12 +63,7 @@
         scroll_into_view: true
       }
       source: $[CLICK_INPUT_SOURCE]
-    }
-        // Wait for "Post Comment" UI to go away
-    {
-      action: wait_for_element
-      selector: body:not(:has([aria-label='Post Comment']))
-      timeout: 3s
+      verify: body:not(:has([aria-label='Post Comment']))
     }
   ]
 }
