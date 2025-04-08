@@ -110,7 +110,7 @@ def upload_rows(metric_name, sheet_api, test_name, rows):
     ).execute()
 
 
-def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, timestamp):
+def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, run_id):
     metric_data = []
 
     with open(metric_csv, "r") as csv_file:
@@ -118,7 +118,7 @@ def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, timesta
 
         for row in reader:
             row.insert(0, device_id)
-            row.insert(0, timestamp)
+            row.insert(0, run_id)
             metric_data.append(row)
 
     # First row is the column headers
@@ -127,17 +127,17 @@ def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, timesta
     upload_rows(metric_name, sheet_api, test_name, metric_data)
 
 
-def upload_success(sheet_api, test_name, device_id, timestamp, success):
-    row = [timestamp, device_id, str(success)]
+def upload_success(sheet_api, test_name, device_id, run_id, success):
+    row = [run_id, device_id, str(success)]
 
     upload_rows("Success", sheet_api, test_name, [row])
 
 
 def upload_results(results_path, device_id, test_name, success):
-    test_timestamp = datetime.datetime.now().isoformat()
+    run_id = os.path.basename(results_path)
     sheet_api = get_sheet_api()
 
-    upload_success(sheet_api, test_name, device_id, test_timestamp, success)
+    upload_success(sheet_api, test_name, device_id, run_id, success)
 
     if results_path:
         trace_processor_path = Path.joinpath(Path(results_path), "trace_processor")
@@ -149,5 +149,5 @@ def upload_results(results_path, device_id, test_name, success):
                 sheet_api,
                 test_name,
                 device_id,
-                test_timestamp,
+                run_id,
             )
