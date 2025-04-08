@@ -22,7 +22,12 @@ clean_git() {
 }
 
 clean_git $CROSSBENCH_DIR
-rm -rf ${CROSSBENCH_DIR}/results
+if [ -d "${CROSSBENCH_DIR}/results.previous" ]; then
+    rm -rf "${CROSSBENCH_DIR}/results.previous"
+fi
+if [ -d "${CROSSBENCH_DIR}/results" ]; then
+    mv "${CROSSBENCH_DIR}/results" "${CROSSBENCH_DIR}/results.previous"
+fi
 cd $CROSSBENCH_DIR
 poetry install
 cd -
