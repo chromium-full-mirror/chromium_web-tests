@@ -18,12 +18,75 @@
         }
       }
     }
+    open-2: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "2"
+        }
+      }
+    }
+    open-3: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "3"
+        }
+      }
+    }
+    open-4: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "4"
+        }
+      }
+    }
+    open-5: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "5"
+        }
+      }
+    }
+    open-6: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "6"
+        }
+      }
+    }
+    open-7: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "7"
+        }
+      }
+    }
+    open-8: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "8"
+        }
+      }
+    }
+    open-9: {
+      blocks: {
+        template: ./action-blocks/open-10-tabs.hjson
+        args: {
+          ITER_COUNT: "9"
+        }
+      }
+    }
     cycle-0: {
       blocks: {
         template: ./action-blocks/cycle-10-tabs.hjson
         args: {
           INDEX_PREFIX: ""
-          CYCLE_DELAY: 1s
         }
       }
     }
@@ -32,7 +95,70 @@
         template: ./action-blocks/cycle-10-tabs.hjson
         args: {
           INDEX_PREFIX: "1"
-          CYCLE_DELAY: 1s
+        }
+      }
+    }
+    cycle-2: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "2"
+        }
+      }
+    }
+    cycle-3: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "3"
+        }
+      }
+    }
+    cycle-4: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "4"
+        }
+      }
+    }
+    cycle-5: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "5"
+        }
+      }
+    }
+    cycle-6: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "6"
+        }
+      }
+    }
+    cycle-7: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "7"
+        }
+      }
+    }
+    cycle-8: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "8"
+        }
+      }
+    }
+    cycle-9: {
+      blocks: {
+        template: ./action-blocks/cycle-10-tabs.hjson
+        args: {
+          INDEX_PREFIX: "9"
         }
       }
     }

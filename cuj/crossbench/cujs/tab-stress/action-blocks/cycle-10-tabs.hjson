@@ -5,80 +5,80 @@
       tab_index: $[INDEX_PREFIX]0
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]1
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]2
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]3
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]4
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]5
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]6
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]7
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]8
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
     {
       action: switch_tab
       tab_index: $[INDEX_PREFIX]9
     }
     {
-      action: wait
-      duration: $[CYCLE_DELAY]
+      action: wait_for_ready_state
+      timeout: 120s
     }
   ]
 }
