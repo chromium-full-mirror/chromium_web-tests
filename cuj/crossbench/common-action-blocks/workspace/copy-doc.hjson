@@ -6,23 +6,15 @@
       ready_state: complete
     }
     {
-      action: wait_for_element
-      selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]"
-      timeout: 10s
-    }
-    {
       action: click
       pos: {
         selector: "#docs-file-menu[role='menuitem']$[ARIA_DISABLED]"
         required: true
         scroll_into_view: true
+        wait: true
       }
+      verify:  $[ARIA_DISABLED] [aria-label='Make a copy c']
       source: $[CLICK_INPUT_SOURCE]
-    }
-    {
-      action: wait_for_element
-      selector: $[ARIA_DISABLED] [aria-label='Make a copy c']
-      timeout: 10s
     }
     {
       action: click
@@ -31,12 +23,8 @@
         required: true
         scroll_into_view: true
       }
+      verify: "[aria-modal='true'] input[type='text']:focus"
       source: $[CLICK_INPUT_SOURCE]
-    }
-    {
-      action: wait_for_element
-      selector: "[aria-modal='true'] input[type='text']:focus"
-      timeout: 15s
     }
     {
       action: text_input
@@ -54,6 +42,7 @@
         required: true
         scroll_into_view: true
       }
+      verify: body:not(:has([aria-modal='true']))
       source: $[CLICK_INPUT_SOURCE]
     }
     {
