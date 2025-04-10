@@ -1,3 +1,6 @@
 {
-  flags: --request-desktop-sites --use-fake-ui-for-media-stream
+  template: ../../browser-flags/common-flags.hjson
+  args: {
+    CHROME_FLAGS: --use-fake-ui-for-media-stream
+  }
 }
