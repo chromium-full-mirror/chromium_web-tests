@@ -1,0 +1,108 @@
+{
+  page-load: {
+    actions: [
+      {
+        action: get
+        url: $[PAGE_URL]
+        ready_state: complete
+        timeout: $[PAGE_LOAD_TIMEOUT]
+        target: $[TARGET]
+      }
+    ]
+  }
+  scroll:  {
+    actions: [
+      {
+        action: js
+        script: performance.mark('$[SCROLL_MARK_NAME]-start');
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_DOWN_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_UP_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_DOWN_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_UP_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_DOWN_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_UP_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_DOWN_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_UP_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: js
+        script: '''
+          performance.mark('$[SCROLL_MARK_NAME]-end', {detail: document.querySelector('html').scrollTop});
+          performance.measure('$[SCROLL_MARK_NAME]-duration', '$[SCROLL_MARK_NAME]-start', '$[SCROLL_MARK_NAME]-end');
+          '''
+      }
+    ]
+  }
+}

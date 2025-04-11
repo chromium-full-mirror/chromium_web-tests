@@ -1,0 +1,6 @@
+{
+  template: ../../browser-flags/common-flags.hjson
+  args: {
+    CHROME_FLAGS: --autoplay-policy=no-user-gesture-required
+  }
+}

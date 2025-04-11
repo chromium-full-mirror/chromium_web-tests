@@ -1,0 +1,8 @@
+{
+  template: ../../probe-config.hjson
+  args: {
+    TRACE_PROCESSOR_QUERIES: []
+    TRACE_PROCESSOR_MODULE_PATHS: []
+    TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+  }
+}
