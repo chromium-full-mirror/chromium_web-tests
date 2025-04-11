@@ -10,14 +10,11 @@
         name: Tab Load Durations
         sql: ./queries/tab_load_durations.sql
       }
-      {
-        name: Tab Open Latency
-        sql: ./queries/tab_open_latency.sql
-      }
+      ../../common-metrics/tab_open_latency.hjson
     ]
     TRACE_PROCESSOR_MODULE_PATHS: [
       ../../common-metrics/trace-processor-modules/web_tests_common
-      ./trace-processor-modules/simultaneous_load
+      ../../common-metrics/trace-processor-modules/page_load
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }

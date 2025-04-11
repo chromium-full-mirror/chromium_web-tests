@@ -1,0 +1,25 @@
+{
+  template: ./action-blocks/tab-stress-template.hjson
+  args: {
+    PAGE_URL0: about:blank
+    PAGE_URL1: about:blank
+    PAGE_URL2: about:blank
+    PAGE_URL3: about:blank
+    PAGE_URL4: about:blank
+    PAGE_URL5: about:blank
+    PAGE_URL6: about:blank
+    PAGE_URL7: about:blank
+    PAGE_URL8: about:blank
+    PAGE_URL9: about:blank
+    SWITCH_TARGET0: about:blank
+    SWITCH_TARGET1: about:blank
+    SWITCH_TARGET2: about:blank
+    SWITCH_TARGET3: about:blank
+    SWITCH_TARGET4: about:blank
+    SWITCH_TARGET5: about:blank
+    SWITCH_TARGET6: about:blank
+    SWITCH_TARGET7: about:blank
+    SWITCH_TARGET8: about:blank
+    SWITCH_TARGET9: about:blank
+  }
+}

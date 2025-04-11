@@ -1,9 +1,18 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: []
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        name: Total Renderers
+        sql: ./queries/total_renderers.sql
+      }
+      ../../common-metrics/lmk_kill_list.hjson
+      ../../common-metrics/lmk_kill_count.hjson
+      ../../common-metrics/tab_open_latency.hjson
+    ]
     TRACE_PROCESSOR_MODULE_PATHS: [
       ../../common-metrics/trace-processor-modules/web_tests_common
+      ../../common-metrics/trace-processor-modules/page_load
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }

@@ -1,4 +1,4 @@
-include PERFETTO MODULE simultaneous_load.page_load_start_end_by_iteration;
+include PERFETTO MODULE page_load.page_load_start_end_by_iteration;
 
 -- Output tab load duration for each tab.
 select

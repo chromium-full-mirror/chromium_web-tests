@@ -1,0 +1,4 @@
+{
+  name: lmk_kill_count
+  sql: ./queries/lmk_kill_count.sql
+}

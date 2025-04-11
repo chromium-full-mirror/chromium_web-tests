@@ -2,83 +2,113 @@
   actions: [
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]0
+      url: $[SWITCH_TARGET0]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]1
+      url: $[SWITCH_TARGET1]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]2
+      url: $[SWITCH_TARGET2]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]3
+      url: $[SWITCH_TARGET3]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]4
+      url: $[SWITCH_TARGET4]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]5
+      url: $[SWITCH_TARGET5]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]6
+      url: $[SWITCH_TARGET6]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]7
+      url: $[SWITCH_TARGET7]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]8
+      url: $[SWITCH_TARGET8]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
     {
       action: switch_tab
-      tab_index: $[INDEX_PREFIX]9
+      url: $[SWITCH_TARGET9]
     }
     {
       action: wait_for_ready_state
       timeout: 120s
+    }
+    {
+      action: close_tab
     }
   ]
 }

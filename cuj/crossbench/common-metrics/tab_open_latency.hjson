@@ -1,0 +1,4 @@
+{
+  name: Tab Open Latency
+  sql: ./queries/tab_open_latency.sql
+}

@@ -1,82 +1,112 @@
 {
   "tab-stress-$[ITER_COUNT]0": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_product.html
+      PAGE_URL: $[PAGE_URL0]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL0
+    ]
   }
   "tab-stress-$[ITER_COUNT]1": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html
+      PAGE_URL: $[PAGE_URL1]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL1
+    ]
   }
   "tab-stress-$[ITER_COUNT]2": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html
+      PAGE_URL: $[PAGE_URL2]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL2
+    ]
   }
   "tab-stress-$[ITER_COUNT]3": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/ebay.html
+      PAGE_URL: $[PAGE_URL3]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL3
+    ]
   }
   "tab-stress-$[ITER_COUNT]4": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/google.html
+      PAGE_URL: $[PAGE_URL4]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL4
+    ]
   }
   "tab-stress-$[ITER_COUNT]5": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wattpad.html
+      PAGE_URL: $[PAGE_URL5]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL5
+    ]
   }
   "tab-stress-$[ITER_COUNT]6": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html
+      PAGE_URL: $[PAGE_URL6]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL6
+    ]
   }
   "tab-stress-$[ITER_COUNT]7": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html
+      PAGE_URL: $[PAGE_URL7]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL7
+    ]
   }
   "tab-stress-$[ITER_COUNT]8": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html
+      PAGE_URL: $[PAGE_URL8]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL8
+    ]
   }
   "tab-stress-$[ITER_COUNT]9": {
-    template: ../../../common-action-blocks/basic/page-load.hjson
+    template: ./page-load.hjson
     args: {
-      PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html
+      PAGE_URL: $[PAGE_URL9]
       TARGET: _new_tab
       PAGE_LOAD_TIMEOUT: 3m
     }
+    unbound_args: [
+      PAGE_URL9
+    ]
   }
 }

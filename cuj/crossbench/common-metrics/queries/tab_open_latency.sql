@@ -1,4 +1,4 @@
-include PERFETTO MODULE simultaneous_load.page_load_start_by_iteration;
+include PERFETTO MODULE page_load.page_load_start_by_iteration;
 
 -- Calculate the difference between every page_load_start and the
 -- previous page_load_start for each iteration.
