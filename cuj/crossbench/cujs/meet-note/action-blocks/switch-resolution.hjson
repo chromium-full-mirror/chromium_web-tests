@@ -3,9 +3,9 @@
     {
       action: click
       position: {
-        selector: button[aria-label='More options'][data-tooltip-classes]
-        required: "true"
-        wait: "true"
+        selector: "[aria-label='Call controls'] button[aria-label='More options'][aria-haspopup='menu']"
+        required: true
+        wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: xpath///*[text()='Settings']
@@ -33,11 +33,12 @@
     {
       action: click
       position: {
-        selector: xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::div[@role='combobox']
+        selector: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox']"
         required: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
     }
         // Wait for the dropdown combobox to finish the amination.
         // TODO: Remove after click action supports waiting for stable position.
@@ -48,21 +49,22 @@
     {
       action: click
       position: {
-        selector: xpath///div[text()='Send resolution (maximum)']/parent::div/descendant::*[@aria-label='$[SEND_RESOLUTION]'][1]
+        selector: "[aria-label='Send resolution (maximum)'] [role='option'][aria-label='$[SEND_RESOLUTION]']"
         required: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
-      verify: span[aria-label='$[SEND_RESOLUTION]']
+      verify: "[aria-label='Send resolution (maximum)'] span[aria-label='$[SEND_RESOLUTION]']"
     }
     {
       action: click
       position: {
-        selector: xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::div[@role='combobox']
+        selector: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox']"
         required: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
     }
         // Wait for the dropdown combobox to finish the amination.
         // TODO: Remove after click action supports waiting for stable position.
@@ -73,12 +75,12 @@
     {
       action: click
       position: {
-        selector: xpath///div[text()='Receive resolution (maximum)']/parent::div/descendant::*[@aria-label='$[RECEIVE_RESOLUTION]'][1]
+        selector: "[aria-label='Receive resolution (maximum)'] [role='option'][aria-label='$[RECEIVE_RESOLUTION]']"
         required: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
-      verify: body:not(:has(span[aria-label='Auto']))
+      verify: "[aria-label='Receive resolution (maximum)'] span[aria-label='$[RECEIVE_RESOLUTION]']"
     }
     {
       action: click
@@ -88,6 +90,7 @@
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: body:not(:has([aria-modal='true']))
     }
   ]
 }

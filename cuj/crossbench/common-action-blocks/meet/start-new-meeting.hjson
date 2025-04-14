@@ -6,6 +6,7 @@
         num_of_bots: $[NUM-OF-BOTS]
         ttl_secs: $[TTL-SECS]
       }
+      timeout: 30s
     }
     {
       action: js
