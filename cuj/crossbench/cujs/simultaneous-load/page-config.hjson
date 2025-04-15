@@ -1,13 +1,5 @@
 {
   pages: {
-    start-mark: {
-      actions: [
-        {
-          action: js
-          script: performance.mark("iteration-start");
-        }
-      ]
-    }
     open-10-0: {
       blocks: {
         template: ./action-blocks/open-10.hjson
@@ -23,14 +15,6 @@
           INDEX_PREFIX: ""
         }
       }
-    }
-    end-mark: {
-      actions: [
-        {
-          action: js
-          script: performance.mark("iteration-end");
-        }
-      ]
     }
   }
 }

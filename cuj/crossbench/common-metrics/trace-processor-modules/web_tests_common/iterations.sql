@@ -18,7 +18,7 @@ from
       slice
     where
       category = 'blink.user_timing'
-      and name = 'iteration-start'
+      and name = 'crossbench-iteration-start'
   )
   join (
     select
@@ -31,7 +31,7 @@ from
       slice
     where
       category = 'blink.user_timing'
-      and name = 'iteration-end'
+      and name = 'crossbench-iteration-end'
   ) using (id)
 order by
   id;
