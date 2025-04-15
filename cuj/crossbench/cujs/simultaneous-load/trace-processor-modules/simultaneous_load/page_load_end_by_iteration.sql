@@ -1,6 +1,6 @@
-include PERFETTO MODULE ext.iterations;
+include PERFETTO MODULE web_tests_common.iterations;
 
-include PERFETTO MODULE ext.page_load_end;
+include PERFETTO MODULE simultaneous_load.page_load_end;
 
 -- Add the iteration id to the page load end table.
 drop view if exists page_load_end_by_iteration;

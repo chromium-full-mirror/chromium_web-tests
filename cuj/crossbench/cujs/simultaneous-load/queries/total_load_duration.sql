@@ -1,4 +1,4 @@
-include PERFETTO MODULE ext.page_load_start_end_by_iteration;
+include PERFETTO MODULE simultaneous_load.page_load_start_end_by_iteration;
 
 -- Get only the first page_load_start for each iteration
 drop view if exists first_page_load_starts;

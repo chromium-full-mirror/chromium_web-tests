@@ -16,7 +16,8 @@
       }
     ]
     TRACE_PROCESSOR_MODULE_PATHS: [
-      ./trace-processor-modules/ext
+      ../../common-metrics/trace-processor-modules/web_tests_common
+      ./trace-processor-modules/simultaneous_load
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }

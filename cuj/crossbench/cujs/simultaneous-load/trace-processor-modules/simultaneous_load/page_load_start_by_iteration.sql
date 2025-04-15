@@ -1,6 +1,6 @@
-include PERFETTO MODULE ext.iterations;
+include PERFETTO MODULE web_tests_common.iterations;
 
-include PERFETTO MODULE ext.page_load_start;
+include PERFETTO MODULE simultaneous_load.page_load_start;
 
 -- Add the iteration id to the page load start table.
 drop view if exists page_load_start_by_iteration;
