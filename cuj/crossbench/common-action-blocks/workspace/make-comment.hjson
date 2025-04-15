@@ -17,11 +17,7 @@
         scroll_into_view: true
       }
       source: $[CLICK_INPUT_SOURCE]
-    }
-    {
-      action: wait_for_element
-      selector: "[aria-label='Comment m']"
-      timeout: 10s
+      verify: "[aria-label='Comment m']"
     }
     {
       action: click
@@ -31,11 +27,7 @@
         scroll_into_view: true
       }
       source: $[CLICK_INPUT_SOURCE]
-    }
-    {
-      action: wait_for_element
-      selector: "[aria-label='Comment draft']:focus"
-      timeout: 10s
+      verify: "[aria-label='Comment draft']:focus"
     }
     {
       action: js

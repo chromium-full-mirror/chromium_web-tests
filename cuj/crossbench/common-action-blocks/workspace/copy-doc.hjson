@@ -13,7 +13,7 @@
         scroll_into_view: true
         wait: true
       }
-      verify:  $[ARIA_DISABLED] [aria-label='Make a copy c']
+      verify: $[ARIA_DISABLED] [aria-label='Make a copy c']
       source: $[CLICK_INPUT_SOURCE]
     }
     {
@@ -22,9 +22,11 @@
         selector: $[ARIA_DISABLED] [aria-label='Make a copy c']
         required: true
         scroll_into_view: true
+        wait: true
       }
       verify: "[aria-modal='true'] input[type='text']:focus"
       source: $[CLICK_INPUT_SOURCE]
+      timeout: 15s
     }
     {
       action: text_input
@@ -44,6 +46,7 @@
       }
       verify: body:not(:has([aria-modal='true']))
       source: $[CLICK_INPUT_SOURCE]
+      verify: body:not(:has([aria-modal='true'][role='dialog']))
     }
     {
       action: switch_tab
