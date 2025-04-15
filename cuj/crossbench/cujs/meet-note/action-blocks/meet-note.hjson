@@ -13,6 +13,7 @@
           ]
         }
         wait-camera-start: ../../../common-action-blocks/meet/wait-camera-start.hjson
+        dismiss-popups: ../../../common-action-blocks/meet/dismiss-popups.hjson
         switch-resolution: ./switch-resolution.hjson
         open-new-docs: {
           actions: [

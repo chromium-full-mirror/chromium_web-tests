@@ -1,0 +1,15 @@
+{
+  actions: [
+    {
+      action: click
+      position: {
+        selector: "[aria-modal='true'][role='dialog'] button[data-mdc-dialog-action='ok']"
+        required: false
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      timeout: 5s
+      verify: body:not(:has([aria-modal='true'][role='dialog']))
+    }
+  ]
+}
