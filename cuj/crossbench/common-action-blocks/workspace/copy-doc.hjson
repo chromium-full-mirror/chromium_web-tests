@@ -15,6 +15,8 @@
       }
       verify: $[ARIA_DISABLED] [aria-label='Make a copy c']
       source: $[CLICK_INPUT_SOURCE]
+      timeout: 10s
+      attempts: 3
     }
     {
       action: click
