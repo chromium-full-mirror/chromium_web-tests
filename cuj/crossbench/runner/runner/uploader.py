@@ -1,5 +1,5 @@
 import csv
-import datetime
+import json
 import os.path
 
 from google.auth.transport.requests import Request
@@ -81,6 +81,27 @@ def get_sheet_api():
     return sheet_api
 
 
+def get_device_info(results_path):
+    with open(Path(results_path) / "first_run/cb.system.details.json") as f:
+        system_details = json.load(f)
+
+    sys_info_columns = []
+
+    sys_info_columns.append(system_details["os"]["release"])
+    sys_info_columns.append(system_details["CPU"]["info"])
+
+    if system_details.get("ChromeOS"):
+        sys_info_columns.append(
+            system_details["ChromeOS"]["CHROMEOS_RELEASE_DESCRIPTION"]
+        )
+    if system_details.get("Android"):
+        sys_info_columns.append(
+            system_details["Android"]["ro.vendor.build.fingerprint"]
+        )
+        sys_info_columns.append(system_details["Android"]["ro.vendor.build.id"])
+    return sys_info_columns
+
+
 def upload_rows(metric_name, sheet_api, test_name, rows):
     spreasheet_id = get_sheet_id_for_cuj(sheet_api, test_name)
 
@@ -110,15 +131,14 @@ def upload_rows(metric_name, sheet_api, test_name, rows):
     ).execute()
 
 
-def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, run_id):
+def upload_csv(metric_name, metric_csv, sheet_api, test_name, run_info_columns):
     metric_data = []
 
     with open(metric_csv, "r") as csv_file:
         reader = csv.reader(csv_file)
 
         for row in reader:
-            row.insert(0, device_id)
-            row.insert(0, run_id)
+            row.extend(run_info_columns)
             metric_data.append(row)
 
     # First row is the column headers
@@ -127,17 +147,18 @@ def upload_csv(metric_name, metric_csv, sheet_api, test_name, device_id, run_id)
     upload_rows(metric_name, sheet_api, test_name, metric_data)
 
 
-def upload_success(sheet_api, test_name, device_id, run_id, success):
-    row = [run_id, device_id, str(success)]
-
-    upload_rows("Success", sheet_api, test_name, [row])
+def upload_success(sheet_api, test_name, success, run_info):
+    upload_rows("success", sheet_api, test_name, [[success] + run_info])
 
 
 def upload_results(results_path, device_id, test_name, success):
-    run_id = os.path.basename(results_path)
+    run_info_columns = [device_id]
+    run_info_columns.extend(get_device_info(results_path))
+    run_info_columns.append(os.path.basename(results_path))
+
     sheet_api = get_sheet_api()
 
-    upload_success(sheet_api, test_name, device_id, run_id, success)
+    upload_success(sheet_api, test_name, success, run_info_columns)
 
     if results_path:
         trace_processor_path = Path.joinpath(Path(results_path), "trace_processor")
@@ -148,6 +169,5 @@ def upload_results(results_path, device_id, test_name, success):
                 Path.joinpath(trace_processor_path, metric_file),
                 sheet_api,
                 test_name,
-                device_id,
-                run_id,
+                run_info_columns,
             )
