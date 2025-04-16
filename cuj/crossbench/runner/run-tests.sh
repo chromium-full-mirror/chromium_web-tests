@@ -4,8 +4,8 @@ CROSSBENCH_DIR="/home/crossbench-lab/crossbench"
 WEB_TESTS_DIR="/home/crossbench-lab/web-tests"
 SECRETS_FILE="/home/crossbench-lab/secrets.hjson"
 
-ADB_DEVICES=("[2401:fa00:480:ee08:c68e:cc14:2832:a1b6]:5555" "[2401:fa00:480:ee08:8672:515c:1107:42af]:5555")
-CHROMEOS_DEVICES=("C244591" "C289107")
+ADB_DEVICES=("[2401:fa00:480:ee08:877f:adf8:8a66:4840]:5555")
+CHROMEOS_DEVICES=("Servo-88541f0f72f8")
 
 clean_git() {
     dir=$1
@@ -54,6 +54,8 @@ done
 
 cd $WEB_TESTS_DIR/cuj/crossbench/runner
 
-for target in $WEB_TESTS_DIR/cuj/crossbench/runner/targets/*; do
-    poetry run python runner/main.py --device-id $(basename $target) --browser-config-file $target --secrets-config-file ~/secrets.hjson --crossbench $CROSSBENCH_DIR --web-tests $WEB_TESTS_DIR --upload
+for i in $(seq 1 5); do
+    for target in $WEB_TESTS_DIR/cuj/crossbench/runner/targets/*; do
+        poetry run python runner/main.py --device-id $(basename $target) --browser-config-file $target --secrets-config-file ~/secrets.hjson --crossbench $CROSSBENCH_DIR --web-tests $WEB_TESTS_DIR --tests "{docs,gmail,meet,meet-note,sheets,slides}" --upload
+    done
 done

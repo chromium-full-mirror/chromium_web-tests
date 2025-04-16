@@ -9,7 +9,7 @@
       driver: {
         type: chromeos-ssh
         settings: {
-          host: C244591
+          host: Servo-88541f0f72f8
           ssh_port: 22
           ssh_user: root
         }
