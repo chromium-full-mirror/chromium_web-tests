@@ -15,17 +15,19 @@ CREATE PERFETTO TABLE chrome_histograms (
   pid LONG
 ) AS
 SELECT
-  extract_arg(slice.arg_set_id, "chrome_histogram_sample.name") AS name,
-  extract_arg(slice.arg_set_id, "chrome_histogram_sample.sample") AS value,
+  extract_arg (slice.arg_set_id, "chrome_histogram_sample.name") AS name,
+  extract_arg (
+    slice.arg_set_id,
+    "chrome_histogram_sample.sample"
+  ) AS value,
   ts,
   process.name AS process_name,
   process.upid AS upid,
   process.pid AS pid
-FROM slice
-JOIN process_track
-  ON process_track.id = slice.track_id
-JOIN process
-  USING (upid)
+FROM
+  slice
+  JOIN process_track ON process_track.id = slice.track_id
+  JOIN process USING (upid)
 WHERE
   slice.name = "HistogramSample"
   AND category = "disabled-by-default-histogram_samples";

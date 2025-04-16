@@ -1,4 +1,5 @@
 include PERFETTO MODULE page_load.page_load_start_by_iteration;
+
 include PERFETTO MODULE page_load.page_load_end_by_iteration;
 
 -- Group the page load start and end together.

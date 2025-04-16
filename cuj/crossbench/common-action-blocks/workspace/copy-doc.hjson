@@ -5,7 +5,8 @@
       url: $[DOC_URL]
       ready_state: complete
     }
-    { // Clicking the file menu while the JS is still loading stuff can make the
+    {
+      // Clicking the file menu while the JS is still loading stuff can make the
       // file menu dissappear. Sometimes this allows the verify to pass, but the
       // make a copy click to fail. So add a wait here.
       action: wait
@@ -52,9 +53,8 @@
         required: true
         scroll_into_view: true
       }
-      verify: body:not(:has([aria-modal='true']))
-      source: $[CLICK_INPUT_SOURCE]
       verify: body:not(:has([aria-modal='true'][role='dialog']))
+      source: $[CLICK_INPUT_SOURCE]
     }
     {
       action: switch_tab

@@ -10,7 +10,7 @@
       }
     ]
   }
-  scroll:  {
+  scroll: {
     actions: [
       {
         action: js
@@ -98,7 +98,8 @@
       }
       {
         action: js
-        script: '''
+        script:
+          '''
           performance.mark('$[SCROLL_MARK_NAME]-end', {detail: document.querySelector('html').scrollTop});
           performance.measure('$[SCROLL_MARK_NAME]-duration', '$[SCROLL_MARK_NAME]-start', '$[SCROLL_MARK_NAME]-end');
           '''
