@@ -31,6 +31,10 @@
         set-title: {
           actions: [
             {
+              action: wait
+              duration: 5s
+            }
+            {
               action: click
               pos: {
                 selector: input[class='docs-title-input']
