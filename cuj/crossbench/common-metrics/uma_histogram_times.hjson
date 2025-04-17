@@ -8,7 +8,7 @@
   name: $[NAME]
   sql: ./queries/uma_histogram_times.sql
   replacements: {
-    METRIC_NAME: $[NAME],
-    UNITS_IN_MS: "$[UNITS_IN_MS]"
+    METRIC_NAME: $[NAME]
+    UNITS_IN_MS: $[UNITS_IN_MS]
   }
 }

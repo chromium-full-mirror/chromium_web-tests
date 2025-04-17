@@ -1,4 +1,4 @@
-INCLUDE PERFETTO MODULE chrome.histograms;
+INCLUDE PERFETTO MODULE web_tests_common.histograms;
 
 SELECT
   AVG(hist.value / UNITS_IN_MS) AS 'avg_ms',

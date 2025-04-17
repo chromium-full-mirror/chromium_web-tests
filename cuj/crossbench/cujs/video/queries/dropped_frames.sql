@@ -1,4 +1,4 @@
-INCLUDE PERFETTO MODULE chrome.histograms;
+INCLUDE PERFETTO MODULE web_tests_common.histograms;
 
 select
   AVG(value) as 'avg_percent_dropped'

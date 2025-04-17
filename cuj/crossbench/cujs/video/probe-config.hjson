@@ -7,7 +7,9 @@
         sql: ./queries/dropped_frames.sql
       }
     ]
-    TRACE_PROCESSOR_MODULE_PATHS: []
+    TRACE_PROCESSOR_MODULE_PATHS: [
+      ../../common-metrics/trace-processor-modules/web_tests_common
+    ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
 }

@@ -29,6 +29,12 @@
       {
         template: ../../common-metrics/uma_histogram_count.hjson
         args: {
+          NAME: Browser.MainThreadsCongestion.RunningOnly
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
           NAME: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
         }
       }
@@ -40,7 +46,9 @@
         }
       }
     ]
-    TRACE_PROCESSOR_MODULE_PATHS: []
+    TRACE_PROCESSOR_MODULE_PATHS: [
+      ../../common-metrics/trace-processor-modules/web_tests_common
+    ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
 }
