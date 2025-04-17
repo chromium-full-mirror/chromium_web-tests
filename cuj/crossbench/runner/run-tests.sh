@@ -56,6 +56,6 @@ cd $WEB_TESTS_DIR/cuj/crossbench/runner
 
 for i in $(seq 1 5); do
     for target in $WEB_TESTS_DIR/cuj/crossbench/runner/targets/*; do
-        poetry run python runner/main.py --device-id $(basename $target) --browser-config-file $target --secrets-config-file ~/secrets.hjson --crossbench $CROSSBENCH_DIR --web-tests $WEB_TESTS_DIR --tests "[dgms][omehl][ciei]*" --upload
+        poetry run python runner/main.py --device-id $(basename $target) --browser-config-file $target --secrets-config-file ~/secrets.hjson --crossbench $CROSSBENCH_DIR --web-tests $WEB_TESTS_DIR --tests "[dgms][omehl][caei]*" --upload
     done
 done
