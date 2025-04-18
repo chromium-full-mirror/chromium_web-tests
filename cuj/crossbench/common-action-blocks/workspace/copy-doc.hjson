@@ -5,6 +5,12 @@
       url: $[DOC_URL]
       ready_state: complete
     }
+    { // Clicking the file menu while the JS is still loading stuff can make the
+      // file menu dissappear. Sometimes this allows the verify to pass, but the
+      // make a copy click to fail. So add a wait here.
+      action: wait
+      duration: 10s
+    }
     {
       action: click
       pos: {
