@@ -22,7 +22,7 @@ def create_new_sheet(sheet_api, title):
     return spreadsheet.get("spreadsheetId")
 
 
-def get_sheet_id_for_cuj(sheet_api, cuj_name):
+def get_sheet_id_for_test(sheet_api, test_name):
     result = (
         sheet_api.values()
         .get(spreadsheetId=SPREADSHEET_MAP_ID, range=SPREADSHEET_MAP_RANGE)
@@ -32,12 +32,12 @@ def get_sheet_id_for_cuj(sheet_api, cuj_name):
     rows = result.get("values", [])
 
     for row in rows:
-        if row[0] == cuj_name:
+        if row[0] == test_name:
             return row[1]
 
-    new_sheet_id = create_new_sheet(sheet_api, f"{cuj_name}_metrics")
+    new_sheet_id = create_new_sheet(sheet_api, f"{test_name}_metrics")
 
-    new_row = [cuj_name, new_sheet_id]
+    new_row = [test_name, new_sheet_id]
 
     sheet_api.values().append(
         spreadsheetId=SPREADSHEET_MAP_ID,
@@ -103,7 +103,7 @@ def get_device_info(results_path):
 
 
 def upload_rows(metric_name, sheet_api, test_name, rows):
-    spreasheet_id = get_sheet_id_for_cuj(sheet_api, test_name)
+    spreasheet_id = get_sheet_id_for_test(sheet_api, test_name)
 
     full_metric_name = f"{test_name}_{metric_name}"
 
@@ -111,15 +111,21 @@ def upload_rows(metric_name, sheet_api, test_name, rows):
 
     body = {"requests": [{"addSheet": {"properties": {"title": full_metric_name}}}]}
 
+    new_sheet = True
+
     try:
         sheet_api.batchUpdate(spreadsheetId=spreasheet_id, body=body).execute()
     except HttpError as e:
         if "A sheet with the name" in str(e):
-            pass
+            new_sheet = False
         else:
             raise
 
     data_range = f"{full_metric_name}!A1:E"
+
+    # Only add the column headers if it is a new sheet
+    if not new_sheet:
+        rows.pop(0)
 
     body = {"values": rows}
 
@@ -141,17 +147,43 @@ def upload_csv(metric_name, metric_csv, sheet_api, test_name, run_info_columns):
             row.extend(run_info_columns)
             metric_data.append(row)
 
-    # First row is the column headers
-    metric_data = metric_data[1:]
-
     upload_rows(metric_name, sheet_api, test_name, metric_data)
 
 
 def upload_success(sheet_api, test_name, success, run_info):
-    upload_rows("success", sheet_api, test_name, [[success] + run_info])
+    upload_rows("success", sheet_api, test_name, [["SUCCESS"], [success] + run_info])
 
 
-def upload_results(results_path, device_id, test_name, success):
+def upload_benchmark_results(results_path, device_id, test_name, success):
+    run_info_columns = [device_id]
+    run_info_columns.extend(get_device_info(results_path))
+    run_info_columns.append(os.path.basename(results_path))
+
+    sheet_api = get_sheet_api()
+
+    upload_success(sheet_api, test_name, success, run_info_columns)
+
+    results_json = {}
+
+    if results_path:
+        results_json_path = Path(results_path) / f"{test_name}.json"
+
+        with results_json_path.open() as f:
+            results_json = json.load(f)
+
+    for _, run in results_json.items():
+        column_headers = []
+        row = []
+
+        for datapoint_name, datapoint in run["data"].items():
+            column_headers.append(datapoint_name)
+            # No support for multiple values yet
+            row.append(datapoint["values"][0])
+
+        upload_rows("scores", sheet_api, test_name, [column_headers, row])
+
+
+def upload_cuj_results(results_path, device_id, test_name, success):
     run_info_columns = [device_id]
     run_info_columns.extend(get_device_info(results_path))
     run_info_columns.append(os.path.basename(results_path))

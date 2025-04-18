@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 
 from pathlib import Path
-from uploader import upload_results
+from uploader import upload_benchmark_results, upload_cuj_results
 
 
 RESUTLS_PATH_RE = re.compile(
@@ -12,14 +12,15 @@ RESUTLS_PATH_RE = re.compile(
 
 
 def execute_crossbench(
+    test_name,
     crossbench_path,
-    page_config,
     probe_config,
     browser_config,
-    secrets_config,
     additional_crossbench_args,
     verbose,
-    playback_flag
+    playback_value="",
+    page_config="",
+    secrets_config="",
 ):
     with tempfile.NamedTemporaryFile() as browser_config_file:
         browser_config_file.write(browser_config.encode("utf-8"))
@@ -30,10 +31,22 @@ def execute_crossbench(
         if verbose:
             debug = "--debug"
 
+        page_config_arg = ""
+        if page_config:
+            page_config_arg = f"--page-config {page_config}"
+
+        secrets_config_arg = ""
+        if secrets_config:
+            secrets_config_arg = f"--secrets {secrets_config}"
+
+        playback_arg = ""
+        if playback_value:
+            playback_arg = f"--playback {playback_value}"
+
         command = (
-            f"poetry run cb loading --page-config {page_config}"
+            f"poetry run cb {test_name} {page_config_arg}"
             f" --probe-config {probe_config} --browser-config {browser_config_file.name}"
-            f" --secrets {secrets_config} --playback {playback_flag} {additional_crossbench_args} {debug}"
+            f" {secrets_config_arg} {playback_arg} {additional_crossbench_args} {debug}"
         )
         print(f"Invoking crossbench: '{command}'")
         proc = subprocess.run(
@@ -78,7 +91,46 @@ def get_full_browser_config(browser_config_file, browser_flags_file):
     return browser_config.replace("$[FLAGS_DEFINITION]", str(browser_flags_file))
 
 
-def run_test(
+def run_benchmark(
+    device_id,
+    benchmark_name,
+    crossbench,
+    web_tests,
+    benchmark_dir,
+    browser_config_file,
+    verbose,
+    do_upload,
+):
+    probe_config = benchmark_dir / "probe-config.hjson"
+    browser_flags_file = benchmark_dir / "browser-flags.hjson"
+    additional_crossbench_args_file = benchmark_dir / "cb-args"
+
+    try:
+        additional_crossbench_args = additional_crossbench_args_file.read_text()
+    except Exception:
+        additional_crossbench_args = ""
+
+    additional_crossbench_args = additional_crossbench_args.replace(
+        "$[WEB_TESTS]", str(web_tests)
+    )
+
+    success, results_path = execute_crossbench(
+        benchmark_name,
+        crossbench_path=crossbench,
+        probe_config=probe_config,
+        browser_config=get_full_browser_config(browser_config_file, browser_flags_file),
+        additional_crossbench_args=additional_crossbench_args,
+        verbose=verbose,
+    )
+
+    if do_upload:
+        try:
+            upload_benchmark_results(results_path, device_id, benchmark_name, success)
+        except Exception as e:
+            print(f"Failed to upload results for test {benchmark_name}: {e}")
+
+
+def run_cuj(
     device_id,
     test_name,
     crossbench_path,
@@ -88,8 +140,8 @@ def run_test(
     secrets_config,
     verbose,
     do_upload,
-    playback_flag,
-    variants_glob
+    playback_value,
+    variants_glob,
 ):
     for config_file in runnable_config_dir.glob(variants_glob):
         filename = config_file.name
@@ -135,6 +187,7 @@ def run_test(
             )
 
             success, results_path = execute_crossbench(
+                "loading",
                 crossbench_path=crossbench_path,
                 page_config=page_config,
                 probe_config=probe_config,
@@ -144,7 +197,7 @@ def run_test(
                 secrets_config=secrets_config,
                 additional_crossbench_args=additional_crossbench_args,
                 verbose=verbose,
-                playback_flag=playback_flag
+                playback_value=playback_value,
             )
 
             full_test_name = test_name
@@ -154,6 +207,6 @@ def run_test(
 
             if do_upload:
                 try:
-                    upload_results(results_path, device_id, full_test_name, success)
+                    upload_cuj_results(results_path, device_id, full_test_name, success)
                 except Exception as e:
                     print(f"Failed to upload results for test {full_test_name}: {e}")

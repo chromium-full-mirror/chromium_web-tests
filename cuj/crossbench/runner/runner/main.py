@@ -3,7 +3,7 @@ import os
 import sys
 
 from pathlib import Path
-from runner import run_test
+from runner import run_benchmark, run_cuj
 
 
 def run_and_upload(argv):
@@ -42,7 +42,10 @@ def run_and_upload(argv):
         "--tests", help="Glob to match tests to run.", type=str, default="*"
     )
     parser.add_argument(
-        "--playback", help="Directly passed to crossbench as the --playback flag for the loading benchmark.", type=str, default="1x"
+        "--playback",
+        help="Directly passed to crossbench as the --playback flag for the loading benchmark.",
+        type=str,
+        default="1x",
     )
     parser.add_argument("--verbose", action="store_true", default=False)
     parser.add_argument("--variants", type=str, default="*")
@@ -56,28 +59,49 @@ def run_and_upload(argv):
     do_upload = args.upload
     tests_glob = args.tests
     variants_glob = args.variants
-    playback_flag = args.playback
+    playback_value = args.playback
     verbose = args.verbose
 
-    for test in (web_tests / "cuj/crossbench/cujs").glob(tests_glob):
+    for benchmark_dir in (web_tests / "cuj/crossbench/benchmarks").glob(tests_glob):
 
-        if not test.is_dir():
+        if not benchmark_dir.is_dir():
             continue
 
-        test_name = os.path.basename(test)
+        benchmark = os.path.basename(benchmark_dir)
 
         try:
-            run_test(
+            run_benchmark(
+                device_id,
+                benchmark,
+                crossbench,
+                web_tests,
+                benchmark_dir,
+                browser_config_file,
+                verbose,
+                do_upload,
+            )
+        except Exception as e:
+            print(f"Failed to run crossbench benchmark {benchmark}: {e}")
+
+    for test_dir in (web_tests / "cuj/crossbench/cujs").glob(tests_glob):
+
+        if not test_dir.is_dir():
+            continue
+
+        test_name = os.path.basename(test_dir)
+
+        try:
+            run_cuj(
                 device_id,
                 test_name,
                 crossbench,
                 web_tests,
-                test,
+                test_dir,
                 browser_config_file,
                 secrets_config_file,
                 verbose,
                 do_upload,
-                playback_flag,
+                playback_value,
                 variants_glob,
             )
         except Exception as e:
