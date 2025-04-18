@@ -180,6 +180,8 @@ def upload_benchmark_results(results_path, device_id, test_name, success):
             # No support for multiple values yet
             row.append(datapoint["values"][0])
 
+        row.extend(run_info_columns)
+
         upload_rows("scores", sheet_api, test_name, [column_headers, row])
 
 
