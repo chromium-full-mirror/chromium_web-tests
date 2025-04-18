@@ -39,6 +39,8 @@
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
+      attempts: 3
+      timeout: 5s
     }
         // Wait for the dropdown combobox to finish the amination.
         // TODO: Remove after click action supports waiting for stable position.
@@ -65,6 +67,8 @@
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
+      attempts: 3
+      timeout: 5s
     }
         // Wait for the dropdown combobox to finish the amination.
         // TODO: Remove after click action supports waiting for stable position.
