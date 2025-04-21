@@ -1,0 +1,8 @@
+{
+  template: ./action-blocks/meet.hjson
+  args: {
+    CLICK_INPUT_SOURCE: touch
+    NUM_OF_BOTS: "48"
+    TTL_SECS: "120"
+  }
+}

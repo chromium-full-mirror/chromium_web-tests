@@ -6,8 +6,8 @@
     CLICK_INPUT_SOURCE: touch
     NOTE_TEXT: "the quick brown fox jumps over the lazy dog. "
     NOTE_DURATION: 20s
-    NUM-OF-BOTS: "48"
-    TTL-SECS: "180"
+    NUM_OF_BOTS: "48"
+    TTL_SECS: "180"
     SEND_RESOLUTION: High definition (720p)
     RECEIVE_RESOLUTION: High definition (720p)
   }

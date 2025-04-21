@@ -1,7 +1,32 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: []
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: WebRTC.Video.DroppedFrames.Capturer
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: WebRTC.Video.DroppedFrames.Encoder
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: WebRTC.Video.DroppedFrames.Receiver
+        }
+      }
+    ]
     TRACE_PROCESSOR_MODULE_PATHS: [
       ../../common-metrics/trace-processor-modules/web_tests_common
     ]

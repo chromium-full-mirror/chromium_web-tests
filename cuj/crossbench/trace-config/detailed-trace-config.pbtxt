@@ -249,6 +249,15 @@ data_sources: {
       histograms {
         histogram_name: "Browser.Tabs.TabSwitchResult3.WithSavedFrames"
       }
+      histograms {
+        histogram_name: "WebRTC.Video.DroppedFrames.Capturer"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.DroppedFrames.Encoder"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.DroppedFrames.Receiver"
+      }
     }
   }
 }

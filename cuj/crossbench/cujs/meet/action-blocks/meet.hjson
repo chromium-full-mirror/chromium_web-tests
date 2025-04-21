@@ -5,6 +5,15 @@
       blocks: {
         start-new-meeting: ../../../common-action-blocks/meet/start-new-meeting.hjson
         wait-for-camera-start: ../../../common-action-blocks/meet/wait-camera-start.hjson
+        dismiss-popups: ../../../common-action-blocks/meet/dismiss-popups.hjson
+        wait: {
+          actions: [
+            {
+              action: wait
+              duration: 60s
+            }
+          ]
+        }
       }
     }
   }
