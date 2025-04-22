@@ -16,6 +16,13 @@
       {
         template: ../../common-metrics/uma_histogram_times.hjson
         args: {
+          NAME: EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency
+          UNITS_IN_MS: 1000
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_times.hjson
+        args: {
           NAME: PageLoad.InteractiveTiming.TimeToNextPaint
           UNITS_IN_MS: 1
         }
