@@ -24,7 +24,7 @@ def run_and_upload(argv):
         "--secrets-config-file",
         help="The secrets config for the tests.",
         type=Path,
-        required=True,
+        default=None,
     )
     parser.add_argument(
         "--crossbench", help="The path to crossbench.", type=Path, required=True
@@ -53,7 +53,9 @@ def run_and_upload(argv):
 
     device_id = args.device_id
     browser_config_file = args.browser_config_file.resolve()
-    secrets_config_file = args.secrets_config_file.resolve()
+    secrets_config_file = None
+    if args.secrets_config_file:
+        secrets_config_file = args.secrets_config_file.resolve()
     crossbench = args.crossbench.resolve()
     web_tests = args.web_tests.resolve()
     do_upload = args.upload
