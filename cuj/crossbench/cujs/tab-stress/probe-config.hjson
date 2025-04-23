@@ -6,6 +6,18 @@
         name: Total Renderers
         sql: ./queries/total_renderers.sql
       }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: Discarding.DiscardingProtectedTab
+        }
+      }
+      {
+        template: ../../common-metrics/uma_histogram_count.hjson
+        args: {
+          NAME: Discarding.DiscardingFocusedTab
+        }
+      }
       ../../common-metrics/lmk_kill_list.hjson
       ../../common-metrics/lmk_kill_count.hjson
       ../../common-metrics/tab_open_latency.hjson
