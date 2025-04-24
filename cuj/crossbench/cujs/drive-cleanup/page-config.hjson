@@ -1,0 +1,6 @@
+{
+  template: ./action-blocks/drive-cleanup.hjson
+  args: {
+    CLICK_INPUT_SOURCE: touch
+  }
+}
