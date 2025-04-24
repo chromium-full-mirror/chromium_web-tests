@@ -1,116 +1,115 @@
 import argparse
-import os
+from datetime import datetime as dt
+import logging
+import re
 import sys
 
 from pathlib import Path
 from runner import run_benchmark, run_cuj
 
+from typing import List
 
-def run_and_upload(argv):
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--device-id",
-        help="The id of the device on which tests are run (i.e. asset tag).",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
-        "--browser-config-file",
-        help="The browser config for the target.",
-        type=Path,
-        required=True,
-    )
-    parser.add_argument(
-        "--secrets-config-file",
-        help="The secrets config for the tests.",
-        type=Path,
-        default=None,
-    )
-    parser.add_argument(
-        "--crossbench", help="The path to crossbench.", type=Path, required=True
-    )
-    parser.add_argument(
-        "--web-tests", help="The path to web tests.", type=Path, required=True
-    )
-    parser.add_argument(
-        "--upload",
-        help="Upload results.",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-    )
-    parser.add_argument(
-        "--tests", help="Glob to match tests to run.", type=str, default="*"
-    )
-    parser.add_argument(
-        "--playback",
-        help="Directly passed to crossbench as the --playback flag for the loading benchmark.",
-        type=str,
-        default="1x",
-    )
-    parser.add_argument("--verbose", action="store_true", default=False)
-    parser.add_argument("--variants", type=str, default="*")
-    args = parser.parse_args()
 
-    device_id = args.device_id
-    browser_config_file = args.browser_config_file.resolve()
-    secrets_config_file = None
-    if args.secrets_config_file:
-        secrets_config_file = args.secrets_config_file.resolve()
-    crossbench = args.crossbench.resolve()
-    web_tests = args.web_tests.resolve()
-    do_upload = args.upload
-    tests_glob = args.tests
-    variants_glob = args.variants
-    playback_value = args.playback
-    verbose = args.verbose
+def run(argv: List[str]) -> None:
+  logging.getLogger().setLevel(logging.INFO)
 
-    for benchmark_dir in (web_tests / "cuj/crossbench/benchmarks").glob(tests_glob):
+  # TODO this will break if main.py is ever moved within web-tests
+  web_tests_root: Path = Path(
+      argv[0]).resolve().parent.parent.parent.parent.parent
 
-        if not benchmark_dir.is_dir():
-            continue
+  if not (web_tests_root / "cuj" / "crossbench").is_dir():
+    logging.error(
+        "web-tests does not have the expected layout. Did this file move?")
+    return
 
-        benchmark = os.path.basename(benchmark_dir)
+  parser = argparse.ArgumentParser()
+  parser.add_argument(
+      "--browser-config-file",
+      help="The browser config for the target.",
+      type=Path,
+      required=True,
+  )
+  parser.add_argument(
+      "--secrets-config-file",
+      help="The secrets config for the tests.",
+      type=Path,
+      default=None,
+  )
+  parser.add_argument(
+      "--tests", help="Regex to match tests to run.", type=str, default=".*")
+  parser.add_argument(
+      "--playback",
+      help="Directly passed to crossbench as the --playback flag for the loading benchmark.",
+      type=str,
+      default="1x",
+  )
+  parser.add_argument("--debug", action="store_true", default=False)
+  parser.add_argument(
+      "--variants",
+      help="Regex to match test variants to run.",
+      type=str,
+      default=".*")
+  args = parser.parse_args()
 
-        try:
-            run_benchmark(
-                device_id,
-                benchmark,
-                crossbench,
-                web_tests,
-                benchmark_dir,
-                browser_config_file,
-                verbose,
-                do_upload,
-            )
-        except Exception as e:
-            print(f"Failed to run crossbench benchmark {benchmark}: {e}")
+  browser_config_file: Path = args.browser_config_file.resolve()
 
-    for test_dir in (web_tests / "cuj/crossbench/cujs").glob(tests_glob):
+  secrets_config_file = None
+  if args.secrets_config_file:
+    secrets_config_file: Path = args.secrets_config_file.resolve()
 
-        if not test_dir.is_dir():
-            continue
+  tests_regex: re.Pattern = re.compile(args.tests)
+  variants_regex: re.Pattern = re.compile(args.variants)
 
-        test_name = os.path.basename(test_dir)
+  playback_value: str = args.playback
+  debug: bool = args.debug
 
-        try:
-            run_cuj(
-                device_id,
-                test_name,
-                crossbench,
-                web_tests,
-                test_dir,
-                browser_config_file,
-                secrets_config_file,
-                verbose,
-                do_upload,
-                playback_value,
-                variants_glob,
-            )
-        except Exception as e:
-            print(f"Failed to run crossbench for test {test_name}: {e}")
-            pass
+  results_root: Path = web_tests_root / "cuj/crossbench/runner/results/"
+  run_results_path: Path = results_root / dt.now().strftime("%Y-%m-%d_%H%M%S")
+  run_results_path.mkdir(parents=True)
+
+  latest_results: Path = results_root / "latest"
+  latest_results.unlink(missing_ok=True)
+  latest_results.symlink_to(run_results_path, target_is_directory=True)
+
+  for benchmark_path in (web_tests_root /
+                         "cuj/crossbench/benchmarks").iterdir():
+
+    if not benchmark_path.is_dir() or not tests_regex.match(
+        benchmark_path.name):
+      continue
+
+    try:
+      run_benchmark(
+          benchmark_path=benchmark_path,
+          results_path=run_results_path,
+          web_tests_path=web_tests_root,
+          browser_config_file=browser_config_file,
+          debug=debug,
+      )
+    except Exception as e:
+      logging.error(f"Failed to run crossbench benchmark {benchmark_path}: {e}")
+
+  for cuj_path in (web_tests_root / "cuj/crossbench/cujs").iterdir():
+
+    if not cuj_path.is_dir() or not tests_regex.match(cuj_path.name):
+      continue
+
+    try:
+      run_cuj(
+          cuj_path=cuj_path,
+          variants_regex=variants_regex,
+          results_path=run_results_path,
+          browser_config_file=browser_config_file,
+          secrets_config_file=secrets_config_file,
+          web_tests_path=web_tests_root,
+          debug=debug,
+          playback_value=playback_value,
+      )
+    except Exception as e:
+      logging.error(f"Failed to run crossbench for test {cuj_path}: {e}")
+      pass
 
 
 if __name__ == "__main__":
-    argv = sys.argv
-    run_and_upload(argv)
+  argv = sys.argv
+  run(argv)

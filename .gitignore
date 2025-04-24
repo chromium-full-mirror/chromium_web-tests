@@ -2,3 +2,4 @@
 *.gstmp
 __pycache__
 .vscode
+cuj/crossbench/runner/results

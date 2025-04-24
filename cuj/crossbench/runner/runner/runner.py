@@ -1,212 +1,180 @@
+import logging
 import re
-import subprocess
+import shlex
 import tempfile
 
 from pathlib import Path
-from uploader import upload_benchmark_results, upload_cuj_results
+from typing import List, Optional
 
-
-RESUTLS_PATH_RE = re.compile(
-    r"RESULTS( \(maybe incomplete\/broken\))?: (.+\/crossbench\/results\/.+)"
-)
+from crossbench.cli.cli import CrossBenchCLI
 
 
 def execute_crossbench(
-    test_name,
-    crossbench_path,
-    probe_config,
-    browser_config,
-    additional_crossbench_args,
-    verbose,
-    playback_value="",
-    page_config="",
-    secrets_config="",
-):
-    with tempfile.NamedTemporaryFile() as browser_config_file:
-        browser_config_file.write(browser_config.encode("utf-8"))
-        browser_config_file.seek(0)
+    test_name: str,
+    probe_config_file: Path,
+    browser_config: str,
+    additional_crossbench_args: str,
+    debug: bool,
+    results_path: Path,
+    playback_value: Optional[str] = None,
+    page_config_file: Optional[Path] = None,
+    secrets_config_file: Optional[Path] = None,
+) -> None:
+  with tempfile.NamedTemporaryFile() as browser_config_file:
+    browser_config_file.write(browser_config.encode("utf-8"))
+    browser_config_file.seek(0)
 
-        debug = ""
+    crossbench_args: List[str] = []
 
-        if verbose:
-            debug = "--debug"
+    crossbench_args.append(test_name)
 
-        page_config_arg = ""
-        if page_config:
-            page_config_arg = f"--page-config {page_config}"
+    crossbench_args.append("--out-dir")
+    crossbench_args.append(str(results_path))
 
-        secrets_config_arg = ""
-        if secrets_config:
-            secrets_config_arg = f"--secrets {secrets_config}"
+    if page_config_file:
+      crossbench_args.append("--page-config")
+      crossbench_args.append(str(page_config_file))
 
-        playback_arg = ""
-        if playback_value:
-            playback_arg = f"--playback {playback_value}"
+    crossbench_args.append("--probe-config")
+    crossbench_args.append(str(probe_config_file))
 
-        command = (
-            f"poetry run cb {test_name} {page_config_arg}"
-            f" --probe-config {probe_config} --browser-config {browser_config_file.name}"
-            f" {secrets_config_arg} {playback_arg} {additional_crossbench_args} {debug}"
-        )
-        print(f"Invoking crossbench: '{command}'")
-        proc = subprocess.run(
-            command, shell=True, cwd=crossbench_path, capture_output=True
-        )
+    crossbench_args.append("--browser-config")
+    crossbench_args.append(str(browser_config_file.name))
 
-        print("Crossbench stdout:")
-        print(proc.stdout.decode("utf-8"))
-        print("Crossbench stderr:")
-        print(proc.stderr.decode("utf-8"))
+    if secrets_config_file:
+      crossbench_args.append("--secrets")
+      crossbench_args.append(str(secrets_config_file))
 
-        results_path = re.search(RESUTLS_PATH_RE, proc.stderr.decode("utf-8"))
+    if playback_value:
+      crossbench_args.append("--playback")
+      crossbench_args.append(playback_value)
 
-        if results_path:
-            results_path = results_path.group(2)
+    if debug:
+      crossbench_args.append("--debug")
 
-        if proc.returncode:
-            return False, results_path
+    for arg in shlex.split(additional_crossbench_args):
+      crossbench_args.append(arg)
 
-    return True, results_path
+    logging.info(f"Running crossbench with args: {crossbench_args}")
+
+    CrossBenchCLI().run(crossbench_args)
 
 
-def is_page_config(filename):
-    return filename.endswith("page-config.hjson")
+def is_page_config(filename: str) -> bool:
+  return filename.endswith("page-config.hjson")
 
 
-def get_test_variant(page_config_file):
-    name_sections = page_config_file.split(".")
+def get_test_variant(page_config_filename: str) -> str:
+  name_sections: List[str] = page_config_filename.split(".")
 
-    if len(name_sections) <= 2:
-        return ""
+  if len(name_sections) <= 2:
+    return ""
 
-    return name_sections[0]
+  return name_sections[0]
 
 
-def get_full_browser_config(browser_config_file, browser_flags_file):
-    with open(browser_config_file, "r") as file:
-        browser_config = file.read()
+def get_full_browser_config(browser_config_file: Path,
+                            browser_flags_file: Path) -> str:
+  # TODO Currently crossbench doesn't support templates for
+  # browser config. When it does, replace this logic with a template.
+  return browser_config_file.read_text().replace("$[FLAGS_DEFINITION]",
+                                                 str(browser_flags_file))
 
-    # TODO Currently crossbench doesn't support templates for
-    # browser config. When it does, replace this logic with a template.
-    return browser_config.replace("$[FLAGS_DEFINITION]", str(browser_flags_file))
+
+def get_additional_crossbench_args(test_path: Path,
+                                   web_tests_path: Path,
+                                   test_variant: str = "") -> str:
+  additional_crossbench_args_file: Path = test_path / f"{test_variant}.cb-args"
+
+  if not additional_crossbench_args_file.is_file():
+    additional_crossbench_args_file = test_path / "cb-args"
+
+  additional_crossbench_args: str = ""
+  if additional_crossbench_args_file.is_file():
+    additional_crossbench_args = additional_crossbench_args_file.read_text()
+
+  return additional_crossbench_args.replace("$[WEB_TESTS]", str(web_tests_path))
 
 
 def run_benchmark(
-    device_id,
-    benchmark_name,
-    crossbench,
-    web_tests,
-    benchmark_dir,
-    browser_config_file,
-    verbose,
-    do_upload,
-):
-    probe_config = benchmark_dir / "probe-config.hjson"
-    browser_flags_file = benchmark_dir / "browser-flags.hjson"
-    additional_crossbench_args_file = benchmark_dir / "cb-args"
+    benchmark_path: Path,
+    results_path: Path,
+    web_tests_path: Path,
+    browser_config_file: Path,
+    debug: bool,
+) -> None:
+  benchmark_name: str = benchmark_path.name
+  benchmark_results_path: Path = results_path / benchmark_name
+  probe_config_file: Path = benchmark_path / "probe-config.hjson"
+  browser_flags_file: Path = benchmark_path / "browser-flags.hjson"
 
-    try:
-        additional_crossbench_args = additional_crossbench_args_file.read_text()
-    except Exception:
-        additional_crossbench_args = ""
+  logging.info(f"Executing crossbench for CUJ: {benchmark_name}")
 
-    additional_crossbench_args = additional_crossbench_args.replace(
-        "$[WEB_TESTS]", str(web_tests)
-    )
-
-    success, results_path = execute_crossbench(
-        benchmark_name,
-        crossbench_path=crossbench,
-        probe_config=probe_config,
-        browser_config=get_full_browser_config(browser_config_file, browser_flags_file),
-        additional_crossbench_args=additional_crossbench_args,
-        verbose=verbose,
-    )
-
-    if do_upload:
-        try:
-            upload_benchmark_results(results_path, device_id, benchmark_name, success)
-        except Exception as e:
-            print(f"Failed to upload results for test {benchmark_name}: {e}")
+  execute_crossbench(
+      test_name=benchmark_name,
+      probe_config_file=probe_config_file,
+      browser_config=get_full_browser_config(browser_config_file,
+                                             browser_flags_file),
+      additional_crossbench_args=get_additional_crossbench_args(
+          benchmark_path, web_tests_path),
+      debug=debug,
+      results_path=benchmark_results_path,
+  )
 
 
 def run_cuj(
-    device_id,
-    test_name,
-    crossbench_path,
-    web_tests_path,
-    runnable_config_dir,
-    browser_config_file,
-    secrets_config,
-    verbose,
-    do_upload,
-    playback_value,
-    variants_glob,
-):
-    for config_file in runnable_config_dir.glob(variants_glob):
-        filename = config_file.name
+    cuj_path: Path,
+    variants_regex: re.Pattern,
+    results_path: Path,
+    browser_config_file: Path,
+    secrets_config_file: Path,
+    web_tests_path: Path,
+    debug: bool,
+    playback_value: str,
+) -> None:
+  cuj_name: str = cuj_path.name
 
-        if is_page_config(filename):
+  for config_file in cuj_path.iterdir():
+    filename: str = config_file.name
 
-            test_variant = get_test_variant(filename)
+    if is_page_config(filename):
 
-            page_config = config_file
+      cuj_variant: str = get_test_variant(filename)
 
-            probe_config = Path.joinpath(
-                runnable_config_dir, f"{test_variant}.probe-config.hjson"
-            )
+      if not variants_regex.match(cuj_variant):
+        continue
 
-            if not probe_config.is_file():
-                probe_config = Path.joinpath(runnable_config_dir, "probe-config.hjson")
+      full_cuj_name = cuj_name
 
-            browser_flags_file = Path.joinpath(
-                runnable_config_dir, f"{test_variant}.browser-flags.hjson"
-            )
+      if cuj_variant:
+        full_cuj_name = full_cuj_name + f"_{cuj_variant}"
 
-            if not browser_flags_file.is_file():
-                browser_flags_file = Path.joinpath(
-                    runnable_config_dir, "browser-flags.hjson"
-                )
+      variant_results_path: Path = results_path / full_cuj_name
 
-            additional_crossbench_args_file = Path.joinpath(
-                runnable_config_dir, f"{test_variant}.cb-args"
-            )
+      page_config_file: Path = config_file
 
-            if not additional_crossbench_args_file.is_file():
-                additional_crossbench_args_file = Path.joinpath(
-                    runnable_config_dir, "cb-args"
-                )
+      probe_config_file: Path = cuj_path / f"{cuj_variant}.probe-config.hjson"
 
-            try:
-                additional_crossbench_args = additional_crossbench_args_file.read_text()
-            except Exception:
-                additional_crossbench_args = ""
+      if not probe_config_file.is_file():
+        probe_config_file = cuj_path / "probe-config.hjson"
 
-            additional_crossbench_args = additional_crossbench_args.replace(
-                "$[WEB_TESTS]", str(web_tests_path)
-            )
+      browser_flags_file: Path = cuj_path / f"{cuj_variant}.browser-flags.hjson"
 
-            success, results_path = execute_crossbench(
-                "loading",
-                crossbench_path=crossbench_path,
-                page_config=page_config,
-                probe_config=probe_config,
-                browser_config=get_full_browser_config(
-                    browser_config_file, browser_flags_file
-                ),
-                secrets_config=secrets_config,
-                additional_crossbench_args=additional_crossbench_args,
-                verbose=verbose,
-                playback_value=playback_value,
-            )
+      if not browser_flags_file.is_file():
+        browser_flags_file = cuj_path / "browser-flags.hjson"
 
-            full_test_name = test_name
+      logging.info(f"Executing crossbench for CUJ: {full_cuj_name}")
 
-            if test_variant:
-                full_test_name = f"{test_name}_{test_variant}"
-
-            if do_upload:
-                try:
-                    upload_cuj_results(results_path, device_id, full_test_name, success)
-                except Exception as e:
-                    print(f"Failed to upload results for test {full_test_name}: {e}")
+      execute_crossbench(
+          test_name="loading",
+          probe_config_file=probe_config_file,
+          browser_config=get_full_browser_config(browser_config_file,
+                                                 browser_flags_file),
+          additional_crossbench_args=get_additional_crossbench_args(
+              cuj_path, web_tests_path, cuj_variant),
+          debug=debug,
+          results_path=variant_results_path,
+          playback_value=playback_value,
+          page_config_file=page_config_file,
+          secrets_config_file=secrets_config_file,
+      )
