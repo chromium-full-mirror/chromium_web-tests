@@ -1,10 +1,11 @@
+import json
 import logging
 import re
 import shlex
 import tempfile
 
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from crossbench.cli.cli import CrossBenchCLI
 
@@ -73,12 +74,45 @@ def get_test_variant(page_config_filename: str) -> str:
   return name_sections[0]
 
 
-def get_full_browser_config(browser_config_file: Path,
-                            browser_flags_file: Path) -> str:
-  # TODO Currently crossbench doesn't support templates for
-  # browser config. When it does, replace this logic with a template.
-  return browser_config_file.read_text().replace("$[FLAGS_DEFINITION]",
-                                                 str(browser_flags_file))
+def is_android_target(target: str) -> bool:
+  return target.startswith("adb:")
+
+
+def get_browser_config_for_target(target: str, browser_flags_file: Path) -> str:
+  # TODO support different chrome versions (i.e. dev/beta)
+
+  # assume anything that is not specified as adb is ChromeOS
+  browser_config: Dict[str, Any] = {
+      "flags": str(browser_flags_file),
+      "browsers": {
+          "chrome": {
+              "browser": "/opt/google/chrome/chrome",
+              "flags": ["flags"],
+              "driver": {
+                  "type": "chromeos-ssh",
+                  "settings": {
+                      "host": target,
+                      # TODO support different ports
+                      "ssh_port": 22,
+                      "ssh_user": "root",
+                  }
+              }
+          }
+      }
+  }
+
+  if is_android_target(target):
+    device_id: str = target[4:]
+    browser_config["browsers"]["chrome"]["browser"] = "chrome"
+
+    adb_driver = {
+        "type": "adb",
+        "device_id": device_id,
+    }
+
+    browser_config["browsers"]["chrome"]["driver"] = adb_driver
+
+  return json.dumps(browser_config)
 
 
 def get_additional_crossbench_args(test_path: Path,
@@ -100,7 +134,7 @@ def run_benchmark(
     benchmark_path: Path,
     results_path: Path,
     web_tests_path: Path,
-    browser_config_file: Path,
+    target: str,
     debug: bool,
 ) -> None:
   benchmark_name: str = benchmark_path.name
@@ -108,13 +142,14 @@ def run_benchmark(
   probe_config_file: Path = benchmark_path / "probe-config.hjson"
   browser_flags_file: Path = benchmark_path / "browser-flags.hjson"
 
+  browser_config = get_browser_config_for_target(target, browser_flags_file)
+
   logging.info(f"Executing crossbench for CUJ: {benchmark_name}")
 
   execute_crossbench(
       test_name=benchmark_name,
       probe_config_file=probe_config_file,
-      browser_config=get_full_browser_config(browser_config_file,
-                                             browser_flags_file),
+      browser_config=browser_config,
       additional_crossbench_args=get_additional_crossbench_args(
           benchmark_path, web_tests_path),
       debug=debug,
@@ -126,7 +161,7 @@ def run_cuj(
     cuj_path: Path,
     variants_regex: re.Pattern,
     results_path: Path,
-    browser_config_file: Path,
+    target: str,
     secrets_config_file: Path,
     web_tests_path: Path,
     debug: bool,
@@ -163,13 +198,14 @@ def run_cuj(
       if not browser_flags_file.is_file():
         browser_flags_file = cuj_path / "browser-flags.hjson"
 
+      browser_config = get_browser_config_for_target(target, browser_flags_file)
+
       logging.info(f"Executing crossbench for CUJ: {full_cuj_name}")
 
       execute_crossbench(
           test_name="loading",
           probe_config_file=probe_config_file,
-          browser_config=get_full_browser_config(browser_config_file,
-                                                 browser_flags_file),
+          browser_config=browser_config,
           additional_crossbench_args=get_additional_crossbench_args(
               cuj_path, web_tests_path, cuj_variant),
           debug=debug,

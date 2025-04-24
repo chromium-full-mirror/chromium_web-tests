@@ -24,9 +24,9 @@ def run(argv: List[str]) -> None:
 
   parser = argparse.ArgumentParser()
   parser.add_argument(
-      "--browser-config-file",
-      help="The browser config for the target.",
-      type=Path,
+      "--target",
+      help="The IP or adb ID of the device to run against. For adb devices, use the format abd:<ID listed by 'adb devices'>",
+      type=str,
       required=True,
   )
   parser.add_argument(
@@ -51,7 +51,7 @@ def run(argv: List[str]) -> None:
       default=".*")
   args = parser.parse_args()
 
-  browser_config_file: Path = args.browser_config_file.resolve()
+  target = args.target
 
   secrets_config_file = None
   if args.secrets_config_file:
@@ -83,7 +83,7 @@ def run(argv: List[str]) -> None:
           benchmark_path=benchmark_path,
           results_path=run_results_path,
           web_tests_path=web_tests_root,
-          browser_config_file=browser_config_file,
+          target=target,
           debug=debug,
       )
     except Exception as e:
@@ -99,7 +99,7 @@ def run(argv: List[str]) -> None:
           cuj_path=cuj_path,
           variants_regex=variants_regex,
           results_path=run_results_path,
-          browser_config_file=browser_config_file,
+          target=target,
           secrets_config_file=secrets_config_file,
           web_tests_path=web_tests_root,
           debug=debug,

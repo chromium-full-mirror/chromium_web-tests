@@ -27,6 +27,15 @@ clean_git() {
     cd -
 }
 
+run_and_upload() {
+    cd "${CUJ_DIR}/runner"
+    poetry run python runner/main.py --target "$1" --secrets-config-file "${SECRETS_FILE}"
+    cd -
+    cd "${CUJ_DIR}/uploader"
+    poetry run python uploader/main.py "${CUJ_DIR}/runner/results/latest"
+    cd -
+}
+
 if [ -d "${CUJ_DIR}/runner/results.previous" ]; then
     rm -rf "${CUJ_DIR}/runner/results.previous"
 fi
@@ -52,23 +61,17 @@ adb disconnect
 for adb_device in ${ADB_DEVICES[@]}; do
     adb connect $adb_device
     adb -s $adb_device reboot
+    sleep 120
+    adb connect $adb_device
+
+    run_and_upload adb:${adb_device}
 done
 
 for chromeos_device in ${CHROMEOS_DEVICES[@]}; do
     ssh $chromeos_device reboot
+    sleep 120
+
+    run_and_upload ${chromeos_device}
 done
 
 sleep 120
-
-for adb_device in ${ADB_DEVICES[@]}; do
-    adb connect $adb_device
-done
-
-for target in "${CUJ_DIR}"/runner/targets/*; do
-    cd "${CUJ_DIR}/runner"
-    poetry run python runner/main.py --browser-config-file $target --secrets-config-file "${SECRETS_FILE}"
-    cd -
-    cd "${CUJ_DIR}/uploader"
-    poetry run python uploader/main.py "${CUJ_DIR}/runner/results/latest"
-    cd -
-done
