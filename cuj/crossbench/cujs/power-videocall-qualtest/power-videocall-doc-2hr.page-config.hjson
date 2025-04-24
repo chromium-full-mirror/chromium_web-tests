@@ -1,0 +1,9 @@
+{
+  template: ./action-blocks/videocall-doc.hjson
+  args: {
+    MEET_SIMULATOR_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_VideoCall/power_VideoCall.webrtc.html?preset=high
+    DOCS_SIMULATOR_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_VideoCall/power_VideoCall_doc.html
+    TOTAL_DURATION: 2h
+    NOTE_DURATION: 6s
+  }
+}
