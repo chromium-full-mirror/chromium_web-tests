@@ -6,7 +6,7 @@ if [ "$USER" != "crossbench-lab" ]; then
   exit 1
 fi
 
-CUJ_DIR=$(dirname "$0")
+CUJ_DIR=$(realpath $(dirname "$0"))
 SECRETS_FILE="/home/crossbench-lab/secrets.hjson"
 
 ADB_DEVICES=("[2401:fa00:480:ee08:877f:adf8:8a66:4840]:5555")
@@ -73,5 +73,3 @@ for chromeos_device in ${CHROMEOS_DEVICES[@]}; do
 
     run_and_upload ${chromeos_device}
 done
-
-sleep 120
