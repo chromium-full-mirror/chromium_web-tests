@@ -7,7 +7,13 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from crossbench.cli.cli import CrossBenchCLI
+try:
+  from crossbench.cli.cli import CrossBenchCLI
+except:
+  logging.error(
+      "Failed to import crossbench. Have you run 'git submodule update --init' and 'poetry install'?"
+  )
+  exit()
 
 
 def execute_crossbench(
