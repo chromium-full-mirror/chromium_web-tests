@@ -17,7 +17,7 @@ except:
 
 
 def execute_crossbench(
-    test_name: str,
+    cb_benchmark_name: str,
     probe_config_file: Path,
     browser_config: str,
     additional_crossbench_args: str,
@@ -33,7 +33,7 @@ def execute_crossbench(
 
     crossbench_args: List[str] = []
 
-    crossbench_args.append(test_name)
+    crossbench_args.append(cb_benchmark_name)
 
     crossbench_args.append("--out-dir")
     crossbench_args.append(str(results_path))
@@ -58,6 +58,8 @@ def execute_crossbench(
 
     if debug:
       crossbench_args.append("--debug")
+
+    crossbench_args.append("--throw")
 
     for arg in shlex.split(additional_crossbench_args):
       crossbench_args.append(arg)
@@ -152,15 +154,19 @@ def run_benchmark(
 
   logging.info(f"Executing crossbench for CUJ: {benchmark_name}")
 
-  execute_crossbench(
-      test_name=benchmark_name,
-      probe_config_file=probe_config_file,
-      browser_config=browser_config,
-      additional_crossbench_args=get_additional_crossbench_args(
-          benchmark_path, web_tests_path),
-      debug=debug,
-      results_path=benchmark_results_path,
-  )
+  try:
+    execute_crossbench(
+        cb_benchmark_name=benchmark_name,
+        probe_config_file=probe_config_file,
+        browser_config=browser_config,
+        additional_crossbench_args=get_additional_crossbench_args(
+            benchmark_path, web_tests_path),
+        debug=debug,
+        results_path=benchmark_results_path,
+    )
+  except Exception as e:
+    logging.error(e)
+    logging.error(f"Crossbench invocation for {benchmark_name} failed.")
 
 
 def run_cuj(
@@ -178,38 +184,40 @@ def run_cuj(
   for config_file in cuj_path.iterdir():
     filename: str = config_file.name
 
-    if is_page_config(filename):
+    if not is_page_config(filename):
+      continue
 
-      cuj_variant: str = get_test_variant(filename)
+    cuj_variant: str = get_test_variant(filename)
 
-      if not variants_regex.match(cuj_variant):
-        continue
+    if not variants_regex.match(cuj_variant):
+      continue
 
-      full_cuj_name = cuj_name
+    full_cuj_name = cuj_name
 
-      if cuj_variant:
-        full_cuj_name = full_cuj_name + f"_{cuj_variant}"
+    if cuj_variant:
+      full_cuj_name = full_cuj_name + f"_{cuj_variant}"
 
-      variant_results_path: Path = results_path / full_cuj_name
+    variant_results_path: Path = results_path / full_cuj_name
 
-      page_config_file: Path = config_file
+    page_config_file: Path = config_file
 
-      probe_config_file: Path = cuj_path / f"{cuj_variant}.probe-config.hjson"
+    probe_config_file: Path = cuj_path / f"{cuj_variant}.probe-config.hjson"
 
-      if not probe_config_file.is_file():
-        probe_config_file = cuj_path / "probe-config.hjson"
+    if not probe_config_file.is_file():
+      probe_config_file = cuj_path / "probe-config.hjson"
 
-      browser_flags_file: Path = cuj_path / f"{cuj_variant}.browser-flags.hjson"
+    browser_flags_file: Path = cuj_path / f"{cuj_variant}.browser-flags.hjson"
 
-      if not browser_flags_file.is_file():
-        browser_flags_file = cuj_path / "browser-flags.hjson"
+    if not browser_flags_file.is_file():
+      browser_flags_file = cuj_path / "browser-flags.hjson"
 
-      browser_config = get_browser_config_for_target(target, browser_flags_file)
+    browser_config = get_browser_config_for_target(target, browser_flags_file)
 
-      logging.info(f"Executing crossbench for CUJ: {full_cuj_name}")
+    logging.info(f"Executing crossbench for CUJ: {full_cuj_name}")
 
+    try:
       execute_crossbench(
-          test_name="loading",
+          cb_benchmark_name="loading",
           probe_config_file=probe_config_file,
           browser_config=browser_config,
           additional_crossbench_args=get_additional_crossbench_args(
@@ -220,3 +228,6 @@ def run_cuj(
           page_config_file=page_config_file,
           secrets_config_file=secrets_config_file,
       )
+    except Exception as e:
+      logging.error(e)
+      logging.error(f"Crossbench invocation for {full_cuj_name} failed.")
