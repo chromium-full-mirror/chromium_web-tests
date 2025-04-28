@@ -165,12 +165,15 @@ def upload_success(sheet_api, test_name, success, run_info):
 
 
 def has_error(test_path):
-  cb_results_json = test_path / "cb.results.json"
+  cb_results_json = test_path / "first_run" / "cb.results.json"
 
-  with cb_results_json.open() as f:
-    cb_results = json.load(f)
+  try:
+    with cb_results_json.open() as f:
+      cb_results = json.load(f)
 
-  return bool(cb_results["errors"])
+    return bool(cb_results["errors"])
+  except Exception:
+    return True
 
 
 def are_benchmark_results(test_path, test_name):
