@@ -2,20 +2,19 @@ import argparse
 from datetime import datetime as dt
 import logging
 import re
-import sys
 
 from pathlib import Path
-from runner import run_benchmark, run_cuj
+from .runner import run_benchmark, run_cuj
 
 from typing import List
 
 
-def run(argv: List[str]) -> None:
+def runner_cli(argv: List[str]) -> None:
   logging.getLogger().setLevel(logging.INFO)
 
-  # TODO this will break if main.py is ever moved within web-tests
+  # TODO this will break if cli.py is ever moved within web-tests
   web_tests_root: Path = Path(
-      argv[0]).resolve().parent.parent.parent.parent.parent
+      __file__).resolve().parent.parent.parent.parent.parent
 
   if not (web_tests_root / "cuj" / "crossbench").is_dir():
     logging.error(
@@ -108,8 +107,3 @@ def run(argv: List[str]) -> None:
     except Exception as e:
       logging.error(f"Failed to run crossbench for test {cuj_path}: {e}")
       pass
-
-
-if __name__ == "__main__":
-  argv = sys.argv
-  run(argv)
