@@ -1,9 +1,9 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE web_tests_common.iterations;
+include PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-include PERFETTO MODULE page_load.page_load_start;
+include PERFETTO MODULE sql_packages.page_load.page_load_start;
 
 -- Add the iteration id to the page load start table.
 drop view if exists page_load_start_by_iteration;

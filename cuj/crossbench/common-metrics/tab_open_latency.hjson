@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: Tab Open Latency
-  sql: ./queries/tab_open_latency.sql
+  sql: ../sql_packages/queries/tab_open_latency.sql
 }

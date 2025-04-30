@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: comment_opened
-  sql: ./queries/comment_opened.sql
+  sql: ../sql_packages/queries/comment_opened.sql
 }

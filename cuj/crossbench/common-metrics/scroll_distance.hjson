@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: scroll_distance
-  sql: ./queries/scroll_distance.sql
+  sql: ../sql_packages/queries/scroll_distance.sql
 }

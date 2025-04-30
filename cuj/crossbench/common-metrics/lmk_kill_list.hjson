@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: lmk_kills
-  sql: ./queries/lmk_kill_list.sql
+  sql: ../sql_packages/queries/lmk_kill_list.sql
 }

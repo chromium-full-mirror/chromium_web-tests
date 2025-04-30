@@ -31,7 +31,7 @@
       }
     ]
     TRACE_PROCESSOR_MODULE_PATHS: [
-      ../../common-metrics/trace-processor-modules/web_tests_common
+      ../../sql_packages
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }

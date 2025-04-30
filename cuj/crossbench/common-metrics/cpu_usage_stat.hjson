@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: cpu_usage_stat
-  sql: ./queries/cpu_usage_stat.sql
+  sql: ../sql_packages/queries/cpu_usage_stat.sql
 }

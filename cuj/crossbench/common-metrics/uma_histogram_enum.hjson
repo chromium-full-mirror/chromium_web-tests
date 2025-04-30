@@ -5,7 +5,7 @@
   // Counts one value from one histogram logged with
   // UMA_HISTOGRAM_ENUMERATION macro.
   name: $[NAME]
-  sql: ./queries/uma_histogram_enum.sql
+  sql: ../sql_packages/queries/uma_histogram_enum.sql
   replacements: {
     TABLE_NAME: $[TABLE]
     METRIC_NAME: $[NAME]

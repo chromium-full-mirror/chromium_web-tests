@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 {
   name: scroll_duration
-  sql: ./queries/scroll_duration.sql
+  sql: ../sql_packages/queries/scroll_duration.sql
 }
