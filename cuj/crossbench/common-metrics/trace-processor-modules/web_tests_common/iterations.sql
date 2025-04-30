@@ -1,3 +1,6 @@
+-- Copyright 2025 The Chromium Authors
+-- Use of this source code is governed by a BSD-style license that can be
+-- found in the LICENSE file.
 -- The test may have been run multiple times in the same trace.
 -- Grab the start and end ts for each iteration.
 drop view if exists iterations;

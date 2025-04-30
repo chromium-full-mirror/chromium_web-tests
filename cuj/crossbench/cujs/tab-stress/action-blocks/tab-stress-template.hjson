@@ -1,5 +1,8 @@
 // Opens tabs, waits for ready-state complete, and then cycles through all the opened tabs.
 // To change the number of tabs that are opened, add additional open and cycle blocks.
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 {
   pages: {
     open-0: {

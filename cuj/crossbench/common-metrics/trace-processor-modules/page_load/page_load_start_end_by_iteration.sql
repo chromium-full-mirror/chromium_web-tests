@@ -1,3 +1,6 @@
+-- Copyright 2025 The Chromium Authors
+-- Use of this source code is governed by a BSD-style license that can be
+-- found in the LICENSE file.
 include PERFETTO MODULE page_load.page_load_start_by_iteration;
 
 include PERFETTO MODULE page_load.page_load_end_by_iteration;

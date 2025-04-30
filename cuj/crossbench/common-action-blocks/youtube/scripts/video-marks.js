@@ -1,3 +1,7 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 performance.mark("video-loaded-start")
 performance.mark("switch-resolution-start")
 // Add a one-time listener for the video canplay event,

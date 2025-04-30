@@ -1,3 +1,7 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Before we click the comment button, set up an observer to log exactly
 // when the comment window appears.
 (new MutationObserver((mutationList, observer) => {
