@@ -17,7 +17,7 @@ try:
 except ImportError:
   logging.error(
       "Failed to import crossbench. "
-      "Have you run 'git submodule update --init' and 'poetry install'?")
+      "Have you run 'gclient sync' and 'poetry install'?")
   sys.exit()
 
 
