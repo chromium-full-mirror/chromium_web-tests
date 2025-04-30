@@ -1,12 +1,16 @@
+# Copyright 2025 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 import argparse
 from datetime import datetime as dt
 import logging
 import re
 
-from pathlib import Path
-from .runner import run_benchmark, run_cuj
-
 from typing import List
+
+from pathlib import Path
+from runner.runner import run_benchmark, run_cuj
 
 
 def runner_cli(argv: List[str]) -> None:
@@ -24,7 +28,8 @@ def runner_cli(argv: List[str]) -> None:
   parser = argparse.ArgumentParser()
   parser.add_argument(
       "--target",
-      help="The IP or adb ID of the device to run against. For adb devices, use the format abd:<ID listed by 'adb devices'>",
+      help="The IP or adb ID of the device to run against. "
+      "For adb devices, use the format abd:<ID listed by 'adb devices'>",
       type=str,
       required=True,
   )
@@ -38,7 +43,8 @@ def runner_cli(argv: List[str]) -> None:
       "--tests", help="Regex to match tests to run.", type=str, default=".*")
   parser.add_argument(
       "--playback",
-      help="Directly passed to crossbench as the --playback flag for the loading benchmark.",
+      help="Directly passed to crossbench as the "
+      "--playback flag for the loading benchmark.",
       type=str,
       default="1x",
   )
@@ -48,7 +54,7 @@ def runner_cli(argv: List[str]) -> None:
       help="Regex to match test variants to run.",
       type=str,
       default=".*")
-  args = parser.parse_args()
+  args = parser.parse_args(argv)
 
   target = args.target
 
@@ -85,8 +91,10 @@ def runner_cli(argv: List[str]) -> None:
           target=target,
           debug=debug,
       )
+    # pylint: disable=broad-exception-caught
     except Exception as e:
-      logging.error(f"Failed to run crossbench benchmark {benchmark_path}: {e}")
+      logging.error("Failed to run crossbench benchmark %s: %s", benchmark_path,
+                    e)
 
   for cuj_path in (web_tests_root / "cuj/crossbench/cujs").iterdir():
 
@@ -104,6 +112,7 @@ def runner_cli(argv: List[str]) -> None:
           debug=debug,
           playback_value=playback_value,
       )
+    # pylint: disable=broad-exception-caught
     except Exception as e:
-      logging.error(f"Failed to run crossbench for test {cuj_path}: {e}")
+      logging.error("Failed to run crossbench for test %s: %s", cuj_path, e)
       pass

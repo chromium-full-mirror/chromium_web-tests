@@ -1,7 +1,12 @@
+# Copyright 2025 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 import json
 import logging
 import re
 import shlex
+import sys
 import tempfile
 
 from pathlib import Path
@@ -9,11 +14,11 @@ from typing import Any, Dict, List, Optional
 
 try:
   from crossbench.cli.cli import CrossBenchCLI
-except:
+except ImportError:
   logging.error(
-      "Failed to import crossbench. Have you run 'git submodule update --init' and 'poetry install'?"
-  )
-  exit()
+      "Failed to import crossbench. "
+      "Have you run 'git submodule update --init' and 'poetry install'?")
+  sys.exit()
 
 
 def execute_crossbench(
@@ -64,7 +69,7 @@ def execute_crossbench(
     for arg in shlex.split(additional_crossbench_args):
       crossbench_args.append(arg)
 
-    logging.info(f"Running crossbench with args: {crossbench_args}")
+    logging.info("Running crossbench with args: %s", crossbench_args)
 
     CrossBenchCLI().run(crossbench_args)
 
@@ -152,7 +157,7 @@ def run_benchmark(
 
   browser_config = get_browser_config_for_target(target, browser_flags_file)
 
-  logging.info(f"Executing crossbench for CUJ: {benchmark_name}")
+  logging.info("Executing crossbench for CUJ: %s", benchmark_name)
 
   try:
     execute_crossbench(
@@ -164,9 +169,10 @@ def run_benchmark(
         debug=debug,
         results_path=benchmark_results_path,
     )
+  # pylint: disable=broad-exception-caught
   except Exception as e:
     logging.error(e)
-    logging.error(f"Crossbench invocation for {benchmark_name} failed.")
+    logging.error("Crossbench invocation for %s failed.", benchmark_name)
 
 
 def run_cuj(
@@ -213,7 +219,7 @@ def run_cuj(
 
     browser_config = get_browser_config_for_target(target, browser_flags_file)
 
-    logging.info(f"Executing crossbench for CUJ: {full_cuj_name}")
+    logging.info("Executing crossbench for CUJ: %s", full_cuj_name)
 
     try:
       execute_crossbench(
@@ -228,6 +234,7 @@ def run_cuj(
           page_config_file=page_config_file,
           secrets_config_file=secrets_config_file,
       )
+    # pylint: disable=broad-exception-caught
     except Exception as e:
       logging.error(e)
-      logging.error(f"Crossbench invocation for {full_cuj_name} failed.")
+      logging.error("Crossbench invocation for %s failed.", full_cuj_name)

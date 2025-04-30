@@ -1,3 +1,7 @@
+# Copyright 2025 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 import csv
 import json
 import logging
@@ -5,12 +9,13 @@ import os
 import re
 import sys
 
+from pathlib import Path
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from pathlib import Path
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 SPREADSHEET_MAP_ID = "1GcNTMRuPRvy5mbEY51Ew4rhJmyvOQKHn_YYCjs-J6hs"
@@ -55,6 +60,9 @@ def get_sheet_id_for_test(sheet_api, test_name: str):
 
 
 def get_sheet_api():
+
+  creds = None
+
   if TOKEN_PATH.is_file():
     creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
 
@@ -75,17 +83,18 @@ def get_sheet_api():
     service = build("sheets", "v4", credentials=creds)
     sheet_api = service.spreadsheets()
   except HttpError as err:
-    logging.error(f"Failed to initialize sheets api: {err}")
+    logging.error("Failed to initialize sheets api: %s", err)
 
   if not sheet_api:
     logging.error("Failed to connect to sheets.")
-    exit()
+    sys.exit()
 
   return sheet_api
 
 
 def get_device_info(results_path):
-  with open(results_path / "first_run/cb.system.details.json") as f:
+  with open(
+      results_path / "first_run/cb.system.details.json", encoding="utf-8") as f:
     system_details = json.load(f)
 
   sys_info_columns = []
@@ -108,7 +117,7 @@ def upload_rows(metric_name, sheet_api, test_name, rows):
 
   full_metric_name = f"{test_name}_{metric_name}"
 
-  logging.info(f"Processing metric: {full_metric_name}")
+  logging.info("Processing metric: %s", full_metric_name)
 
   body = {
       "requests": [{
@@ -149,7 +158,7 @@ def upload_rows(metric_name, sheet_api, test_name, rows):
 def upload_csv(metric_name, metric_csv, sheet_api, test_name, run_info_columns):
   metric_data = []
 
-  with open(metric_csv, "r") as csv_file:
+  with open(metric_csv, "r", encoding="utf-8") as csv_file:
     reader = csv.reader(csv_file)
 
     for row in reader:
@@ -172,7 +181,7 @@ def has_error(test_path):
       cb_results = json.load(f)
 
     return bool(cb_results["errors"])
-  except Exception:
+  except FileNotFoundError:
     return True
 
 
@@ -216,7 +225,7 @@ def upload_cuj_results(test_path, test_name, sheet_api, run_info_columns):
     )
 
 
-def upload(argv):
+def upload(args):
   logging.getLogger().setLevel(logging.INFO)
 
   if os.getlogin() != "crossbench-lab":
@@ -226,9 +235,9 @@ def upload(argv):
         "in the google sheets dashboard.")
     bypass_input = input("To continue, type: CONTINUE\n")
     if bypass_input != "CONTINUE":
-      exit()
+      sys.exit()
 
-  if len(argv) != 2:
+  if len(args) != 2:
     logging.error("Usage: main.py <path to results from runner>")
     return
 
@@ -236,7 +245,7 @@ def upload(argv):
   # (such as results/latest) and/or a relative path is passed.
   # After resolve() the results_dir will be used as a test run ID
   # for uploading.
-  results_dir = Path(argv[1]).resolve()
+  results_dir = Path(args[1]).resolve()
 
   if not re.match(r"\d{4}-\d{2}-\d{2}_\d{6}", results_dir.name):
     logging.error(
