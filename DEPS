@@ -39,8 +39,14 @@ git_dependencies = 'SYNC'
 use_relative_paths = True
 
 vars = {
+  'crossbench_git': 'https://chromium.googlesource.com/crossbench',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
+
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling tsproxy
+  # and whatever else without interference from each other.
+  'crossbench_revision': '536175537c2ac04e2dc440154c16488fa6274708',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -49,7 +55,10 @@ allowed_hosts = [
   'chromium.googlesource.com',
 ]
 
-deps = {}
+deps = {
+  'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
+}
+
 
 hooks = [
   {

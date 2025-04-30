@@ -254,6 +254,7 @@ colorama = "^0.4.6"
 google-auth = "^2.36.0"
 hjson = "^3.1.0"
 immutabledict = "^4.1.0"
+mobly = "^1.12.4"
 numpy = "^1.23.5"
 ordered-set = "^4.1.0"
 pandas = "^1.1.3"
@@ -265,13 +266,15 @@ python-dateutil = "2.7.3"
 pytz = "^2024.1"
 requests = "^2.32.3"
 selenium = "^4.1.0"
+snippet-uiautomator = "^1.1.2"
 sqlalchemy = "^2.0.38"
 tabulate = "^0.8.10"
 websockets = "^11.0.3"
+xlsxwriter = "^3.2.2"
 
 [package.source]
 type = "directory"
-url = "ext/crossbench"
+url = "../../../third_party/crossbench"
 
 [[package]]
 name = "google-auth"
@@ -579,6 +582,25 @@ files = [
 ]
 
 [[package]]
+name = "mobly"
+version = "1.12.4"
+description = "Automation framework for special end-to-end test cases"
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "mobly-1.12.4.tar.gz", hash = "sha256:c950bb66e2cbbfa533248dd70f2d4dd90e83cc6fcd501cd55219b6284d1e871e"},
+]
+
+[package.dependencies]
+portpicker = "*"
+pywin32 = {version = "*", markers = "platform_system == \"Windows\""}
+pyyaml = "*"
+
+[package.extras]
+testing = ["mock", "pytest", "pytz"]
+
+[[package]]
 name = "msgspec"
 version = "0.19.0"
 description = "A fast serialization and validation library, with builtin support for JSON, MessagePack, YAML, and TOML."
@@ -812,6 +834,21 @@ files = [
 protobuf = "*"
 
 [[package]]
+name = "portpicker"
+version = "1.6.0"
+description = "A library to choose unique available network ports."
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "portpicker-1.6.0-py3-none-any.whl", hash = "sha256:b2787a41404cf7edbe29b07b9e0ed863b09f2665dcc01c1eb0c2261c1e7d0755"},
+    {file = "portpicker-1.6.0.tar.gz", hash = "sha256:bd507fd6f96f65ee02781f2e674e9dc6c99bbfa6e3c39992e3916204c9d431fa"},
+]
+
+[package.dependencies]
+psutil = "*"
+
+[[package]]
 name = "protobuf"
 version = "4.25.6"
 description = ""
@@ -1039,6 +1076,33 @@ files = [
 ]
 
 [[package]]
+name = "pywin32"
+version = "310"
+description = "Python for Window Extensions"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "platform_system == \"Windows\""
+files = [
+    {file = "pywin32-310-cp310-cp310-win32.whl", hash = "sha256:6dd97011efc8bf51d6793a82292419eba2c71cf8e7250cfac03bba284454abc1"},
+    {file = "pywin32-310-cp310-cp310-win_amd64.whl", hash = "sha256:c3e78706e4229b915a0821941a84e7ef420bf2b77e08c9dae3c76fd03fd2ae3d"},
+    {file = "pywin32-310-cp310-cp310-win_arm64.whl", hash = "sha256:33babed0cf0c92a6f94cc6cc13546ab24ee13e3e800e61ed87609ab91e4c8213"},
+    {file = "pywin32-310-cp311-cp311-win32.whl", hash = "sha256:1e765f9564e83011a63321bb9d27ec456a0ed90d3732c4b2e312b855365ed8bd"},
+    {file = "pywin32-310-cp311-cp311-win_amd64.whl", hash = "sha256:126298077a9d7c95c53823934f000599f66ec9296b09167810eb24875f32689c"},
+    {file = "pywin32-310-cp311-cp311-win_arm64.whl", hash = "sha256:19ec5fc9b1d51c4350be7bb00760ffce46e6c95eaf2f0b2f1150657b1a43c582"},
+    {file = "pywin32-310-cp312-cp312-win32.whl", hash = "sha256:8a75a5cc3893e83a108c05d82198880704c44bbaee4d06e442e471d3c9ea4f3d"},
+    {file = "pywin32-310-cp312-cp312-win_amd64.whl", hash = "sha256:bf5c397c9a9a19a6f62f3fb821fbf36cac08f03770056711f765ec1503972060"},
+    {file = "pywin32-310-cp312-cp312-win_arm64.whl", hash = "sha256:2349cc906eae872d0663d4d6290d13b90621eaf78964bb1578632ff20e152966"},
+    {file = "pywin32-310-cp313-cp313-win32.whl", hash = "sha256:5d241a659c496ada3253cd01cfaa779b048e90ce4b2b38cd44168ad555ce74ab"},
+    {file = "pywin32-310-cp313-cp313-win_amd64.whl", hash = "sha256:667827eb3a90208ddbdcc9e860c81bde63a135710e21e4cb3348968e4bd5249e"},
+    {file = "pywin32-310-cp313-cp313-win_arm64.whl", hash = "sha256:e308f831de771482b7cf692a1f308f8fca701b2d8f9dde6cc440c7da17e47b33"},
+    {file = "pywin32-310-cp38-cp38-win32.whl", hash = "sha256:0867beb8addefa2e3979d4084352e4ac6e991ca45373390775f7084cc0209b9c"},
+    {file = "pywin32-310-cp38-cp38-win_amd64.whl", hash = "sha256:30f0a9b3138fb5e07eb4973b7077e1883f558e40c578c6925acc7a94c34eaa36"},
+    {file = "pywin32-310-cp39-cp39-win32.whl", hash = "sha256:851c8d927af0d879221e616ae1f66145253537bbdd321a77e8ef701b443a9a1a"},
+    {file = "pywin32-310-cp39-cp39-win_amd64.whl", hash = "sha256:96867217335559ac619f00ad70e513c0fcf84b8a3af9fc2bba3b59b97da70475"},
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 description = "YAML parser and emitter for Python"
@@ -1181,6 +1245,20 @@ files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
 ]
+
+[[package]]
+name = "snippet-uiautomator"
+version = "1.1.2"
+description = "A Python wrapper for Android UI Automator"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "snippet-uiautomator-1.1.2.tar.gz", hash = "sha256:b5eaa53daa20e38015fc20a43624625b7681e4aa8b1947caa8fbecb3a4349101"},
+]
+
+[package.dependencies]
+mobly = ">=1.12.2"
 
 [[package]]
 name = "sortedcontainers"
@@ -1499,7 +1577,19 @@ files = [
 [package.dependencies]
 h11 = ">=0.9.0,<1"
 
+[[package]]
+name = "xlsxwriter"
+version = "3.2.3"
+description = "A Python module for creating Excel XLSX files."
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "XlsxWriter-3.2.3-py3-none-any.whl", hash = "sha256:593f8296e8a91790c6d0378ab08b064f34a642b3feb787cf6738236bd0a4860d"},
+    {file = "xlsxwriter-3.2.3.tar.gz", hash = "sha256:ad6fd41bdcf1b885876b1f6b7087560aecc9ae5a9cc2ba97dcac7ab2e210d3d5"},
+]
+
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "96da4a738f00789aa10dda79f35ccca35382e54de16d204ec41938947bd19d35"
+content-hash = "db1b1a9e18854a71b317f8810151f7d1db5b9d286adcd3e9ca6c4e3e97b4518f"
