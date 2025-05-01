@@ -4,6 +4,15 @@
 {
   template: ./action-blocks/tab-stress-template.hjson
   args: {
+    POST_LOAD_ACTIONS: [
+      {
+        action: js
+        path: ./scripts/iframes.js
+        replacements: {
+          NUM_FRAMES: 5
+        }
+      }
+    ]
     PAGE_URL0: about:blank
     PAGE_URL1: about:blank
     PAGE_URL2: about:blank
