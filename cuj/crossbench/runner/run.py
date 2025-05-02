@@ -3,7 +3,19 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import logging
 import sys
+
+# This is the earliest entrypoint into the runner.
+# Try to import some simple crossbench package here to
+# check that crossbench is setup properly.
+try:
+  # pylint: disable=unused-import
+  from crossbench.types import Json
+except ImportError:
+  logging.error("Failed to import crossbench. "
+                "Have you run 'gclient sync' and 'poetry install'?")
+  sys.exit()
 
 from runner.cli import runner_cli
 
