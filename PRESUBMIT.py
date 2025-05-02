@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import platform
 
+import hjson
+
 USE_PYTHON3 = True
 
 
@@ -32,6 +34,24 @@ def CheckChange(input_api, output_api):
       output_api,
       source_file_filter=lambda x: input_api.FilterSourceFile(
           x, files_to_check=files_to_check))
+
+  # ---------------------------------------------------------------------------
+  # hjson:
+  # ---------------------------------------------------------------------------
+  bad_hjson_files = []
+
+  for hjson_file in input_api.AffectedSourceFiles(
+      lambda x: input_api.FilterSourceFile(x, files_to_check=[r".+\.hjson$"])):
+    try:
+      contents = input_api.ReadFile(hjson_file, "r")
+      hjson.loads(contents)
+    except ValueError:
+      bad_hjson_files.append(hjson_file)
+
+  if bad_hjson_files:
+    results.append(
+        output_api.PresubmitPromptWarning(
+            "Invalid hjson files:", items=bad_hjson_files))
 
   # ---------------------------------------------------------------------------
   # Pylint:
