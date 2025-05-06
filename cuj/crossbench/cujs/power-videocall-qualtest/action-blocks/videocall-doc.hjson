@@ -13,10 +13,20 @@
           target: _self
         }
         {
+          action: wait_for_condition
+          condition: return Array.from(document.getElementsByTagName('video')).every(v => v.currentTime >= 0.001)
+          timeout: 10s
+        }
+        {
           action: get
           url: $[DOCS_SIMULATOR_URL]
           ready_state: complete
           target: _new_window
+        }
+        {
+          action: wait_for_element
+          selector: textarea#text
+          timeout: 5s
         }
       ]
       actions: [
