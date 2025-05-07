@@ -40,6 +40,7 @@ use_relative_paths = True
 
 vars = {
   'crossbench_git': 'https://chromium.googlesource.com/crossbench',
+  'chromium_webpagereplay_git': 'https://chromium.googlesource.com/webpagereplay',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
 
@@ -47,6 +48,10 @@ vars = {
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
   'crossbench_revision': 'd76b1d0c71576fc907b06db38b5033963e80f341',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling webpagereplay
+  # and whatever else without interference from each other.
+  'webpagereplay_revision': '2c5049abfc2cf36ece82f7f84ebdcb786659eaf7',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -57,6 +62,10 @@ allowed_hosts = [
 
 deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
+  'third_party/webpagereplay': {
+    'url': Var('chromium_webpagereplay_git') + '@' + Var('webpagereplay_revision'),
+    'condition': 'not build_with_chromium',
+  }
 }
 
 
