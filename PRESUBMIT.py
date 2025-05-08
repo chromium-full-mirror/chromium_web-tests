@@ -5,9 +5,11 @@
 
 from __future__ import annotations
 
+import pathlib as pth
 import platform
+import subprocess
+from typing import List
 
-import hjson
 
 USE_PYTHON3 = True
 
@@ -38,20 +40,26 @@ def CheckChange(input_api, output_api):
   # ---------------------------------------------------------------------------
   # hjson:
   # ---------------------------------------------------------------------------
-  bad_hjson_files = []
-
-  for hjson_file in input_api.AffectedSourceFiles(
-      lambda x: input_api.FilterSourceFile(x, files_to_check=[r".+\.hjson$"])):
+  for hjson_file in AllHjsonFiles(input_api):
     try:
-      contents = input_api.ReadFile(hjson_file, "r")
-      hjson.loads(contents)
-    except ValueError:
-      bad_hjson_files.append(hjson_file)
+      formatted_contents: str = FormatHjsonFile(input_api, hjson_file)
+    except ValueError as e:
+      results.append(
+          output_api.PresubmitPromptWarning(
+              "Malformed hjson file:",
+              items=[str(hjson_file)],
+              long_text=str(e)))
+      continue
 
-  if bad_hjson_files:
-    results.append(
-        output_api.PresubmitPromptWarning(
-            "Invalid hjson files:", items=bad_hjson_files))
+    original_contents = input_api.ReadFile(str(hjson_file), "r")
+
+    if original_contents != formatted_contents:
+      results.append(
+          output_api.PresubmitPromptWarning(
+              "Unformatted hjson file:",
+              items=[str(hjson_file)],
+              long_text=f"Expected:\n{formatted_contents}"
+              f"Got:\n{original_contents}"))
 
   # ---------------------------------------------------------------------------
   # Pylint:
@@ -68,6 +76,35 @@ def CheckChange(input_api, output_api):
   # ---------------------------------------------------------------------------
   results += input_api.RunTests(tests)
   return results
+
+
+def AllHjsonFiles(input_api) -> List[pth.Path]:
+  hjson_files = []
+  for file in input_api.change.AllFiles():
+    if file.endswith(".hjson"):
+      hjson_files.append(pth.Path(input_api.change.RepositoryRoot()) / file)
+
+  return hjson_files
+
+
+def FormatHjsonFile(input_api, hjson_file: pth.Path) -> str:
+  node_bin = str(
+      pth.Path(input_api.change.RepositoryRoot()) /
+      "third_party/node/linux/node-linux-x64/bin/node")
+  hjson_js_bin = str(
+      pth.Path(input_api.change.RepositoryRoot()) /
+      "third_party/hjson_js/bin/hjson")
+
+  try:
+    return subprocess.run([
+        node_bin, hjson_js_bin, "-rt", "-sl", "-nocol", "-cond=0",
+        str(hjson_file)
+    ],
+                          check=True,
+                          capture_output=True).stdout.decode(encoding="utf-8")
+  except subprocess.CalledProcessError as e:
+    error = e.stderr.decode(encoding="utf=8")
+    raise ValueError(f"Failed to parse hjson file: {error}") from e
 
 
 def CheckChangeOnUpload(input_api, output_api):

@@ -41,6 +41,7 @@ use_relative_paths = True
 vars = {
   'crossbench_git': 'https://chromium.googlesource.com/crossbench',
   'chromium_webpagereplay_git': 'https://chromium.googlesource.com/webpagereplay',
+  'hjson_js_git': 'https://github.com/hjson/hjson-js.git',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
 
@@ -52,6 +53,10 @@ vars = {
   # the commit queue can handle CLs rolling webpagereplay
   # and whatever else without interference from each other.
   'webpagereplay_revision': '2c5049abfc2cf36ece82f7f84ebdcb786659eaf7',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling webpagereplay
+  # and whatever else without interference from each other.
+  'hjson_js_revision': '5734a70a17b94f12b59081aa6fdf966aac066b23',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -62,10 +67,25 @@ allowed_hosts = [
 
 deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
+  'third_party/hjson_js': Var('hjson_js_git') + '@' + Var('hjson_js_revision'),
   'third_party/webpagereplay': {
     'url': Var('chromium_webpagereplay_git') + '@' + Var('webpagereplay_revision'),
     'condition': 'not build_with_chromium',
-  }
+  },
+  'third_party/node/linux': {
+    'dep_type': 'gcs',
+    'condition': 'non_git_source',
+    'bucket': 'chromium-nodejs',
+    'objects': [
+        {
+            'object_name': 'fa98c6432de572206bc5519f85e9c96bd518b039',
+            'sha256sum': 'fb563633b5bfe2d4307075c54c6bb54664a3b5ec6bc811f5b15742720549007a',
+            'size_bytes': 50288755,
+            'generation': 1730835522207929,
+            'output_file': 'node-linux-x64.tar.gz',
+        },
+    ],
+  },
 }
 
 
