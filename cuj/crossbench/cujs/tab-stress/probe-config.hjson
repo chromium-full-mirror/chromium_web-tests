@@ -7,7 +7,11 @@
     TRACE_PROCESSOR_QUERIES: [
       {
         name: Total Renderers
-        sql: ./queries/total_renderers.sql
+        sql:
+          '''
+            include PERFETTO MODULE sql_packages.cujs.tab_stress.total_renderers;
+            SELECT * FROM total_rederers_output;
+          '''
       }
       {
         template: ../../common-metrics/uma_histogram_count.hjson

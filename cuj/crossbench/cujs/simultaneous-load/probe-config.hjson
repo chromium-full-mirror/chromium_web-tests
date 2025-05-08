@@ -7,11 +7,19 @@
     TRACE_PROCESSOR_QUERIES: [
       {
         name: Total Load Duration
-        sql: ./queries/total_load_duration.sql
+        sql:
+        '''
+          include PERFETTO MODULE sql_packages.cujs.simultaneous_load.total_load_duration;
+          SELECT * FROM total_load_duration_output;
+        '''
       }
       {
         name: Tab Load Durations
-        sql: ./queries/tab_load_durations.sql
+        sql:
+        '''
+          include PERFETTO MODULE sql_packages.cujs.simultaneous_load.total_load_duration;
+          SELECT * FROM tab_load_durations_output;
+        '''
       }
       ../../common-metrics/tab_open_latency.hjson
     ]

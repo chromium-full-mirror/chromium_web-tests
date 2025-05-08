@@ -9,9 +9,9 @@
   //  UNITS_IN_MS: Conversion from the histogram's units to ms. E.g. if the
   //    histogram logs in us, then 1000 because there are 1000 us in 1 ms.
   name: $[NAME]
-  sql: ../sql_packages/queries/uma_histogram_times.sql
-  replacements: {
-    METRIC_NAME: $[NAME]
-    UNITS_IN_MS: $[UNITS_IN_MS]
-  }
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_summaries;
+      SELECT * FROM uma_histogram_times_macro!('$[NAME]', $[UNITS_IN_MS]);
+    '''
 }

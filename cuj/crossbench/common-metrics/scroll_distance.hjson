@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: scroll_distance
-  sql: ../sql_packages/queries/scroll_distance.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.scroll_distance;
+      SELECT * FROM scroll_distance_output;
+    '''
 }

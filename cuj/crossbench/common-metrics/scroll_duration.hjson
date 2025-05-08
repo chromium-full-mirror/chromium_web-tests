@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: scroll_duration
-  sql: ../sql_packages/queries/scroll_duration.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.scroll_duration;
+      SELECT * FROM scroll_duration_output;
+    '''
 }

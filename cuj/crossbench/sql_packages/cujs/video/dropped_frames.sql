@@ -3,6 +3,8 @@
 -- found in the LICENSE file.
 INCLUDE PERFETTO MODULE sql_packages.web_tests_common.histograms;
 
+DROP TABLE IF EXISTS dropped_frames_output;
+CREATE PERFETTO TABLE dropped_frames_output AS
 select
   AVG(value) as 'avg_percent_dropped'
 from

@@ -7,7 +7,11 @@
     TRACE_PROCESSOR_QUERIES: [
       {
         name: LCP for page load and link clicks
-        sql: ./queries/lcp.sql
+        sql:
+          '''
+            INCLUDE PERFETTO MODULE sql_packages.cujs.page_click.output;
+            SELECT * FROM page_click_output;
+          '''
       }
     ]
     TRACE_PROCESSOR_MODULE_PATHS: [

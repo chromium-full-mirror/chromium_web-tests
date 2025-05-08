@@ -4,6 +4,8 @@
 include PERFETTO MODULE sql_packages.page_load.page_load_start_end_by_iteration;
 
 -- Output tab load duration for each tab.
+DROP TABLE IF EXISTS tab_load_durations_output;
+CREATE PERFETTO TABLE tab_load_durations_output AS
 select
   id,
   it_id,

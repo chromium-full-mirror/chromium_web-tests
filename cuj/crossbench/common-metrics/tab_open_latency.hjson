@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: Tab Open Latency
-  sql: ../sql_packages/queries/tab_open_latency.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.tab_open_latency;
+      SELECT * FROM tab_open_latency_output;
+    '''
 }

@@ -35,6 +35,9 @@ from
 where
   name = 'lmk_kill_occurred';
 
+drop view if exists lmk_kill_list_output;
+create view
+  lmk_kill_list_output as
 select
   iterations.id as it_id,
   lmk_kill_occurred.*

@@ -1,3 +1,6 @@
+-- Copyright 2025 The Chromium Authors
+-- Use of this source code is governed by a BSD-style license that can be
+-- found in the LICENSE file.
 DROP VIEW IF EXISTS all_started;
 CREATE VIEW all_started AS
 SELECT  -- The last of the first compress events
@@ -14,7 +17,8 @@ FROM (
   GROUP BY track_id
 );
 
-
+DROP TABLE IF EXISTS cpu_stress_output;
+CREATE PERFETTO TABLE cpu_stress_output AS
 SELECT
   SUM(CASE WHEN ever_hidden = 0 THEN size END)  / 1048576.0 as foreground_size,
   AVG(CASE WHEN ever_hidden = 0 THEN size / duration END) / 1048576.0 as foreground_throughput,
@@ -37,4 +41,4 @@ FROM (
       AND category = 'blink.user_timing'
       AND name = 'compress'
   )
-)
+);

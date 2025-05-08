@@ -1,6 +1,10 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
+DROP TABLE IF EXISTS cpu_usage_stat_output;
+
+CREATE PERFETTO TABLE cpu_usage_stat_output
+AS
 WITH
   cpu_time_table AS (
     SELECT

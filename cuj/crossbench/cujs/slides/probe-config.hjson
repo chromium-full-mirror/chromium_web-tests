@@ -52,7 +52,6 @@
         template: ../../common-metrics/uma_histogram_enum.hjson
         args: {
           NAME: Viz.DisplayCompositor.OverlayStrategy
-          TABLE: ('kUnknown', 0), ('kNoStrategyUsed', 1), ('kFullscreen', 2), ('kSingleOnTop', 3)
         }
       }
     ]

@@ -55,6 +55,8 @@ where
 
 -- Get the time difference of the first page load starts
 -- and last page load ends for each iteration
+DROP TABLE IF EXISTS total_load_duration_output;
+CREATE PERFETTO TABLE total_load_duration_output AS
 select
   first_page_load_starts.it_id,
   (

@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: lmk_kills
-  sql: ../sql_packages/queries/lmk_kill_list.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.lmk_kill_list;
+      SELECT * FROM lmk_kill_list_output;
+    '''
 }

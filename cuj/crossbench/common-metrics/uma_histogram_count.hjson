@@ -5,8 +5,9 @@
   // Extracts metrics from one histogram logged with the UMA_HISTOGRAM_COUNT
   // macro.
   name: $[NAME]
-  sql: ../sql_packages/queries/uma_histogram_count.sql
-  replacements: {
-    METRIC_NAME: $[NAME]
-  }
+  sql:
+  '''
+    INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_summaries;
+    SELECT * FROM uma_histogram_count_macro!('$[NAME]');
+  '''
 }

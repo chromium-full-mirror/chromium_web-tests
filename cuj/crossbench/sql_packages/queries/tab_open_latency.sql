@@ -7,6 +7,8 @@ include PERFETTO MODULE sql_packages.page_load.page_load_start_by_iteration;
 -- previous page_load_start for each iteration.
 -- Note that this query will output NULL for the first tab of each
 -- iteration since there is no previous tab to compare against.
+DROP TABLE IF EXISTS tab_open_latency_output;
+CREATE PERFETTO TABLE tab_open_latency_output AS
 select
   id,
   (
@@ -21,4 +23,4 @@ from
   page_load_start_by_iteration
 order by
   it_id,
-  id
+  id;

@@ -7,7 +7,11 @@
     TRACE_PROCESSOR_QUERIES: [
       {
         name: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
-        sql: ./queries/dropped_frames.sql
+        sql:
+          '''
+            INCLUDE PERFETTO MODULE sql_packages.cujs.video.dropped_frames;
+            SELECT * FROM dropped_frames_output;
+          '''
       }
     ]
     TRACE_PROCESSOR_MODULE_PATHS: [

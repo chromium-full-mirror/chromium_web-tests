@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: comment_opened
-  sql: ../sql_packages/queries/comment_opened.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.comment_opened;
+      SELECT * FROM comment_opened_output;
+    '''
 }

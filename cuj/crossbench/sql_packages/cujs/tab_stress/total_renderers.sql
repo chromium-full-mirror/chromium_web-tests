@@ -35,6 +35,8 @@ from
   join renderer_created on renderer_created.ts >= iterations.start
   and renderer_created.ts <= iterations.end;
 
+DROP TABLE IF EXISTS total_renderers_output;
+CREATE PERFETTO TABLE total_renderers_output AS
 select
   it_id,
   count(*) as total_renderers

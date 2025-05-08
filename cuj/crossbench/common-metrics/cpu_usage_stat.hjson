@@ -3,5 +3,9 @@
 // found in the LICENSE file.
 {
   name: cpu_usage_stat
-  sql: ../sql_packages/queries/cpu_usage_stat.sql
+  sql:
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.cpu_usage_stat;
+      SELECT * FROM cpu_usage_stat_output;
+    '''
 }

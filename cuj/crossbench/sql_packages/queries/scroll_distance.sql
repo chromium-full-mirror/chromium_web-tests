@@ -1,6 +1,10 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
+DROP TABLE IF EXISTS scroll_distance_output;
+
+CREATE PERFETTO TABLE scroll_distance_output
+AS
 SELECT
   (
     SELECT
@@ -12,4 +16,4 @@ SELECT
       slice.name = 'scroll-end'
       AND key = 'debug.data.detail'
       AND value_type = 'string'
-  ) AS distance_px
+  ) AS distance_px;
