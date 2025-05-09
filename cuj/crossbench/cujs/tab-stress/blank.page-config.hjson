@@ -4,7 +4,6 @@
 {
   template: ./action-blocks/tab-stress-template.hjson
   args: {
-    POST_LOAD_ACTIONS: []
     PAGE_URL0: about:blank
     PAGE_URL1: about:blank
     PAGE_URL2: about:blank

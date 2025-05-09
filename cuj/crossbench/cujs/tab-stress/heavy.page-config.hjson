@@ -4,7 +4,6 @@
 {
   template: ./action-blocks/tab-stress-template.hjson
   args: {
-    POST_LOAD_ACTIONS: []
     PAGE_URL0: https://html.spec.whatwg.org/
     PAGE_URL1: https://html.spec.whatwg.org/
     PAGE_URL2: https://html.spec.whatwg.org/

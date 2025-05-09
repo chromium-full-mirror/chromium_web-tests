@@ -29,7 +29,6 @@
       timeout: $[PAGE_LOAD_TIMEOUT]
       target: $[TARGET]
     }
-    $[...POST_LOAD_ACTIONS]
     {
       action: switch_tab
       url: data:text

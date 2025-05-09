@@ -11,7 +11,6 @@
     }
     unbound_args: [
       PAGE_URL0
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]1": {
@@ -23,7 +22,6 @@
     }
     unbound_args: [
       PAGE_URL1
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]2": {
@@ -35,7 +33,6 @@
     }
     unbound_args: [
       PAGE_URL2
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]3": {
@@ -47,7 +44,6 @@
     }
     unbound_args: [
       PAGE_URL3
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]4": {
@@ -59,7 +55,6 @@
     }
     unbound_args: [
       PAGE_URL4
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]5": {
@@ -71,7 +66,6 @@
     }
     unbound_args: [
       PAGE_URL5
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]6": {
@@ -83,7 +77,6 @@
     }
     unbound_args: [
       PAGE_URL6
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]7": {
@@ -95,7 +88,6 @@
     }
     unbound_args: [
       PAGE_URL7
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]8": {
@@ -107,7 +99,6 @@
     }
     unbound_args: [
       PAGE_URL8
-      POST_LOAD_ACTIONS
     ]
   }
   "tab-stress-$[ITER_COUNT]9": {
@@ -119,7 +110,6 @@
     }
     unbound_args: [
       PAGE_URL9
-      POST_LOAD_ACTIONS
     ]
   }
 }
