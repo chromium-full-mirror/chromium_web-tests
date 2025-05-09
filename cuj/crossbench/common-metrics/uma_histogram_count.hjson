@@ -6,8 +6,8 @@
   // macro.
   name: $[NAME]
   sql:
-  '''
-    INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_summaries;
-    SELECT * FROM uma_histogram_count_macro!('$[NAME]');
-  '''
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_summaries;
+      SELECT * FROM uma_histogram_count_macro!('$[NAME]');
+    '''
 }

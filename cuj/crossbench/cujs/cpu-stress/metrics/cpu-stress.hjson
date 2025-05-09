@@ -4,8 +4,8 @@
 {
   name: cpu_stress
   sql:
-  '''
-    INCLUDE PERFETTO MODULE sql_packages.cujs.cpu_stress.output;
-    SELECT * FROM cpu_stress_output;
-  '''
+    '''
+      INCLUDE PERFETTO MODULE sql_packages.cujs.cpu_stress.output;
+      SELECT * FROM cpu_stress_output;
+    '''
 }

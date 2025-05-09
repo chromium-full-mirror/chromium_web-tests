@@ -4,7 +4,7 @@
 {
   pages: {
     Video-Doc: {
-    playback: $[TOTAL_DURATION]
+      playback: $[TOTAL_DURATION]
       setup: [
         {
           action: get
@@ -56,7 +56,11 @@
         }
         {
           action: text_input
-          text: "1234567894\n"
+          text:
+            '''
+            1234567894
+
+            '''
           duration: $[NOTE_DURATION]
           source: keyboard
         }
@@ -86,7 +90,11 @@
         }
         {
           action: text_input
-          text: "1234567899\n"
+          text:
+            '''
+            1234567899
+
+            '''
           duration: $[NOTE_DURATION]
           source: keyboard
         }
