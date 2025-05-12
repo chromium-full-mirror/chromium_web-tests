@@ -20,7 +20,7 @@
     // due to other reasons (e.g. certificate error, offline, connection timeout, etc.)
     {
       action: wait_for_condition
-      condition: 'return document.getElementsByClassName("interstitial-wrapper").length != 1'
+      condition: return document.getElementsByClassName("interstitial-wrapper").length != 1
       timeout: 5s
     }
     {
