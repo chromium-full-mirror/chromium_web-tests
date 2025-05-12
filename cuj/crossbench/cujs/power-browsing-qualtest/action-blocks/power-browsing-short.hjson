@@ -1,0 +1,157 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  pages: {
+    page-load-and-scroll-1: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_1]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-2: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_2]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-3: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_3]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-4: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_4]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-5: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_5]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-6: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_6]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-7: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_7]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-8: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_8]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-9: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_9]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+    page-load-and-scroll-10: {
+      blocks: {
+        template: ./page-load-and-short-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]$[PAGE_10]
+        }
+        unbound_args: [
+          SCROLL_DISTANCE
+          WAIT_DURATION
+          SCROLL_DURATION
+          PAGE_LOAD_TIMEOUT
+          SCROLL_SOURCE
+        ]
+      }
+    }
+  }
+}

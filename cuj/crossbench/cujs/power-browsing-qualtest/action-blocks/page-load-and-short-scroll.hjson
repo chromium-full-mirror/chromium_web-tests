@@ -1,0 +1,56 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  page-load: {
+    actions: [
+      {
+        action: get
+        url: $[PAGE_URL]
+        ready_state: interactive
+        timeout: $[PAGE_LOAD_TIMEOUT]
+        target: _self
+      }
+    ]
+  }
+  scroll: {
+    actions: [
+      {
+        action: js
+        script: performance.mark('scroll-start');
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: $[SCROLL_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: scroll
+        distance: -$[SCROLL_DISTANCE]
+        duration: $[SCROLL_DURATION]
+        source: $[SCROLL_SOURCE]
+      }
+      {
+        action: wait
+        duration: $[WAIT_DURATION]
+      }
+      {
+        action: js
+        script:
+          '''
+          performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
+          performance.measure('scroll-duration', 'scroll-start', 'scroll-end');
+          '''
+      }
+    ]
+  }
+}
