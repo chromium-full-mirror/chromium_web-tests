@@ -7,7 +7,6 @@
     TRACE_PROCESSOR_QUERIES: [
       metrics/cpu-stress.hjson
     ]
-    TRACE_PROCESSOR_MODULE_PATHS: []
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
 }

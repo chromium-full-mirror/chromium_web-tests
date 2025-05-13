@@ -7,7 +7,9 @@
     dump_html: {}
     trace_processor: {
       queries: $[TRACE_PROCESSOR_QUERIES]
-      module_paths: $[TRACE_PROCESSOR_MODULE_PATHS]
+      module_paths: [
+        ./sql_packages
+      ]
     }
     perfetto: {
       textproto: $[TRACE_CONFIG]

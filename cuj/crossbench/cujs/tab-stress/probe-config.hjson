@@ -29,9 +29,6 @@
       ../../common-metrics/lmk_kill_count.hjson
       ../../common-metrics/tab_open_latency.hjson
     ]
-    TRACE_PROCESSOR_MODULE_PATHS: [
-      ../../sql_packages
-    ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
 }
