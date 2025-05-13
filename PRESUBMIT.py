@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-import pathlib as pth
+from pathlib import Path
 import platform
 import subprocess
 from typing import List
@@ -58,8 +58,10 @@ def CheckChange(input_api, output_api):
           output_api.PresubmitPromptWarning(
               "Unformatted hjson file:",
               items=[str(hjson_file)],
-              long_text=f"Expected:\n{formatted_contents}"
-              f"Got:\n{original_contents}"))
+              long_text=(
+                  "Run format_hjson.py to automatically fix this error.\n"
+                  f"Expected:\n{formatted_contents}"
+                  f"Got:\n{original_contents}")))
 
   # ---------------------------------------------------------------------------
   # Pylint:
@@ -78,21 +80,21 @@ def CheckChange(input_api, output_api):
   return results
 
 
-def AllHjsonFiles(input_api) -> List[pth.Path]:
+def AllHjsonFiles(input_api) -> List[Path]:
   hjson_files = []
   for file in input_api.change.AllFiles():
     if file.endswith(".hjson"):
-      hjson_files.append(pth.Path(input_api.change.RepositoryRoot()) / file)
+      hjson_files.append(Path(input_api.change.RepositoryRoot()) / file)
 
   return hjson_files
 
 
-def FormatHjsonFile(input_api, hjson_file: pth.Path) -> str:
+def FormatHjsonFile(input_api, hjson_file: Path) -> str:
   node_bin = str(
-      pth.Path(input_api.change.RepositoryRoot()) /
+      Path(input_api.change.RepositoryRoot()) /
       "third_party/node/linux/node-linux-x64/bin/node")
   hjson_js_bin = str(
-      pth.Path(input_api.change.RepositoryRoot()) /
+      Path(input_api.change.RepositoryRoot()) /
       "third_party/hjson_js/bin/hjson")
 
   try:
