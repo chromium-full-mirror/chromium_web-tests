@@ -14,15 +14,15 @@
     PAGE_URL7: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
     PAGE_URL8: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
     PAGE_URL9: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET0: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET1: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET2: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET3: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET4: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET5: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET6: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET7: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET8: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET9: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
+    SWITCH_TARGET0: .*frame-container.*
+    SWITCH_TARGET1: .*frame-container.*
+    SWITCH_TARGET2: .*frame-container.*
+    SWITCH_TARGET3: .*frame-container.*
+    SWITCH_TARGET4: .*frame-container.*
+    SWITCH_TARGET5: .*frame-container.*
+    SWITCH_TARGET6: .*frame-container.*
+    SWITCH_TARGET7: .*frame-container.*
+    SWITCH_TARGET8: .*frame-container.*
+    SWITCH_TARGET9: .*frame-container.*
   }
 }
