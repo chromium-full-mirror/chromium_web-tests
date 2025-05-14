@@ -5,7 +5,23 @@
   pages: {
     CPU-Stress: {
       blocks: {
-        startup: ./startup.hjson
+        startup: {
+          actions: [
+            {
+              action: get
+              url: http://localhost:8000/cpu-stress.html
+              ready_state: complete
+            }
+            {
+              action: js
+              timeout: $[CPU_STRESS_STARTUP_TIMEOUT]
+              path: ./scripts/cpu-stress.js
+              replacements: {
+                "$[[NUM_TABS]": $[NUM_TABS]
+              }
+            }
+          ]
+        }
         wait: {
           actions: [
             {
