@@ -6,9 +6,17 @@
     Meet-Camera: {
       login: google
       blocks: {
-        start-new-meeting: ../../../common-action-blocks/meet/start-new-meeting.hjson
-        wait-for-camera-start: ../../../common-action-blocks/meet/wait-camera-start.hjson
-        dismiss-popups: ../../../common-action-blocks/meet/dismiss-popups.hjson
+        meet-setup: {
+          args: {
+            CLICK_INPUT_SOURCE: touch
+            TTL_SECS: 120
+            POST_CREATION_ACTIONS: []
+          }
+          unbound_args: [
+            NUM_OF_BOTS
+          ]
+          template: ../../../common-action-blocks/meet/meet-setup.hjson
+        }
         wait: {
           actions: [
             {
