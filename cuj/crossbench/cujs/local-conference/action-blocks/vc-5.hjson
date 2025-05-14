@@ -4,10 +4,31 @@
 {
   pages: {
     WebRTC: {
-      blocks: {
-        start-meeting: ./start-meeting.hjson
-        measure-performance: ./measure-webrtc-perf.hjson
-      }
+      actions: [
+        {
+          action: get
+          url: http://127.0.0.1:8000/video_conference.html
+          ready_state: complete
+        }
+        {
+          action: js
+          script:
+            '''
+            await VC.startCamera();
+            await VC.micOn();
+            await VC.showCameraPreview();
+            await VC.holdCall($[NUM_PEOPLE], false);
+            '''
+        }
+        {
+          action: js
+          path: ./scripts/measure-webrtc-perf.js
+          timeout: 2m
+          replacements: {
+            "$[[NUM_PEOPLE]": $[NUM_PEOPLE]
+          }
+        }
+      ]
     }
   }
 }
