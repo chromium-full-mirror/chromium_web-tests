@@ -49,6 +49,7 @@ def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
   parser.add_argument(
       "--variants", type=ObjectParser.non_empty_str, default=".*")
   parser.add_argument("--debug", action="store_true", default=False)
+  parser.add_argument("--dry-run", action="store_true", default=False)
 
   parsed = parser.parse_args(argv)
 
@@ -74,11 +75,14 @@ def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
       variants_regex=re.compile(parsed.variants),
       results_path=run_results_path,
       web_tests_root=web_tests_root,
-      debug=parsed.debug)
+      debug=parsed.debug,
+      dry_run=parsed.dry_run)
 
 
 def runner_cli(argv: List[str]) -> None:
   logging.getLogger().setLevel(logging.INFO)
+
+  failed_tests: List[str] = []
 
   run_config = get_run_config_from_args(argv)
 
@@ -89,27 +93,28 @@ def runner_cli(argv: List[str]) -> None:
         benchmark_path.name):
       continue
 
-    try:
-      run_benchmark(
-          benchmark_path=benchmark_path,
-          run_config=run_config,
-      )
-    # pylint: disable=broad-exception-caught
-    except Exception as e:
-      logging.error("Failed to run crossbench benchmark %s: %s", benchmark_path,
-                    e)
+    failed_benchmarks = run_benchmark(
+        benchmark_path=benchmark_path,
+        run_config=run_config,
+    )
+
+    failed_tests.extend(failed_benchmarks)
 
   for cuj_path in (run_config.web_tests_root / "cuj/crossbench/cujs").iterdir():
 
     if not cuj_path.is_dir() or not run_config.tests_regex.match(cuj_path.name):
       continue
 
-    try:
-      run_cuj(
-          cuj_path=cuj_path,
-          run_config=run_config,
-      )
-    # pylint: disable=broad-exception-caught
-    except Exception as e:
-      logging.error("Failed to run crossbench for test %s: %s", cuj_path, e)
-      pass
+    failed_cujs = run_cuj(
+        cuj_path=cuj_path,
+        run_config=run_config,
+    )
+
+    failed_tests.extend(failed_cujs)
+
+  if failed_tests:
+    for failed_test in failed_tests:
+      logging.error("Test failed: %s", failed_test)
+    sys.exit(1)
+
+  sys.exit(0)

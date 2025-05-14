@@ -21,6 +21,7 @@ def execute_crossbench(
     browser_config: str,
     additional_crossbench_args: str,
     debug: bool,
+    dry_run: bool,
     results_path: Path,
     playback: Optional[str] = None,
     page_config_file: Optional[Path] = None,
@@ -57,6 +58,11 @@ def execute_crossbench(
 
     if debug:
       crossbench_args.append("--debug")
+
+    if dry_run:
+      crossbench_args.append("--dry-run")
+      crossbench_args.append("--env-validation")
+      crossbench_args.append("skip")
 
     crossbench_args.append("--throw")
 
@@ -190,7 +196,7 @@ def get_additional_crossbench_args(test_path: Path,
 def run_benchmark(
     benchmark_path: Path,
     run_config: WebTestsRunConfig,
-) -> None:
+) -> List[str]:
   benchmark_name: str = benchmark_path.name
   benchmark_results_path: Path = run_config.results_path / benchmark_name
   probe_config_file: Path = benchmark_path / "probe-config.hjson"
@@ -208,19 +214,25 @@ def run_benchmark(
         additional_crossbench_args=get_additional_crossbench_args(
             benchmark_path, run_config.web_tests_root),
         debug=run_config.debug,
+        dry_run=run_config.dry_run,
         results_path=benchmark_results_path,
     )
   # pylint: disable=broad-exception-caught
   except Exception as e:
     logging.error(e)
     logging.error("Crossbench invocation for %s failed.", benchmark_name)
+    return [benchmark_name]
+
+  return []
 
 
 def run_cuj(
     cuj_path: Path,
     run_config: WebTestsRunConfig,
-) -> None:
+) -> List[str]:
   cuj_name: str = cuj_path.name
+
+  failed_cujs: List[str] = []
 
   for config_file in cuj_path.iterdir():
     filename: str = config_file.name
@@ -264,6 +276,7 @@ def run_cuj(
           additional_crossbench_args=get_additional_crossbench_args(
               cuj_path, run_config.web_tests_root, cuj_variant),
           debug=run_config.debug,
+          dry_run=run_config.dry_run,
           results_path=variant_results_path,
           playback=run_config.playback,
           page_config_file=page_config_file,
@@ -273,3 +286,6 @@ def run_cuj(
     except Exception as e:
       logging.error(e)
       logging.error("Crossbench invocation for %s failed.", full_cuj_name)
+      failed_cujs.append(full_cuj_name)
+
+  return failed_cujs

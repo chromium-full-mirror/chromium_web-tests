@@ -64,6 +64,20 @@ def CheckChange(input_api, output_api):
                   f"Got:\n{original_contents}")))
 
   # ---------------------------------------------------------------------------
+  # crossbench:
+  # ---------------------------------------------------------------------------
+  dry_run_py_path = str(
+      Path(input_api.change.RepositoryRoot()) / "crossbench_dry_run.py")
+  tests.append(
+      input_api.Command(
+          name="crossbench dry run",
+          cmd=[input_api.python3_executable, dry_run_py_path],
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=True,
+      ))
+
+  # ---------------------------------------------------------------------------
   # Pylint:
   # ---------------------------------------------------------------------------
   tests += input_api.canned_checks.GetPylint(
