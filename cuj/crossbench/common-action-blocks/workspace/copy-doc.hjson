@@ -36,9 +36,13 @@
         scroll_into_view: true
         wait: true
       }
-      verify: "[aria-modal='true'] input[type='text']:focus"
       source: $[CLICK_INPUT_SOURCE]
       timeout: 15s
+    }
+    $[...AFTER_MAKE_COPY_CLICK_ACTIONS]
+    {
+      action: wait_for_element
+      selector: "[aria-modal='true'] input[type='text']:focus"
     }
     {
       action: text_input
