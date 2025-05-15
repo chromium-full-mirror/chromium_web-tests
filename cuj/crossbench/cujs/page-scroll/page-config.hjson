@@ -2,14 +2,326 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/page-scroll.hjson
   args: {
     // SCROLL args
-    SCROLL_DISTANCE: "300"
+    SCROLL_DISTANCE: 300
     SCROLL_DURATION: 0.5s
     SCROLL_SOURCE: touch
     // PAGE args
     PAGE_LOAD_TIMEOUT: 2m
-    PAGE_TARGET: _self
+  }
+  template: {
+    pages: {
+      page-load-and-scroll-1: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_product.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-2: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-3: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-4: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/ebay.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-5: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/google.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-6: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-7: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/weather.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-8: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-9: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-10: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-11: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_product.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-12: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-13: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-14: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/ebay.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-15: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/google.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-16: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-17: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/weather.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-18: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-19: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      page-load-and-scroll-20: {
+        blocks: {
+          template: ./action-blocks/page-load-and-scroll.hjson
+          args: {
+            PAGE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_LOAD_TIMEOUT
+            SCROLL_DISTANCE
+            SCROLL_SOURCE
+            SCROLL_DURATION
+          ]
+        }
+      }
+      navigate-to-blank: {
+        blocks: {
+          navigate-to-blank: {
+            args: {
+              PRE_NAVIGATE_ACTIONS: []
+            }
+            template: ../../common-action-blocks/basic/navigate-to-blank.hjson
+          }
+        }
+      }
+    }
   }
 }

@@ -2,16 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  page-load: {
-    actions: [
-      {
-        action: get
-        url: $[PAGE_URL]
-        ready_state: complete
-        timeout: $[PAGE_LOAD_TIMEOUT]
-        target: $[TARGET]
-      }
-    ]
-  }
-  scroll: ../../../common-action-blocks/basic/scroll-no-selector.hjson
+  page-load: ../../../common-action-blocks/basic/page-load.hjson
+  scroll: ../../../common-action-blocks/basic/scroll-entire-page.hjson
 }
