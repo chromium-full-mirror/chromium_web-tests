@@ -8,7 +8,7 @@
       setup: [
         {
           action: get
-          url: $[MEET_SIMULATOR_URL]
+          url: https://storage.googleapis.com/chromiumos-test-assets-public/power_VideoCall/power_VideoCall.webrtc.html?preset=high
           ready_state: complete
           target: _self
         }
@@ -19,7 +19,7 @@
         }
         {
           action: get
-          url: $[DOCS_SIMULATOR_URL]
+          url: https://storage.googleapis.com/chromiumos-test-assets-public/power_VideoCall/power_VideoCall_doc.html
           ready_state: complete
           target: _new_window
         }
@@ -29,76 +29,81 @@
           timeout: 5s
         }
       ]
-      actions: [
-        {
-          action: text_input
-          text: "1234567890 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
+      actions: {
+        args: {
+          NOTE_DURATION: 6s
         }
-        {
-          action: text_input
-          text: "1234567891 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567892 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567893 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text:
-            '''
-            1234567894
+        template: [
+          {
+            action: text_input
+            text: "1234567890 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567891 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567892 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567893 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text:
+              '''
+              1234567894
 
-            '''
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567895 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567896 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567897 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text: "1234567898 "
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-        {
-          action: text_input
-          text:
-            '''
-            1234567899
+              '''
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567895 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567896 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567897 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text: "1234567898 "
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+          {
+            action: text_input
+            text:
+              '''
+              1234567899
 
-            '''
-          duration: $[NOTE_DURATION]
-          source: keyboard
-        }
-      ]
+              '''
+            duration: $[NOTE_DURATION]
+            source: keyboard
+          }
+        ]
+      }
     }
   }
 }
