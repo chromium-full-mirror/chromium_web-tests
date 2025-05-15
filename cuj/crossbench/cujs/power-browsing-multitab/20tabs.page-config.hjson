@@ -1,0 +1,235 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  args: {
+    // PAGE args
+    REDIRECT_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/v2_config/redirect.html
+    VERSION: 2023-08-09
+    URL_PREFIX: $[REDIRECT_URL]?ver=$[VERSION]&dest=
+  }
+  template: {
+    pages: {
+      page-scroll-1: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]amazon_product
+          TARGET: _self
+          TAB_INDEX: 0
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-2: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]amazon_search
+          TARGET: _new_tab
+          TAB_INDEX: 1
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-3: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]apple
+          TARGET: _new_tab
+          TAB_INDEX: 2
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-4: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]ebay
+          TARGET: _new_tab
+          TAB_INDEX: 3
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-5: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]google
+          TARGET: _new_tab
+          TAB_INDEX: 4
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-6: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]imdb
+          TARGET: _new_tab
+          TAB_INDEX: 5
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-7: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]weather
+          TARGET: _new_tab
+          TAB_INDEX: 6
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-8: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]office
+          TARGET: _new_tab
+          TAB_INDEX: 7
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-9: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]stackoverflow
+          TARGET: _new_tab
+          TAB_INDEX: 8
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-10: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]wikipedia
+          TARGET: _new_tab
+          TAB_INDEX: 9
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-11: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]amazon_search
+          TARGET: _new_tab
+          TAB_INDEX: 10
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-12: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]apple
+          TARGET: _new_tab
+          TAB_INDEX: 11
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-13: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]bbc
+          TARGET: _new_tab
+          TAB_INDEX: 12
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-14: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]google
+          TARGET: _new_tab
+          TAB_INDEX: 13
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-15: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]live
+          TARGET: _new_tab
+          TAB_INDEX: 14
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-16: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]samsung
+          TARGET: _new_tab
+          TAB_INDEX: 15
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-17: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]wattpad
+          TARGET: _new_tab
+          TAB_INDEX: 16
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-18: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]wikipedia
+          TARGET: _new_tab
+          TAB_INDEX: 17
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-19: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]yahoo
+          TARGET: _new_tab
+          TAB_INDEX: 18
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+      page-scroll-20: {
+        template: ./action-blocks/switch-tab-and-page-scroll.hjson
+        args: {
+          PAGE_URL: $[URL_PREFIX]yelp
+          TARGET: _new_tab
+          TAB_INDEX: 19
+        }
+        unbound_args: [
+          URL_PREFIX
+        ]
+      }
+    }
+  }
+}
