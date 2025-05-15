@@ -4,25 +4,18 @@
 {
   template: ./action-blocks/power-browsing-short.hjson
   args: {
-    // SCROLL args
-    SCROLL_DISTANCE: 600
-    SCROLL_DURATION: 0.5s
-    SCROLL_SOURCE: js
-    WAIT_DURATION: 20s
-    // PAGE args
-    PAGE_LOAD_TIMEOUT: 2m
     REDIRECT_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/v2_config/redirect.html
     VERSION: 2023-08-09
     URL_PREFIX: $[REDIRECT_URL]?ver=$[VERSION]&dest=
-    PAGE_1: amazon_product
-    PAGE_2: amazon_search
-    PAGE_3: apple
-    PAGE_4: ebay
-    PAGE_5: google
-    PAGE_6: imdb
-    PAGE_7: weather
-    PAGE_8: office
-    PAGE_9: stackoverflow
-    PAGE_10: wikipedia
+    PAGE_1: $[URL_PREFIX]amazon_search
+    PAGE_2: $[URL_PREFIX]apple
+    PAGE_3: $[URL_PREFIX]bbc
+    PAGE_4: $[URL_PREFIX]google
+    PAGE_5: $[URL_PREFIX]live
+    PAGE_6: $[URL_PREFIX]samsung
+    PAGE_7: $[URL_PREFIX]wattpad
+    PAGE_8: $[URL_PREFIX]wikipedia
+    PAGE_9: $[URL_PREFIX]yahoo
+    PAGE_10: $[URL_PREFIX]yelp
   }
 }

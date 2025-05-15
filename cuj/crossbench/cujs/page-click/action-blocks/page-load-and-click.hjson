@@ -2,7 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  page-load: ../../../common-action-blocks/basic/page-load.hjson
+  page-load: {
+    template: ../../../common-action-blocks/basic/page-load.hjson
+    args: {
+      READY_STATE: complete
+      PAGE_LOAD_TIMEOUT: 3m
+    }
+    unbound_args: [
+      PAGE_URL
+      TARGET
+    ]
+  }
   click-link: [
     {
       action: js
@@ -21,7 +31,7 @@
     {
       action: wait_for_ready_state
       ready_state: complete
-      timeout: $[PAGE_LOAD_TIMEOUT]
+      timeout: 3m
     }
     {
       action: js

@@ -7,14 +7,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_1]
+          PAGE_URL: $[PAGE_1]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_1
         ]
       }
     }
@@ -22,14 +18,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_2]
+          PAGE_URL: $[PAGE_2]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_2
         ]
       }
     }
@@ -37,14 +29,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_3]
+          PAGE_URL: $[PAGE_3]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_3
         ]
       }
     }
@@ -52,14 +40,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_4]
+          PAGE_URL: $[PAGE_4]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_4
         ]
       }
     }
@@ -67,14 +51,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_5]
+          PAGE_URL: $[PAGE_5]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_5
         ]
       }
     }
@@ -82,14 +62,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_6]
+          PAGE_URL: $[PAGE_6]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_6
         ]
       }
     }
@@ -97,14 +73,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_7]
+          PAGE_URL: $[PAGE_7]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_7
         ]
       }
     }
@@ -112,14 +84,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_8]
+          PAGE_URL: $[PAGE_8]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_8
         ]
       }
     }
@@ -127,14 +95,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_9]
+          PAGE_URL: $[PAGE_9]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_9
         ]
       }
     }
@@ -142,14 +106,10 @@
       blocks: {
         template: ./page-load-and-short-scroll.hjson
         args: {
-          PAGE_URL: $[URL_PREFIX]$[PAGE_10]
+          PAGE_URL: $[PAGE_10]
         }
         unbound_args: [
-          SCROLL_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_10
         ]
       }
     }

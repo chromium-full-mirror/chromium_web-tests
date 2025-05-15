@@ -4,15 +4,6 @@
 {
   template: ./action-blocks/power-browsing.hjson
   args: {
-    // SCROLL args
-    SCROLL_DOWN_DISTANCE: 600
-    SCROLL_UP_DISTANCE: -600
-    SCROLL_DURATION: 2.5s
-    SCROLL_SOURCE: js
-    WAIT_DURATION: 20s
-    //PAGE args
-    PAGE_TARGET: _self
-    PAGE_LOAD_TIMEOUT: 2m
     //Cached page urls
     PAGE_URL_1: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/amazon_search.html
     PAGE_URL_2: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/apple.html

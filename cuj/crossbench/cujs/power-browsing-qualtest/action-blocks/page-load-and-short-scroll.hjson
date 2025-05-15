@@ -3,54 +3,62 @@
 // found in the LICENSE file.
 {
   page-load: {
-    actions: [
-      {
-        action: get
-        url: $[PAGE_URL]
-        ready_state: interactive
-        timeout: $[PAGE_LOAD_TIMEOUT]
-        target: _self
-      }
+    template: ../../../common-action-blocks/basic/page-load.hjson
+    args: {
+      READY_STATE: interactive
+      TARGET: _self
+      PAGE_LOAD_TIMEOUT: 2m
+    }
+    unbound_args: [
+      PAGE_URL
     ]
   }
   scroll: {
-    actions: [
-      {
-        action: js
-        script: performance.mark('scroll-start');
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: $[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: -$[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: js
-        script:
-          '''
-          performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
-          performance.measure('scroll-duration', 'scroll-start', 'scroll-end');
-          '''
-      }
-    ]
+    args: {
+      SCROLL_DISTANCE: 600
+      SCROLL_DURATION: 0.5s
+      SCROLL_SOURCE: js
+      WAIT_DURATION: 20s
+    }
+    template: {
+      actions: [
+        {
+          action: js
+          script: performance.mark('scroll-start');
+        }
+        {
+          action: wait
+          duration: $[WAIT_DURATION]
+        }
+        {
+          action: scroll
+          distance: $[SCROLL_DISTANCE]
+          duration: $[SCROLL_DURATION]
+          source: $[SCROLL_SOURCE]
+        }
+        {
+          action: wait
+          duration: $[WAIT_DURATION]
+        }
+        {
+          action: scroll
+          distance: -$[SCROLL_DISTANCE]
+          duration: $[SCROLL_DURATION]
+          source: $[SCROLL_SOURCE]
+        }
+        {
+          action: wait
+          duration: $[WAIT_DURATION]
+        }
+        {
+          action: js
+          script:
+            '''
+            performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
+            performance.measure('scroll-duration', 'scroll-start', 'scroll-end');
+            '''
+        }
+      ]
+    }
   }
 }

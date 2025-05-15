@@ -8,16 +8,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_1]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-1
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_1
         ]
       }
     }
@@ -26,16 +19,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_2]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-2
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_2
         ]
       }
     }
@@ -44,16 +30,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_3]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-3
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_3
         ]
       }
     }
@@ -62,16 +41,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_4]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-4
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_4
         ]
       }
     }
@@ -80,16 +52,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_5]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-5
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_5
         ]
       }
     }
@@ -98,16 +63,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_6]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-6
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_6
         ]
       }
     }
@@ -116,16 +74,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_7]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-7
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_7
         ]
       }
     }
@@ -134,16 +85,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_8]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-8
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_8
         ]
       }
     }
@@ -152,16 +96,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_9]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-9
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_9
         ]
       }
     }
@@ -170,16 +107,9 @@
         template: ./page-load-and-scroll.hjson
         args: {
           PAGE_URL: $[PAGE_URL_10]
-          TARGET: $[PAGE_TARGET]
-          SCROLL_MARK_NAME: scroll-10
         }
         unbound_args: [
-          SCROLL_DOWN_DISTANCE
-          SCROLL_UP_DISTANCE
-          WAIT_DURATION
-          SCROLL_DURATION
-          PAGE_LOAD_TIMEOUT
-          SCROLL_SOURCE
+          PAGE_URL_10
         ]
       }
     }
