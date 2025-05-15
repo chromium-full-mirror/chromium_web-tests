@@ -2,14 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  actions: [
-    {
-      action: switch_tab
-      tab_index: $[TAB_INDEX]
-    }
-    {
-      action: get
-      url: about:blank
-    }
-  ]
+  args: {
+    PRE_NAVIGATE_ACTIONS: [
+      {
+        action: switch_tab
+        tab_index: $[TAB_INDEX]
+      }
+    ]
+  }
+  template: ./navigate-to-blank.hjson
 }

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 {
   actions: [
+    $[...PRE_NAVIGATE_ACTIONS]
     {
       action: js
       script: performance.mark('navigate_to_blank')

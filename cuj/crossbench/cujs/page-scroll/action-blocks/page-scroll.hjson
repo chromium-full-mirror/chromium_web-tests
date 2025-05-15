@@ -345,7 +345,12 @@
     }
     navigate-to-blank: {
       blocks: {
-        navigate-to-blank: ../../../common-action-blocks/basic/navigate-to-blank.hjson
+        navigate-to-blank: {
+          args: {
+            PRE_NAVIGATE_ACTIONS: []
+          }
+          template: ../../../common-action-blocks/basic/navigate-to-blank.hjson
+        }
       }
     }
   }
