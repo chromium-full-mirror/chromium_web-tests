@@ -2,20 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-const video = document.querySelector("$[VIDEO_SELECTOR]")
-const unitToSeconds = {
-  s: 1,
-  m: 60,
-  h: 3600,
-}
-const parseTimeToSeconds = (timeString) => {
-  const lowerCaseTimeString = timeString.toLowerCase()
-  const match = lowerCaseTimeString.match(/^(\d+)([smh]?)$/)
-  const [_, numStr, unit] = match
-  return parseInt(numStr, 10) * (unitToSeconds[unit] || 1)
-}
+const video = document.querySelector("VIDEO_SELECTOR")
 const duration = Math.floor(video.duration)
-let endTime = parseTimeToSeconds("$[VIDEO_TIME]")
+let endTime = VIDEO_TIME
 if (duration < endTime) {
   endTime = duration
 }

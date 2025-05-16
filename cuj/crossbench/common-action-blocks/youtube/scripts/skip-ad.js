@@ -13,7 +13,7 @@ const skipAd = async () => {
       adVideo.currentTime = adVideo.duration
       performance.mark("skip-ad-executed")
     }
-  } else if (document.querySelector("$[VIDEO_SELECTOR]")) {
+  } else if (document.querySelector("VIDEO_SELECTOR")) {
     return
   }
   await new Promise(resolve => setTimeout(resolve, 2000));

@@ -2,94 +2,96 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  pages: {
-    Youtube: {
-      blocks: {
-        video-page-load: ../../../common-action-blocks/youtube/video-page-load.hjson
-        skip-ad-video: ../../../common-action-blocks/youtube/skip-ad.hjson
-        switch-resolution: ../../../common-action-blocks/youtube/switch-resolution.hjson
-        change-screen: ../../../common-action-blocks/youtube/change-screen.hjson
-        watch-video: ../../../common-action-blocks/youtube/watch-video.hjson
-        open-new-window: [
-          {
-            action: get
-            url: $[NEW_WINDOW_PAGE_URL]
-            target: _new_window
-            ready_state: complete
-            timeout: $[TIMEOUT]
-          }
-        ]
-        page-scroll-1: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "256"
-          }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
+  args: {
+    SCROLL_SOURCE: touch
+    SCROLL_DURATION: 0.5s
+    BASE_SCROLL_DISTANCE: 256
+  }
+  unbound_args: [
+    PAGE_URL
+    CHANGE_SCREEN_INPUT
+    RESOLUTION_TEXT
+  ]
+  template: {
+    pages: {
+      Youtube: {
+        blocks: {
+          play-video: ../../../common-action-blocks/youtube/load-and-play-video.hjson
+          open-new-window: [
+            {
+              action: get
+              url: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/bbc.html
+              target: _new_window
+              ready_state: complete
+              timeout: 2m
+            }
           ]
-        }
-        page-scroll-2: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "-256"
+          page-scroll-1: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: $[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
           }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
-          ]
-        }
-        page-scroll-3: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "256"
+          page-scroll-2: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: -$[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
           }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
-          ]
-        }
-        page-scroll-4: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "-256"
+          page-scroll-3: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: $[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
           }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
-          ]
-        }
-        page-scroll-5: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "256"
+          page-scroll-4: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: -$[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
           }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
-          ]
-        }
-        page-scroll-6: {
-          template: ../../../common-action-blocks/basic/scroll-no-selector.hjson
-          args: {
-            SCROLL_DISTANCE: "-256"
+          page-scroll-5: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: $[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
           }
-          unbound_args: [
-            SCROLL_SOURCE
-            SCROLL_DURATION
-            SCROLL_MARK_NAME
-            SCROLL_END_DISTANCE_SELECTOR
-          ]
+          page-scroll-6: {
+            template: ../../../common-action-blocks/basic/scroll-entire-page.hjson
+            args: {
+              SCROLL_DISTANCE: -$[BASE_SCROLL_DISTANCE]
+            }
+            unbound_args: [
+              BASE_SCROLL_DISTANCE
+              SCROLL_SOURCE
+              SCROLL_DURATION
+            ]
+          }
         }
       }
     }
