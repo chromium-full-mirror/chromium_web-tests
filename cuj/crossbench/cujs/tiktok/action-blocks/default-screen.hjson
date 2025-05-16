@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  pages: {
-    TikTok: {
-      blocks: {
-        tiktok-page-load: ./page-load.hjson
-        watch-video: ./watch-video.hjson
-      }
-    }
+  template: ./base-template.hjson
+  args: {
+    SCREEN_SETTINGS: []
   }
+  unbound_args: [
+    PAGE_URL
+    VIDEO_TIME
+  ]
 }
