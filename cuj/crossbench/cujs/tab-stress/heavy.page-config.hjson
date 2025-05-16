@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/tab-stress-template.hjson
+  template: ./action-blocks/100-tabs-template.hjson
   args: {
     PAGE_URL0: https://html.spec.whatwg.org/
     PAGE_URL1: https://html.spec.whatwg.org/

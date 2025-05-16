@@ -26,8 +26,8 @@
       action: get
       url: $[PAGE_URL]
       ready_state: complete
-      timeout: $[PAGE_LOAD_TIMEOUT]
-      target: $[TARGET]
+      timeout: 3m
+      target: _new_tab
     }
     {
       action: switch_tab

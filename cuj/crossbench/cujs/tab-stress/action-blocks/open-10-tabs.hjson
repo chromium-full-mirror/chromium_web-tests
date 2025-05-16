@@ -6,8 +6,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL0]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL0
@@ -17,8 +15,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL1]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL1
@@ -28,8 +24,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL2]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL2
@@ -39,8 +33,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL3]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL3
@@ -50,8 +42,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL4]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL4
@@ -61,8 +51,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL5]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL5
@@ -72,8 +60,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL6]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL6
@@ -83,8 +69,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL7]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL7
@@ -94,8 +78,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL8]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL8
@@ -105,8 +87,6 @@
     template: ./page-load.hjson
     args: {
       PAGE_URL: $[PAGE_URL9]
-      TARGET: _new_tab
-      PAGE_LOAD_TIMEOUT: 3m
     }
     unbound_args: [
       PAGE_URL9

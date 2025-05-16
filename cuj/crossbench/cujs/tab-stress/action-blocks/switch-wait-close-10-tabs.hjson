@@ -9,7 +9,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -20,7 +20,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -31,7 +31,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -42,7 +42,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -53,7 +53,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -64,7 +64,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -75,7 +75,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -86,7 +86,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -97,7 +97,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
@@ -108,7 +108,7 @@
     }
     {
       action: wait_for_ready_state
-      timeout: 120s
+      timeout: 3m
     }
     {
       action: close_tab
