@@ -14,15 +14,5 @@
     PAGE_URL7: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/yahoo.html
     PAGE_URL8: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/stackoverflow.html
     PAGE_URL9: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/2023-08-09/wikipedia.html
-    SWITCH_TARGET0: .*amazon_product.*
-    SWITCH_TARGET1: .*aajtak.*
-    SWITCH_TARGET2: .*apple.*
-    SWITCH_TARGET3: .*ebay.*
-    SWITCH_TARGET4: .*google.*
-    SWITCH_TARGET5: .*wattpad.*
-    SWITCH_TARGET6: .*bbc.*
-    SWITCH_TARGET7: .*yahoo.*
-    SWITCH_TARGET8: .*stackoverflow.*
-    SWITCH_TARGET9: .*wikipedia.*
   }
 }

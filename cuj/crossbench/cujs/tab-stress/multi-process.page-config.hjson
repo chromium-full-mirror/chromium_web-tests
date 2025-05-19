@@ -5,24 +5,14 @@
   template: ./action-blocks/100-tabs-template.hjson
   args: {
     PAGE_URL0: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL1: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL2: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL3: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL4: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL5: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL6: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL7: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL8: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    PAGE_URL9: https://chromium-workloads.web.app/web-tests/main/cuj/crossbench/cujs/tab-stress/multiprocess/frame-container/?count=5
-    SWITCH_TARGET0: .*frame-container.*
-    SWITCH_TARGET1: .*frame-container.*
-    SWITCH_TARGET2: .*frame-container.*
-    SWITCH_TARGET3: .*frame-container.*
-    SWITCH_TARGET4: .*frame-container.*
-    SWITCH_TARGET5: .*frame-container.*
-    SWITCH_TARGET6: .*frame-container.*
-    SWITCH_TARGET7: .*frame-container.*
-    SWITCH_TARGET8: .*frame-container.*
-    SWITCH_TARGET9: .*frame-container.*
+    PAGE_URL1: $[PAGE_URL0]
+    PAGE_URL2: $[PAGE_URL0]
+    PAGE_URL3: $[PAGE_URL0]
+    PAGE_URL4: $[PAGE_URL0]
+    PAGE_URL5: $[PAGE_URL0]
+    PAGE_URL6: $[PAGE_URL0]
+    PAGE_URL7: $[PAGE_URL0]
+    PAGE_URL8: $[PAGE_URL0]
+    PAGE_URL9: $[PAGE_URL0]
   }
 }

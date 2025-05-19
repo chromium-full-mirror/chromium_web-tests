@@ -5,24 +5,14 @@
   template: ./action-blocks/100-tabs-template.hjson
   args: {
     PAGE_URL0: https://html.spec.whatwg.org/
-    PAGE_URL1: https://html.spec.whatwg.org/
-    PAGE_URL2: https://html.spec.whatwg.org/
-    PAGE_URL3: https://html.spec.whatwg.org/
-    PAGE_URL4: https://html.spec.whatwg.org/
-    PAGE_URL5: https://html.spec.whatwg.org/
-    PAGE_URL6: https://html.spec.whatwg.org/
-    PAGE_URL7: https://html.spec.whatwg.org/
-    PAGE_URL8: https://html.spec.whatwg.org/
-    PAGE_URL9: https://html.spec.whatwg.org/
-    SWITCH_TARGET0: https://html.spec.whatwg.org/
-    SWITCH_TARGET1: https://html.spec.whatwg.org/
-    SWITCH_TARGET2: https://html.spec.whatwg.org/
-    SWITCH_TARGET3: https://html.spec.whatwg.org/
-    SWITCH_TARGET4: https://html.spec.whatwg.org/
-    SWITCH_TARGET5: https://html.spec.whatwg.org/
-    SWITCH_TARGET6: https://html.spec.whatwg.org/
-    SWITCH_TARGET7: https://html.spec.whatwg.org/
-    SWITCH_TARGET8: https://html.spec.whatwg.org/
-    SWITCH_TARGET9: https://html.spec.whatwg.org/
+    PAGE_URL1: $[PAGE_URL0]
+    PAGE_URL2: $[PAGE_URL0]
+    PAGE_URL3: $[PAGE_URL0]
+    PAGE_URL4: $[PAGE_URL0]
+    PAGE_URL5: $[PAGE_URL0]
+    PAGE_URL6: $[PAGE_URL0]
+    PAGE_URL7: $[PAGE_URL0]
+    PAGE_URL8: $[PAGE_URL0]
+    PAGE_URL9: $[PAGE_URL0]
   }
 }

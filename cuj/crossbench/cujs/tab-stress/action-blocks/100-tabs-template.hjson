@@ -5,373 +5,56 @@
 // found in the LICENSE file.
 {
   pages: {
-    open-0: {
-      blocks: {
-        template: ./open-10-tabs.hjson
+    tab-stress: {
+      setup: {
         args: {
-          ITER_COUNT: ""
+          OPEN10: ./open-10-tabs.hjson
         }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
+        template: [
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          $[...OPEN10]
+          {
+            action: meminfo
+          }
         ]
       }
-    }
-    open-1: {
-      blocks: {
-        template: ./open-10-tabs.hjson
+      actions: {
         args: {
-          ITER_COUNT: "1"
+          CYCLE10: ./cycle-10-tabs.hjson
         }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-2: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "2"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-3: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "3"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-4: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "4"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-5: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "5"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-6: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "6"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-7: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "7"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-8: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "8"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    open-9: {
-      blocks: {
-        template: ./open-10-tabs.hjson
-        args: {
-          ITER_COUNT: "9"
-        }
-        unbound_args: [
-          PAGE_URL0
-          PAGE_URL1
-          PAGE_URL2
-          PAGE_URL3
-          PAGE_URL4
-          PAGE_URL5
-          PAGE_URL6
-          PAGE_URL7
-          PAGE_URL8
-          PAGE_URL9
-        ]
-      }
-    }
-    close-0: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-1: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-2: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-3: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-4: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-5: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-6: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-7: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-8: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
-        ]
-      }
-    }
-    close-9: {
-      blocks: {
-        template: ./switch-wait-close-10-tabs.hjson
-        unbound_args: [
-          SWITCH_TARGET0
-          SWITCH_TARGET1
-          SWITCH_TARGET2
-          SWITCH_TARGET3
-          SWITCH_TARGET4
-          SWITCH_TARGET5
-          SWITCH_TARGET6
-          SWITCH_TARGET7
-          SWITCH_TARGET8
-          SWITCH_TARGET9
+        template: [
+          {
+            action: switch_tab
+            tab_index: 0
+            url: data:text
+          }
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          $[...CYCLE10]
+          {
+            // Make sure we cycled though everything
+            action: switch_tab
+            relative_tab_index: 1
+            url: data:text
+          }
+          {
+            action: meminfo
+          }
         ]
       }
     }

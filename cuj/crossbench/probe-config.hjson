@@ -15,5 +15,6 @@
       textproto: $[TRACE_CONFIG]
     }
     downloads: {}
+    meminfo: {}
   }
 }
