@@ -41,7 +41,7 @@ use_relative_paths = True
 vars = {
   'crossbench_git': 'https://chromium.googlesource.com/crossbench',
   'chromium_webpagereplay_git': 'https://chromium.googlesource.com/webpagereplay',
-  'hjson_js_git': 'https://github.com/hjson/hjson-js.git',
+  'hjson_js_git': 'https://chromium.googlesource.com/external/github.com/hjson/hjson-js',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
 
