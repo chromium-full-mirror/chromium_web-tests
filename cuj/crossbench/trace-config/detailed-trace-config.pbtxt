@@ -9,11 +9,11 @@ buffers {
   fill_policy: RING_BUFFER
 }
 buffers {
-  size_kb: 128
+  size_kb: 65536
   fill_policy: RING_BUFFER
 }
 buffers {
-  size_kb: 128
+  size_kb: 512
   fill_policy: RING_BUFFER
 }
 buffers {
@@ -23,6 +23,17 @@ buffers {
 # Buffer dedicated for linux.ftrace. It's OK that the trace data is
 # overwritten. If there are ftrace events that are of interest, use
 # another dedicated buffer or increase this the size of this buffer.
+buffers {
+  size_kb: 40960
+  fill_policy: RING_BUFFER
+}
+# Buffer dedicated for gpu.renderstages and android.gpu.memory. It's
+# OK if data is overwritten.
+buffers {
+  size_kb: 40960
+  fill_policy: RING_BUFFER
+}
+# Buffer dedicated for input events.
 buffers {
   size_kb: 40960
   fill_policy: RING_BUFFER
@@ -43,6 +54,12 @@ data_sources: {
     }
   }
 }
+data_sources {
+  config {
+    name: "linux.system_info"
+    target_buffer: 0
+  }
+}
 data_sources: {
   config {
     name: "linux.sys_stats"
@@ -50,6 +67,7 @@ data_sources: {
     sys_stats_config {
       meminfo_period_ms: 1000
       cpufreq_period_ms: 1000
+      cpuidle_period_ms: 1000
       thermal_period_ms: 1000
       diskstat_period_ms: 2000
       psi_period_ms: 2000
@@ -67,10 +85,118 @@ data_sources: {
 }
 data_sources: {
   config {
+    name: "android.power"
+    target_buffer: 2
+    android_power_config {
+      battery_counters: BATTERY_COUNTER_CAPACITY_PERCENT
+      battery_counters: BATTERY_COUNTER_CHARGE
+      battery_counters: BATTERY_COUNTER_CURRENT
+      battery_counters: BATTERY_COUNTER_CURRENT_AVG
+      battery_counters: BATTERY_COUNTER_VOLTAGE
+    }
+  }
+}
+# TODO(b/389552028): Remove the hardcoded event configs once dynamic resolution is implemented.
+data_sources: {
+  config {
+    name: "linux.perf"
+    target_buffer: 2
+    perf_event_config {
+      target_cpu: 0
+      timebase {
+        poll_period_ms: 1000
+        name: "msr/tsc/"
+        raw_event: {
+          type: 14
+          config: 0
+        }
+      }
+      followers {
+        name: "cstate_pkg/c2-residency/"
+        raw_event: {
+          type: 27
+          config: 0
+        }
+      }
+      followers {
+        name: "cstate_pkg/c3-residency/"
+        raw_event: {
+          type: 27
+          config: 1
+        }
+      }
+      followers {
+        name: "cstate_pkg/c6-residency/"
+        raw_event: {
+          type: 27
+          config: 2
+        }
+      }
+      followers {
+        name: "cstate_pkg/c8-residency/"
+        raw_event: {
+          type: 27
+          config: 4
+        }
+      }
+      followers {
+        name: "cstate_pkg/c10-residency/"
+        raw_event: {
+          type: 27
+          config: 6
+        }
+      }
+    }
+  }
+}
+data_sources: {
+  config {
+    name: "linux.perf"
+    target_buffer: 2
+    perf_event_config {
+      target_cpu: 0
+      timebase {
+        poll_period_ms: 1000
+        name: "power/energy-package/"
+        raw_event: {
+          type: 13
+          config: 2
+        }
+      }
+      followers {
+        name: "power/energy-cores/"
+        raw_event: {
+          type: 13
+          config: 1
+        }
+      }
+      followers {
+        name: "power/energy-gpu/"
+        raw_event: {
+          type: 13
+          config: 4
+        }
+      }
+    }
+  }
+}
+data_sources: {
+  config {
     name: "android.statsd"
     target_buffer: 3
     statsd_tracing_config {
+      push_atom_id: ATOM_APP_COMPACTED_V2
       push_atom_id: ATOM_LMK_KILL_OCCURRED
+      push_atom_id: ATOM_LOW_MEM_REPORTED
+      push_atom_id: ATOM_PACKAGE_INSTALLER_V2_REPORTED
+      push_atom_id: ATOM_PROCESS_LIFE_CYCLE_STATE_CHANGED
+      push_atom_id: ATOM_SLOW_INPUT_EVENT_REPORTED
+      push_atom_id: ATOM_SLOW_IO
+      raw_push_atom_id: 210803
+      pull_config {
+        pull_atom_id: ATOM_PROCESS_CPU_TIME
+        pull_frequency_ms: 500
+      }
     }
   }
 }
@@ -78,6 +204,18 @@ data_sources: {
   config {
     name: "android.surfaceflinger.frametimeline"
     target_buffer: 4
+  }
+}
+data_sources {
+  config {
+    name: "android.gpu.memory"
+    target_buffer: 6
+  }
+}
+data_sources {
+  config {
+    name: "gpu.renderstages"
+    target_buffer: 6
   }
 }
 data_sources: {
@@ -93,12 +231,16 @@ data_sources: {
       ftrace_events: "kmem/ion_heap_shrink"
       ftrace_events: "sched/sched_process_exit"
       ftrace_events: "sched/sched_process_free"
+      ftrace_events: "sched/sched_switch"
       ftrace_events: "task/task_newtask"
       ftrace_events: "task/task_rename"
       ftrace_events: "lowmemorykiller/lowmemory_kill"
+      ftrace_events: "gpu_mem/gpu_mem_total"
       ftrace_events: "oom/oom_score_adj_update"
       ftrace_events: "ftrace/print"
       atrace_apps: "lmkd"
+      atrace_apps: "com.android.vending"
+      atrace_categories: "am"
     }
   }
 }
@@ -261,3 +403,28 @@ data_sources: {
     }
   }
 }
+data_sources: {
+  config {
+    name: "android.input.inputevent"
+    target_buffer: 7
+    android_input_event_config {
+      mode: TRACE_MODE_TRACE_ALL
+    }
+  }
+}
+data_sources: {
+  config {
+    name: "linux.ftrace"
+    target_buffer: 7
+    ftrace_config {
+      atrace_categories: "aidl"
+      atrace_categories: "input"
+      # also want to trace all apps
+      atrace_apps: "*"
+    }
+  }
+}
+write_into_file: true
+file_write_period_ms: 5000
+max_file_size_bytes: 1073741824
+flush_period_ms: 30000

@@ -9,7 +9,7 @@ buffers {
   fill_policy: RING_BUFFER
 }
 buffers {
-  size_kb: 128
+  size_kb: 65536
   fill_policy: RING_BUFFER
 }
 buffers {
@@ -48,6 +48,12 @@ data_sources: {
     }
   }
 }
+data_sources {
+  config {
+    name: "linux.system_info"
+    target_buffer: 0
+  }
+}
 data_sources: {
   config {
     name: "linux.sys_stats"
@@ -55,6 +61,7 @@ data_sources: {
     sys_stats_config {
       meminfo_period_ms: 1000
       cpufreq_period_ms: 1000
+      cpuidle_period_ms: 1000
       thermal_period_ms: 1000
       diskstat_period_ms: 2000
       psi_period_ms: 2000
@@ -67,6 +74,103 @@ data_sources: {
       vmstat_counters: VMSTAT_PGPGOUT
       vmstat_counters: VMSTAT_PSWPIN
       vmstat_counters: VMSTAT_PSWPOUT
+    }
+  }
+}
+data_sources: {
+  config {
+    name: "android.power"
+    target_buffer: 2
+    android_power_config {
+      battery_counters: BATTERY_COUNTER_CAPACITY_PERCENT
+      battery_counters: BATTERY_COUNTER_CHARGE
+      battery_counters: BATTERY_COUNTER_CURRENT
+      battery_counters: BATTERY_COUNTER_CURRENT_AVG
+      battery_counters: BATTERY_COUNTER_VOLTAGE
+    }
+  }
+}
+# TODO(b/389552028): Remove the hardcoded event configs once dynamic resolution is implemented.
+data_sources: {
+  config {
+    name: "linux.perf"
+    target_buffer: 2
+    perf_event_config {
+      target_cpu: 0
+      timebase {
+        poll_period_ms: 1000
+        name: "msr/tsc/"
+        raw_event: {
+          type: 14
+          config: 0
+        }
+      }
+      followers {
+        name: "cstate_pkg/c2-residency/"
+        raw_event: {
+          type: 27
+          config: 0
+        }
+      }
+      followers {
+        name: "cstate_pkg/c3-residency/"
+        raw_event: {
+          type: 27
+          config: 1
+        }
+      }
+      followers {
+        name: "cstate_pkg/c6-residency/"
+        raw_event: {
+          type: 27
+          config: 2
+        }
+      }
+      followers {
+        name: "cstate_pkg/c8-residency/"
+        raw_event: {
+          type: 27
+          config: 4
+        }
+      }
+      followers {
+        name: "cstate_pkg/c10-residency/"
+        raw_event: {
+          type: 27
+          config: 6
+        }
+      }
+    }
+  }
+}
+data_sources: {
+  config {
+    name: "linux.perf"
+    target_buffer: 2
+    perf_event_config {
+      target_cpu: 0
+      timebase {
+        poll_period_ms: 1000
+        name: "power/energy-package/"
+        raw_event: {
+          type: 13
+          config: 2
+        }
+      }
+      followers {
+        name: "power/energy-cores/"
+        raw_event: {
+          type: 13
+          config: 1
+        }
+      }
+      followers {
+        name: "power/energy-gpu/"
+        raw_event: {
+          type: 13
+          config: 4
+        }
+      }
     }
   }
 }
@@ -156,3 +260,7 @@ data_sources: {
     }
   }
 }
+write_into_file: true
+file_write_period_ms: 5000
+max_file_size_bytes: 1073741824
+flush_period_ms: 30000
