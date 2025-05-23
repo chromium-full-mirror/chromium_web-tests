@@ -1,0 +1,43 @@
+# Copyright 2025 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query: {
+  id: "meminfo_query"
+  table {
+    table_name: "meminfo_output"
+    module_name: "sql_packages.queries.meminfo"
+
+    column_names: "ts"
+    column_names: "pss_total_mb"
+    column_names: "rss_total_mb"
+    column_names: "swap_total_mb"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.meminfo.pss_total_mb"
+  query {
+    inner_query_id: "meminfo_query"
+  }
+  dimensions: "ts"
+  value: "pss_total_mb"
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.meminfo.rss_total_mb"
+  query {
+    inner_query_id: "meminfo_query"
+  }
+  dimensions: "ts"
+  value: "rss_total_mb"
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.meminfo.swap_total_mb"
+  query {
+    inner_query_id: "meminfo_query"
+  }
+  dimensions: "ts"
+  value: "swap_total_mb"
+}
