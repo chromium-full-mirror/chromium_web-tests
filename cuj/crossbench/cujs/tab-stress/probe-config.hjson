@@ -28,6 +28,7 @@
       ../../common-metrics/lmk_kill_list.hjson
       ../../common-metrics/lmk_kill_count.hjson
       ../../common-metrics/tab_open_latency.hjson
+      ../../common-metrics/meminfo_total.hjson
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
