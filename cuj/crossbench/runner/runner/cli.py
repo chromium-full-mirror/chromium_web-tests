@@ -50,11 +50,15 @@ def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
       "--variants", type=ObjectParser.non_empty_str, default=".*")
   parser.add_argument("--debug", action="store_true", default=False)
   parser.add_argument("--dry-run", action="store_true", default=False)
+  parser.add_argument(
+      "--results-prefix", type=ObjectParser.any_str, default=None)
 
   parsed = parser.parse_args(argv)
 
   results_root: Path = web_tests_root / "cuj/crossbench/runner/results/"
-  run_results_path: Path = results_root / dt.now().strftime("%Y-%m-%d_%H%M%S")
+  results_prefix = f"{parsed.results_prefix}_" if parsed.results_prefix else ""
+  run_results_path: Path = results_root / dt.now().strftime(
+      f"{results_prefix}%Y-%m-%d_%H%M%S")
   run_results_path.mkdir(parents=True)
 
   latest_results: Path = results_root / "latest"
