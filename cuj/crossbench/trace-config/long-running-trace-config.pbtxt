@@ -13,7 +13,7 @@ buffers {
   fill_policy: RING_BUFFER
 }
 buffers {
-  size_kb: 128
+  size_kb: 512
   fill_policy: RING_BUFFER
 }
 buffers {
@@ -179,7 +179,18 @@ data_sources: {
     name: "android.statsd"
     target_buffer: 3
     statsd_tracing_config {
+      push_atom_id: ATOM_APP_COMPACTED_V2
       push_atom_id: ATOM_LMK_KILL_OCCURRED
+      push_atom_id: ATOM_LOW_MEM_REPORTED
+      push_atom_id: ATOM_PACKAGE_INSTALLER_V2_REPORTED
+      push_atom_id: ATOM_PROCESS_LIFE_CYCLE_STATE_CHANGED
+      push_atom_id: ATOM_SLOW_INPUT_EVENT_REPORTED
+      push_atom_id: ATOM_SLOW_IO
+      raw_push_atom_id: 210803
+      pull_config {
+        pull_atom_id: ATOM_PROCESS_CPU_TIME
+        pull_frequency_ms: 500
+      }
     }
   }
 }
@@ -208,6 +219,7 @@ data_sources: {
       ftrace_events: "oom/oom_score_adj_update"
       ftrace_events: "ftrace/print"
       atrace_apps: "lmkd"
+      atrace_apps: "com.android.vending"
     }
   }
 }
