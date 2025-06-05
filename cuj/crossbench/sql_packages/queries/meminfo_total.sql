@@ -2,6 +2,8 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 
+include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+
 DROP TABLE IF EXISTS meminfo_output;
 
 CREATE PERFETTO TABLE meminfo_output
@@ -16,8 +18,11 @@ WITH meminfo_events AS (
   --  }[]
   SELECT
     ts,
+    iterations.id as iteration,
     EXTRACT_ARG(arg_set_id, 'debug.data.detail') AS json
   FROM slice
+    join iterations on
+      slice.ts >= iterations.start and slice.ts <= iterations.end
   WHERE
     category = 'blink.user_timing'
     AND name = 'crossbench-meminfo'
@@ -26,6 +31,7 @@ SELECT
   -- We have a row per process per meminfo event, sum up the meminfo counters
   -- for each meminfo event.
   ROW_NUMBER() over (ORDER BY ts) as id,
+  meminfo_events.iteration as iteration,
   meminfo_events.ts AS ts,
   SUM(CAST(json_extract(per_process_meminfo_json.value, '$.pss_total') AS FLOAT) / 1024.0) AS pss_total_mb,
   SUM(CAST(json_extract(per_process_meminfo_json.value, '$.rss_total') AS FLOAT) / 1024.0) AS rss_total_mb,
@@ -36,6 +42,6 @@ FROM
   -- a row per process per meminfo event.
   json_each(meminfo_events.json) AS per_process_meminfo_json
 GROUP BY
-  meminfo_events.ts
+  meminfo_events.iteration, meminfo_events.ts
 ORDER by
-  meminfo_events.ts;
+  meminfo_events.iteration, meminfo_events.ts;
