@@ -40,9 +40,13 @@ Install the necessary dependencies from the lock file using poetry:
 
 ```bash
 cd cuj/crossbench/runner
+export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 poetry env use 3.11
 poetry install
 ```
+Setting PYTHON_KEYRING_BACKEND to keyring.backends.null.Keyring disables keyring
+and prevents `poetry install` from getting stuck waiting for user input in the
+GUI.
 
 ### WPR
 
