@@ -5,7 +5,7 @@
   setup: {
     template: ../../../common-action-blocks/basic/page-load.hjson
     args: {
-      READY_STATE: complete
+      READY_STATE: any
       PAGE_LOAD_TIMEOUT: 2m
     }
     unbound_args: [
@@ -15,118 +15,18 @@
   }
   actions: {
     args: {
-      SCROLL_DISTANCE: 600
-      SCROLL_DURATION: 2.5s
-      SCROLL_SOURCE: js
-      WAIT_DURATION: 20s
+      PAGE_SCROLL: ../../../common-action-blocks/power-browsing/page-scroll.hjson
     }
     unbound_args: [
       TAB_INDEX
+      PER_PAGE_DURATION
     ]
     template: [
       {
         action: switch_tab
         tab_index: $[TAB_INDEX]
       }
-      // A condition is being added to identify if the actual page not loaded
-      // due to other reasons (e.g. certificate error, offline, connection timeout, etc.)
-      {
-        action: wait_for_condition
-        condition: return document.getElementsByClassName("interstitial-wrapper").length != 1
-        timeout: 5s
-      }
-      {
-        action: js
-        script: performance.mark('scroll-start');
-      }
-      {
-        action: scroll
-        distance: $[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: -$[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: $[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: -$[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: $[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: -$[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: $[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: scroll
-        distance: -$[SCROLL_DISTANCE]
-        duration: $[SCROLL_DURATION]
-        source: $[SCROLL_SOURCE]
-      }
-      {
-        action: wait
-        duration: $[WAIT_DURATION]
-      }
-      {
-        action: js
-        script:
-          '''
-          performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
-          performance.measure('scroll-duration', 'scroll-start', 'scroll-end');
-          '''
-      }
+      $[...PAGE_SCROLL]
     ]
   }
 }

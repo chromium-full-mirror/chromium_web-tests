@@ -5,7 +5,7 @@
   page-load: {
     template: ../../../common-action-blocks/basic/page-load.hjson
     args: {
-      READY_STATE: complete
+      READY_STATE: any
       TARGET: _self
       PAGE_LOAD_TIMEOUT: 2m
     }
@@ -13,108 +13,5 @@
       PAGE_URL
     ]
   }
-  scroll: {
-    args: {
-      SCROLL_DISTANCE: 600
-      SCROLL_DURATION: 2.5s
-      SCROLL_SOURCE: js
-      WAIT_DURATION: 20s
-    }
-    template: {
-      actions: [
-        {
-          action: js
-          script: performance.mark('scroll-start');
-        }
-        {
-          action: scroll
-          distance: $[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: -$[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: $[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: -$[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: $[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: -$[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: $[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: scroll
-          distance: -$[SCROLL_DISTANCE]
-          duration: $[SCROLL_DURATION]
-          source: $[SCROLL_SOURCE]
-        }
-        {
-          action: wait
-          duration: $[WAIT_DURATION]
-        }
-        {
-          action: js
-          script:
-            '''
-            performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
-            performance.measure('scroll-duration', 'scroll-start', 'scroll-end');
-            '''
-        }
-      ]
-    }
-  }
+  scroll: ../../../common-action-blocks/power-browsing/page-scroll.hjson
 }

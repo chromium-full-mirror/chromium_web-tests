@@ -7,10 +7,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_1]
+          PAGE_URL: $[PAGE_1]
         }
         unbound_args: [
-          PAGE_URL_1
+          PAGE_1
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -18,10 +19,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_2]
+          PAGE_URL: $[PAGE_2]
         }
         unbound_args: [
-          PAGE_URL_2
+          PAGE_2
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -29,10 +31,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_3]
+          PAGE_URL: $[PAGE_3]
         }
         unbound_args: [
-          PAGE_URL_3
+          PAGE_3
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -40,10 +43,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_4]
+          PAGE_URL: $[PAGE_4]
         }
         unbound_args: [
-          PAGE_URL_4
+          PAGE_4
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -51,10 +55,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_5]
+          PAGE_URL: $[PAGE_5]
         }
         unbound_args: [
-          PAGE_URL_5
+          PAGE_5
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -62,10 +67,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_6]
+          PAGE_URL: $[PAGE_6]
         }
         unbound_args: [
-          PAGE_URL_6
+          PAGE_6
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -73,10 +79,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_7]
+          PAGE_URL: $[PAGE_7]
         }
         unbound_args: [
-          PAGE_URL_7
+          PAGE_7
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -84,10 +91,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_8]
+          PAGE_URL: $[PAGE_8]
         }
         unbound_args: [
-          PAGE_URL_8
+          PAGE_8
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -95,10 +103,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_9]
+          PAGE_URL: $[PAGE_9]
         }
         unbound_args: [
-          PAGE_URL_9
+          PAGE_9
+          PER_PAGE_DURATION
         ]
       }
     }
@@ -106,10 +115,11 @@
       blocks: {
         template: ./page-load-and-scroll.hjson
         args: {
-          PAGE_URL: $[PAGE_URL_10]
+          PAGE_URL: $[PAGE_10]
         }
         unbound_args: [
-          PAGE_URL_10
+          PAGE_10
+          PER_PAGE_DURATION
         ]
       }
     }
