@@ -17,7 +17,7 @@
         name: Tab Load Durations
         sql:
           '''
-            include PERFETTO MODULE sql_packages.cujs.simultaneous_load.total_load_duration;
+            include PERFETTO MODULE sql_packages.cujs.simultaneous_load.tab_load_durations;
             SELECT * FROM tab_load_durations_output;
           '''
       }
