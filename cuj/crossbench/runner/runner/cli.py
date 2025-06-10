@@ -106,7 +106,8 @@ def runner_cli(argv: List[str]) -> None:
 
   for cuj_path in (run_config.web_tests_root / "cuj/crossbench/cujs").iterdir():
 
-    if not cuj_path.is_dir() or not run_config.tests_regex.match(cuj_path.name):
+    if not cuj_path.is_dir() or not run_config.tests_regex.fullmatch(
+        cuj_path.name):
       continue
 
     failed_cujs = run_cuj(
