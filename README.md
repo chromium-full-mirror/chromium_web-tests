@@ -27,6 +27,13 @@ manage python dependencies.
 sudo apt-get install python3.11 python3.11-dev python3-poetry
 ```
 
+Alternatively, install poetry in a python venv:
+```bash
+python3 -m venv web-tests-venv
+source web-tests-venv/bin/activate
+pip install poetry
+```
+
 Check that you have poetry on your path and make sure you have the right
 `$PATH` settings.
 ```bash
