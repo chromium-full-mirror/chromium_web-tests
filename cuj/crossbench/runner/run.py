@@ -15,7 +15,7 @@ try:
 except ImportError:
   logging.error("Failed to import crossbench. "
                 "Have you run 'gclient sync' and 'poetry install'?")
-  sys.exit()
+  sys.exit(-1)
 
 from runner.cli import runner_cli
 

@@ -67,7 +67,8 @@ def CheckChange(input_api, output_api):
   # crossbench:
   # ---------------------------------------------------------------------------
   dry_run_py_path = str(
-      Path(input_api.change.RepositoryRoot()) / "crossbench_dry_run.py")
+      Path(input_api.change.RepositoryRoot()) / "cuj" / "crossbench" /
+      "runner" / "dry_run.py")
   tests.append(
       input_api.Command(
           name="crossbench dry run",
