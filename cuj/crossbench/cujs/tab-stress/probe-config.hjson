@@ -14,21 +14,21 @@
           '''
       }
       {
-        template: ../../common-metrics/uma_histogram_count.hjson
+        template: ../../common-metrics/v1/uma_histogram_count.hjson
         args: {
           NAME: Discarding.DiscardingProtectedTab
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_count.hjson
+        template: ../../common-metrics/v1/uma_histogram_count.hjson
         args: {
           NAME: Discarding.DiscardingFocusedTab
         }
       }
-      ../../common-metrics/lmk_kill_list.hjson
-      ../../common-metrics/lmk_kill_count.hjson
-      ../../common-metrics/tab_open_latency.hjson
-      ../../common-metrics/meminfo_total.hjson
+      ../../common-metrics/v1/lmk_kill_list.hjson
+      ../../common-metrics/v1/lmk_kill_count.hjson
+      ../../common-metrics/v1/tab_open_latency.hjson
+      ../../common-metrics/v1/meminfo_total.hjson
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }

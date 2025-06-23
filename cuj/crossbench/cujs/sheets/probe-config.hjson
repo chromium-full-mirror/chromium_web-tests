@@ -5,51 +5,51 @@
   template: ../../probe-config.hjson
   args: {
     TRACE_PROCESSOR_QUERIES: [
-      ../../common-metrics/comment_opened.hjson
-      ../../common-metrics/scroll_duration.hjson
-      ../../common-metrics/scroll_distance.hjson
-      ../../common-metrics/cpu_usage_stat.hjson
+      ../../common-metrics/v1/comment_opened.hjson
+      ../../common-metrics/v1/scroll_duration.hjson
+      ../../common-metrics/v1/scroll_distance.hjson
+      ../../common-metrics/v1/cpu_usage_stat.hjson
       {
-        template: ../../common-metrics/uma_histogram_times.hjson
+        template: ../../common-metrics/v1/uma_histogram_times.hjson
         args: {
           NAME: EventLatency.KeyPressed.TotalLatency
           UNITS_IN_MS: 1000
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_times.hjson
+        template: ../../common-metrics/v1/uma_histogram_times.hjson
         args: {
           NAME: EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency
           UNITS_IN_MS: 1000
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_times.hjson
+        template: ../../common-metrics/v1/uma_histogram_times.hjson
         args: {
           NAME: PageLoad.InteractiveTiming.TimeToNextPaint
           UNITS_IN_MS: 1
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_count.hjson
+        template: ../../common-metrics/v1/uma_histogram_count.hjson
         args: {
           NAME: Browser.MainThreadsCongestion
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_count.hjson
+        template: ../../common-metrics/v1/uma_histogram_count.hjson
         args: {
           NAME: Browser.MainThreadsCongestion.RunningOnly
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_count.hjson
+        template: ../../common-metrics/v1/uma_histogram_count.hjson
         args: {
           NAME: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
         }
       }
       {
-        template: ../../common-metrics/uma_histogram_enum.hjson
+        template: ../../common-metrics/v1/uma_histogram_enum.hjson
         args: {
           NAME: Viz.DisplayCompositor.OverlayStrategy
         }

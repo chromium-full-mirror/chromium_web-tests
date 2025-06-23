@@ -21,7 +21,7 @@
             SELECT * FROM tab_load_durations_output;
           '''
       }
-      ../../common-metrics/tab_open_latency.hjson
+      ../../common-metrics/v1/tab_open_latency.hjson
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
