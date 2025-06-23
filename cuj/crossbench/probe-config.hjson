@@ -11,6 +11,10 @@
         ./sql_packages
       ]
       metric_definitions: [
+        ./common-metrics/v2/cpu_usage_stat.textproto
+        ./common-metrics/v2/lmk_kill_list.textproto
+        ./common-metrics/v2/lmk_kill_count.textproto
+        ./common-metrics/v2/uma_histogram_summaries.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }
