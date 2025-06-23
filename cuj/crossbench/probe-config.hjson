@@ -10,6 +10,9 @@
       module_paths: [
         ./sql_packages
       ]
+      metric_definitions: [
+        $[...METRIC_DEFINITIONS]
+      ]
     }
     perfetto: {
       textproto: $[TRACE_CONFIG]

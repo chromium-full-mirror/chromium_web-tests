@@ -30,6 +30,7 @@
       ../../common-metrics/v1/tab_open_latency.hjson
       ../../common-metrics/v1/meminfo_total.hjson
     ]
+    METRIC_DEFINITIONS: []
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
 }
