@@ -7,7 +7,7 @@ metric_spec: {
   value: "duration_ms"
   query {
     table {
-      table_name: "comment_oened_output"
+      table_name: "comment_opened_output"
       module_name: "sql_packages.queries.comment_opened"
       column_names: "duration_ms"
     }
