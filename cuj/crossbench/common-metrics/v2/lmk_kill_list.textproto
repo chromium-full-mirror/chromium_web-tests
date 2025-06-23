@@ -40,7 +40,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "oom_adj_score"
 }
 
@@ -51,7 +51,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "min_oom_score"
 }
 
@@ -62,7 +62,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "page_fault"
 }
 
@@ -73,7 +73,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "page_major_fault"
 }
 
@@ -84,7 +84,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "rss_in_bytes"
 }
 
@@ -95,7 +95,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "cache_in_bytes"
 }
 
@@ -106,7 +106,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "swap_in_bytes"
 }
 
@@ -117,7 +117,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "free_mem_kb"
 }
 
@@ -128,7 +128,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "free_swap_kb"
 }
 
@@ -139,7 +139,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "reason"
 }
 
@@ -150,7 +150,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "thrashing"
 }
 
@@ -161,7 +161,7 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "max_thrashing"
 }
 
@@ -172,6 +172,6 @@ metric_spec: {
   }
   dimensions: "it_id"
   dimensions: "process_name"
-  dimension: "ts"
+  dimensions: "ts"
   value: "total_foreground_services"
 }
