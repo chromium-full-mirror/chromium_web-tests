@@ -25,6 +25,20 @@
           NAME: Discarding.DiscardingFocusedTab
         }
       }
+      {
+        template: ../../common-metrics/v1/uma_histogram_times.hjson
+        args: {
+          NAME: Browser.Tabs.TotalSwitchDuration3
+          UNITS_IN_MS: 1
+        }
+      }
+      {
+        template: ../../common-metrics/v1/uma_histogram_times.hjson
+        args: {
+          NAME: PageLoad.PaintTiming.NavigationToFirstContentfulPaint
+          UNITS_IN_MS: 1
+        }
+      }
       ../../common-metrics/v1/lmk_kill_list.hjson
       ../../common-metrics/v1/lmk_kill_count.hjson
       ../../common-metrics/v1/tab_open_latency.hjson

@@ -270,6 +270,12 @@ data_sources: {
       histograms {
         histogram_name: "Discarding.DiscardingFocusedTab"
       }
+      histograms {
+        histogram_name: "PageLoad.PaintTiming.NavigationToFirstContentfulPaint"
+      }
+      histograms {
+        histogram_name: "PageLoad.PaintTiming.NavigationToLargestContentfulPaint2"
+      }
     }
   }
 }

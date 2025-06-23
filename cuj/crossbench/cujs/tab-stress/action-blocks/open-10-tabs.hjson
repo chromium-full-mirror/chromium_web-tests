@@ -10,6 +10,8 @@
       }
       unbound_args: [
         PAGE_URL0
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS1: {
@@ -19,6 +21,8 @@
       }
       unbound_args: [
         PAGE_URL1
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS2: {
@@ -28,6 +32,8 @@
       }
       unbound_args: [
         PAGE_URL2
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS3: {
@@ -37,6 +43,8 @@
       }
       unbound_args: [
         PAGE_URL3
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS4: {
@@ -46,6 +54,8 @@
       }
       unbound_args: [
         PAGE_URL4
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS5: {
@@ -55,6 +65,8 @@
       }
       unbound_args: [
         PAGE_URL5
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS6: {
@@ -64,6 +76,8 @@
       }
       unbound_args: [
         PAGE_URL6
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS7: {
@@ -73,6 +87,8 @@
       }
       unbound_args: [
         PAGE_URL7
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS8: {
@@ -82,6 +98,8 @@
       }
       unbound_args: [
         PAGE_URL8
+        READY_STATE
+        TAB_TARGET
       ]
     }
     PAGE_ACTIONS9: {
@@ -91,6 +109,8 @@
       }
       unbound_args: [
         PAGE_URL9
+        READY_STATE
+        TAB_TARGET
       ]
     }
   }
@@ -105,6 +125,8 @@
     PAGE_URL7
     PAGE_URL8
     PAGE_URL9
+    READY_STATE
+    TAB_TARGET
   ]
   template: [
     $[...PAGE_ACTIONS0]
