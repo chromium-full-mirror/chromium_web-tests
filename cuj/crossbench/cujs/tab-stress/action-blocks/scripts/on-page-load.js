@@ -15,6 +15,11 @@ function pageLoaded() {
     startTime: navigation.domComplete,
     detail: {
       url: 'PAGE_URL',
+      // put the complete and interactive times into the event to make it easier
+      // to query the values. Perfetto will map the startTime above to the
+      // global trace timeline.
+      domComplete: navigation.domComplete,
+      domInteractive: navigation.domInteractive,
     },
   });
 }

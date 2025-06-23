@@ -39,6 +39,7 @@
           UNITS_IN_MS: 1
         }
       }
+      ../../common-metrics/v1/dom_complete.hjson
       ../../common-metrics/v1/lmk_kill_list.hjson
       ../../common-metrics/v1/lmk_kill_count.hjson
       ../../common-metrics/v1/tab_open_latency.hjson
@@ -48,6 +49,7 @@
       ./metrics.textproto
       ../../common-metrics/v2/tab_open_latency.textproto
       ../../common-metrics/v2/meminfo_total.textproto
+      ../../common-metrics/v2/dom_complete.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
