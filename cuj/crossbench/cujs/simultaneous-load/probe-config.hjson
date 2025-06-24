@@ -23,7 +23,10 @@
       }
       ../../common-metrics/v1/tab_open_latency.hjson
     ]
-    METRIC_DEFINITIONS: []
+    METRIC_DEFINITIONS: [
+      ./metrics.textproto
+      ../../common-metrics/v2/tab_open_latency.textproto
+    ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
 }

@@ -10,6 +10,7 @@ include PERFETTO MODULE sql_packages.page_load.page_load_start_by_iteration;
 DROP TABLE IF EXISTS tab_open_latency_output;
 CREATE PERFETTO TABLE tab_open_latency_output AS
 select
+  it_id,
   id,
   (
     page_load_start - lag (page_load_start, 1, NULL) over (

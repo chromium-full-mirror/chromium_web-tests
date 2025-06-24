@@ -3,13 +3,15 @@
 # found in the LICENSE file.
 
 metric_spec: {
-  id: "cuj.commen-metrics.tab_open_latency"
+  id: "cuj.common-metrics.tab_open_latency"
+  dimensions: "it_id"
   dimensions: "id"
   value: "open_latency"
   query: {
     table {
       table_name: "tab_open_latency_output"
       module_name: "sql_packages.queries.tab_open_latency"
+      column_names: "it_id"
       column_names: "id"
       column_names: "open_latency"
     }
