@@ -25,6 +25,7 @@ WITH meminfo_events AS (
 SELECT
   -- We have a row per process per meminfo event, sum up the meminfo counters
   -- for each meminfo event.
+  ROW_NUMBER() over (ORDER BY ts) as id,
   meminfo_events.ts AS ts,
   SUM(CAST(json_extract(per_process_meminfo_json.value, '$.pss_total') AS FLOAT) / 1024.0) AS pss_total_mb,
   SUM(CAST(json_extract(per_process_meminfo_json.value, '$.rss_total') AS FLOAT) / 1024.0) AS rss_total_mb,
