@@ -5,6 +5,7 @@
   template: ../../browser-flags/common-flags.hjson
   args: {
     CHROME_FLAGS: ""
+
     // Use the following for WPR recording mode. This requires the host running
     // the WPR recoder server opening http port 8080 and https port 8081.
     // Also need to remove --wpr $[WEB_TESTS]/cuj/crossbench/wpr/page-click-scroll.wprgo
