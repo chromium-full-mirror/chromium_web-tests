@@ -14,7 +14,9 @@
           '''
       }
     ]
-    METRIC_DEFINITIONS: []
+    METRIC_DEFINITIONS: [
+      ./metrics.textproto
+    ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
 }
