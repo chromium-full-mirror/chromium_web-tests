@@ -19,7 +19,7 @@
         template: ./action-blocks/page-load-and-click.hjson
         args: {
           PAGE_URL: https://www.amazon.com/deals?ref_=nav_cs_gb
-          TARGET: _new_tab
+          TARGET: _self
           CLICK_SELECTOR: xpath/(//img[contains(@alt, 'BLACK+DECKER Smart Portable Air Conditioner')])[1]
           VERIFY_SELECTOR: input#buy-now-button
         }
@@ -129,7 +129,7 @@
         template: ./action-blocks/page-load-and-click.hjson
         args: {
           PAGE_URL: https://www.amazon.com/deals?ref_=nav_cs_gb
-          TARGET: _new_tab
+          TARGET: _self
           CLICK_SELECTOR: xpath/(//img[contains(@alt, 'BLACK+DECKER Smart Portable Air Conditioner')])[1]
           VERIFY_SELECTOR: input#buy-now-button
         }

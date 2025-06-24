@@ -8,7 +8,7 @@
         template: ./action-blocks/page-load-and-click.hjson
         args: {
           PAGE_URL: https://www.amazon.com/Pampers-Sensitive-Water-Based-Diaper-Pop-Top/dp/B01C3H4ZTY/
-          TARGET: _self
+          TARGET: _new_tab
           CLICK_SELECTOR: a[data-csa-c-content-id='nav_cs_bestsellers']
           VERIFY_SELECTOR: div[aria-label='Navigation Tree']
         }
@@ -118,7 +118,7 @@
         template: ./action-blocks/page-load-and-click.hjson
         args: {
           PAGE_URL: https://www.amazon.com/Pampers-Sensitive-Water-Based-Diaper-Pop-Top/dp/B01C3H4ZTY/
-          TARGET: _self
+          TARGET: _new_tab
           CLICK_SELECTOR: a[data-csa-c-content-id='nav_cs_bestsellers']
           VERIFY_SELECTOR: div[aria-label='Navigation Tree']
         }
