@@ -27,12 +27,6 @@ buffers {
   size_kb: 40960
   fill_policy: RING_BUFFER
 }
-# Buffer dedicated for gpu.renderstages and android.gpu.memory. It's
-# OK if data is overwritten.
-buffers {
-  size_kb: 40960
-  fill_policy: RING_BUFFER
-}
 # Buffer dedicated for input events.
 buffers {
   size_kb: 40960
@@ -206,18 +200,6 @@ data_sources: {
     target_buffer: 4
   }
 }
-data_sources {
-  config {
-    name: "android.gpu.memory"
-    target_buffer: 6
-  }
-}
-data_sources {
-  config {
-    name: "gpu.renderstages"
-    target_buffer: 6
-  }
-}
 data_sources: {
   config {
     name: "linux.ftrace"
@@ -242,6 +224,7 @@ data_sources: {
       atrace_apps: "lmkd"
       atrace_apps: "com.android.vending"
       atrace_categories: "am"
+      atrace_categories: "wm"
     }
   }
 }
@@ -407,21 +390,9 @@ data_sources: {
 data_sources: {
   config {
     name: "android.input.inputevent"
-    target_buffer: 7
+    target_buffer: 6
     android_input_event_config {
       mode: TRACE_MODE_TRACE_ALL
-    }
-  }
-}
-data_sources: {
-  config {
-    name: "linux.ftrace"
-    target_buffer: 7
-    ftrace_config {
-      atrace_categories: "aidl"
-      atrace_categories: "input"
-      # also want to trace all apps
-      atrace_apps: "*"
     }
   }
 }
