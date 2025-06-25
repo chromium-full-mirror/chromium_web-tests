@@ -23,6 +23,7 @@
           $[...OPEN10]
           {
             action: meminfo
+            title: after_open
           }
         ]
       }
@@ -54,6 +55,7 @@
           }
           {
             action: meminfo
+            title: after_switch
           }
         ]
       }

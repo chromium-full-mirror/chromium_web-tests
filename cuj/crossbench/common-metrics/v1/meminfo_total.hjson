@@ -6,6 +6,6 @@
   sql:
     '''
       INCLUDE PERFETTO MODULE sql_packages.queries.meminfo_total;
-      SELECT * FROM meminfo_output;
+      SELECT * FROM meminfo_total_output;
     '''
 }

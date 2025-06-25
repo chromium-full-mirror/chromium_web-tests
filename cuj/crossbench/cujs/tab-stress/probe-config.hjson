@@ -33,6 +33,7 @@
     METRIC_DEFINITIONS: [
       ./metrics.textproto
       ../../common-metrics/v2/tab_open_latency.textproto
+      ../../common-metrics/v2/meminfo_total.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
