@@ -55,14 +55,6 @@ Setting PYTHON_KEYRING_BACKEND to keyring.backends.null.Keyring disables keyring
 and prevents `poetry install` from getting stuck waiting for user input in the
 GUI.
 
-### WPR
-
-Some tests use WPR for repeatable playback of recorded web sessions. Before running these tests, the WPR archive files must first be downloaded.
-```bash
-cd cuj/crossbench/wpr
-./wpr-setup.sh
-```
-
 ## Running Tests
 
 ### Android

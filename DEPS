@@ -98,4 +98,9 @@ hooks = [
                 '-vpython-tool', 'install',
     ],
   },
+  {
+    'name': 'wpr_archives',
+    'pattern': '.',
+    'action': ['cuj/crossbench/wpr/wpr-setup.sh']
+  }
 ]
