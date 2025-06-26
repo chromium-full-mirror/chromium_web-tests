@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import logging
 import sys
+
+from pathlib import Path
 
 # This is the earliest entrypoint into the runner.
 # Try to import some simple crossbench package here to
@@ -13,9 +14,11 @@ try:
   # pylint: disable=unused-import
   from crossbench.types import Json
 except ImportError:
-  logging.error("Failed to import crossbench. "
-                "Have you run 'gclient sync' and 'poetry install'?")
-  sys.exit(-1)
+  # Manually add crossbench to the path.
+  # This is necessary when running under vpython within web-tests
+  # (such as when running presubmit).
+  web_tests_root = Path(__file__).resolve().parent.parent.parent.parent
+  sys.path.append(str(web_tests_root / "third_party" / "crossbench"))
 
 from runner.cli import runner_cli
 
