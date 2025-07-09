@@ -6,6 +6,7 @@
   args: {
     TRACE_PROCESSOR_QUERIES: [
       ../../common-metrics/v1/meminfo_total.hjson
+      ../../common-metrics/v1/meminfo_per_iteration.hjson
       {
         template: ../../common-metrics/v1/uma_histogram_times.hjson
         args: {
@@ -23,6 +24,7 @@
     ]
     METRIC_DEFINITIONS: [
       ../../common-metrics/v2/meminfo_total.textproto
+      ../../common-metrics/v2/meminfo_per_iteration.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
   }
