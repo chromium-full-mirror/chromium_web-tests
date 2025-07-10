@@ -271,6 +271,21 @@ data_sources: {
         histogram_name: "Discarding.DiscardingFocusedTab"
       }
       histograms {
+        histogram_name: "EventLatency.KeyPressed.TotalLatency"
+      }
+      histograms {
+        histogram_name: "EventLatency.MouseMoved.TotalLatency"
+      }
+      histograms {
+        histogram_name: "EventLatency.MousePressed.TotalLatency"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.Jank3.AllSequences"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.PercentDroppedFrames3.AllSequences"
+      }
+      histograms {
         histogram_name: "PageLoad.PaintTiming.NavigationToFirstContentfulPaint"
       }
       histograms {
