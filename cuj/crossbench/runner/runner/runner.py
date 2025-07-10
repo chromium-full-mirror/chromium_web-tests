@@ -268,7 +268,7 @@ def run_cuj(
 
       cuj_variant: str = get_test_variant(filename)
 
-      if not run_config.variants_regex.match(cuj_variant):
+      if not run_config.variants_regex.fullmatch(cuj_variant):
         continue
 
       full_cuj_name = cuj_name
