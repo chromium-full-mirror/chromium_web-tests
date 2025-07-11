@@ -26,7 +26,6 @@ query: {
     column_names: "swap_in_bytes"
     column_names: "free_mem_kb"
     column_names: "free_swap_kb"
-    column_names: "reason"
     column_names: "thrashing"
     column_names: "max_thrashing"
     column_names: "total_foreground_services"
@@ -130,17 +129,6 @@ metric_spec: {
   dimensions: "process_name"
   dimensions: "ts"
   value: "free_swap_kb"
-}
-
-metric_spec: {
-  id: "cuj.common-metrics.lmk_kill_list.reason"
-  query {
-    inner_query_id: "lmk_kill_list_query"
-  }
-  dimensions: "it_id"
-  dimensions: "process_name"
-  dimensions: "ts"
-  value: "reason"
 }
 
 metric_spec: {
