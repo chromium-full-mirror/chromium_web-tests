@@ -8,15 +8,35 @@ query: {
     table_name: "meminfo_per_iteration_output"
     module_name: "sql_packages.queries.meminfo_per_iteration"
     column_names: "title"
-    column_names: "per_iteration_mb"
+    column_names: "process_mb"
+    column_names: "dma_buf_mb"
+    column_names: "free_mb"
   }
 }
 
 metric_spec: {
-  id: "cuj.common-metrics.meminfo.per_iteration_mb"
+  id: "cuj.common-metrics.meminfo-per-iteration.process_mb"
   query {
     inner_query_id: "meminfo_per_iteration_query"
   }
   dimensions: "title"
-  value: "per_iteration_mb"
+  value: "process_mb"
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.meminfo-per-iteration.dma_buf_mb"
+  query {
+    inner_query_id: "meminfo_per_iteration_query"
+  }
+  dimensions: "title"
+  value: "dma_buf_mb"
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.meminfo-per-iteration.free_mb"
+  query {
+    inner_query_id: "meminfo_per_iteration_query"
+  }
+  dimensions: "title"
+  value: "free_mb"
 }

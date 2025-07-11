@@ -36,7 +36,7 @@ SELECT
   -- crossbench-meminfo event's detail field is a JSON blob of type:
   --  {
   --    title: 'title'
-  --    meminfos: [
+  --    processes: [
   --      {
   --        pid: number
   --        pss_total: number
@@ -45,6 +45,11 @@ SELECT
   --      },
   --      ...
   --    ]
+  --    system: {
+  --      total_ram_kb: number
+  --      free_kb: number
+  --      dma_buf_kb: number
+  --    }
   --  }
   -- We have a row per process per meminfo event, sum up the meminfo counters
   -- for each meminfo event.
@@ -53,7 +58,9 @@ SELECT
   title,
   SUM(pss_total_kb) / 1024.0 AS pss_total_mb,
   SUM(rss_total_kb) / 1024.0 AS rss_total_mb,
-  SUM(swap_total_kb) / 1024.0 AS swap_total_mb
+  SUM(swap_total_kb) / 1024.0 AS swap_total_mb,
+  free_kb / 1024.0 AS free_mb,
+  dma_buf_kb / 1024.0 AS dma_buf_mb
 FROM
   (
     -- Extract the per-process objects and join them to their meminfo rows, to get
@@ -70,14 +77,22 @@ FROM
       ) AS rss_total_kb,
       CAST(
         json_extract (per_process_meminfo_json.value, '$.swap_total') AS FLOAT
-      ) AS swap_total_kb
+      ) AS swap_total_kb,
+      CAST(
+        json_extract (meminfo_with_iteration.json, '$.system.free_kb') AS FLOAT
+      ) AS free_kb,
+      CAST(
+        json_extract (meminfo_with_iteration.json, '$.system.dma_buf_kb') AS FLOAT
+      ) AS dma_buf_kb
     FROM
       meminfo_with_iteration,
       json_each (
-        json_extract (meminfo_with_iteration.json, '$.meminfos')
+        json_extract (meminfo_with_iteration.json, '$.processes')
       ) AS per_process_meminfo_json
   )
 GROUP BY
   it_id,
   ts,
-  title;
+  title,
+  free_kb,
+  dma_buf_kb;

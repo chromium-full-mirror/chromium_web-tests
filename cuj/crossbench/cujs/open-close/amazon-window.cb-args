@@ -1,1 +1,1 @@
---wpr $[WEB_TESTS]/cuj/crossbench/wpr/page-click-scroll.wprgo --playback 100x
+--wpr $[WEB_TESTS]/cuj/crossbench/wpr/page-click-scroll.wprgo --playback 40x

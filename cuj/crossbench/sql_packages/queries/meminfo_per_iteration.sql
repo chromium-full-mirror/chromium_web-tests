@@ -16,7 +16,9 @@ create view per_iteration as
 select
   title,
   CAST(it_id as REAL) as x,
-  AVG(pss_total_mb + swap_total_mb) as y
+  AVG(pss_total_mb + swap_total_mb) as process_mb,
+  AVG(dma_buf_mb) as dma_buf_mb,
+  AVG(free_mb) as free_mb
 from meminfo_total_output
 -- Filter out setup iterations, keeping only integer it_ids.
 where it_id = CAST(CAST(it_id as INTEGER) as TEXT)
@@ -28,7 +30,9 @@ create view mean as
 select
   title,
   AVG(x) as x,
-  AVG(y) as y
+  AVG(process_mb) as process_mb,
+  AVG(dma_buf_mb) as dma_buf_mb,
+  AVG(free_mb) as free_mb
 from per_iteration
 group by title;
 
@@ -41,6 +45,8 @@ DROP TABLE IF EXISTS meminfo_per_iteration_output;
 CREATE PERFETTO TABLE meminfo_per_iteration_output AS
 SELECT
   per_iteration.title as title,
-  SUM((per_iteration.x - mean.x) * (per_iteration.y - mean.y)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as per_iteration_mb
+  SUM((per_iteration.x - mean.x) * (per_iteration.process_mb - mean.process_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as process_mb,
+  SUM((per_iteration.x - mean.x) * (per_iteration.dma_buf_mb - mean.dma_buf_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as dma_buf_mb,
+  SUM((per_iteration.x - mean.x) * (per_iteration.free_mb - mean.free_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as free_mb
 FROM per_iteration join mean on per_iteration.title = mean.title
 GROUP BY per_iteration.title;

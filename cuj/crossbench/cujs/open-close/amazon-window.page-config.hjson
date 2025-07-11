@@ -7,7 +7,7 @@
       template: ./action-blocks/open-close.hjson
       args: {
         URL: https://www.amazon.com/Pampers-Sensitive-Water-Based-Diaper-Pop-Top/dp/B01C3H4ZTY/
-        TARGET: _new_tab
+        TARGET: _new_window
       }
     }
   }
