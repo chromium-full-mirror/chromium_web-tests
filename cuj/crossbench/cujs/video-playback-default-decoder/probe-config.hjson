@@ -19,4 +19,7 @@
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
   }
+  probes: {
+    video_acceleration: {}
+  }
 }
