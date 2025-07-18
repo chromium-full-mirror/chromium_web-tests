@@ -61,20 +61,22 @@
             title: after_switch
             timeout: 60s
           }
-          // Also capture memory after waiting for things to settle. Let reclaim
-          // catch up, extension processes should exit after 30s of inactivity,
-          // etc.
-          {
-            action: wait
-            duration: 60s
-          }
-          {
-            action: meminfo
-            title: after_cooldown
-            timeout: 60s
-          }
         ]
       }
+      teardown: [
+        // Also capture memory after waiting for things to settle. Let reclaim
+        // catch up, extension processes should exit after 30s of inactivity,
+        // etc.
+        {
+          action: wait
+          duration: 60s
+        }
+        {
+          action: meminfo
+          title: after_cooldown
+          timeout: 60s
+        }
+      ]
     }
   }
 }
