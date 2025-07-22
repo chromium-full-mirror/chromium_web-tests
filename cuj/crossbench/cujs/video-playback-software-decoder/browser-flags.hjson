@@ -4,6 +4,6 @@
 {
   template: ../../browser-flags/common-flags.hjson
   args: {
-    CHROME_FLAGS: " --autoplay-policy=no-user-gesture-required --remote-allow-origins=* --disable-accelerated-video-decode"
+    CHROME_FLAGS: " --disable-accelerated-video-decode --autoplay-policy=no-user-gesture-required --remote-allow-origins=* --suppress-message-center-popups --disable-gpu-driver-bug-workarounds --enable-features=WebRTCHardwareVideoEncoderFrameDrop --disable-features=ResolutionBasedDecoderPriority,VaapiEnforceVideoMinMaxResolution,VaapiVideoMinResolutionForPerformance"
   }
 }
