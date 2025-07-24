@@ -39,6 +39,7 @@
                 position: {
                   selector: a[aria-label='review and clean up Large Drive files']
                   wait: true
+                  scroll_into_view: true
                 }
                 source: $[CLICK_INPUT_SOURCE]
                 verify: xpath///span[@role='heading'][@aria-level='1'][text()='Items from Google Drive']
@@ -79,6 +80,7 @@
                 position: {
                   selector: a[aria-label='review and clean up Files in Trash']
                   wait: true
+                  scroll_into_view: true
                 }
                 source: $[CLICK_INPUT_SOURCE]
                 verify: xpath///span[@role='heading'][@aria-level='1'][text()='Items from Google Drive']
