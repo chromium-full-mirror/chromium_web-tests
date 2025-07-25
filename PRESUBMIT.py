@@ -9,7 +9,6 @@ import platform
 import subprocess
 from pathlib import Path
 
-
 USE_PYTHON3 = True
 
 SOURCE_SKIP_RE = [r"^protoc/gen.*", r"^third_party/.*"]

@@ -2,134 +2,206 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import argparse
-from datetime import datetime as dt
+from __future__ import annotations
+
 import logging
-from pathlib import Path
 import re
 import sys
+from datetime import datetime as dt
+from pathlib import Path
 
-from typing import List
-
-from crossbench.parse import ObjectParser, PathParser
 import debugpy
-
-from runner.runner import run_benchmark, run_cuj
-from runner.run_config import TargetPlatform, WebTestsRunConfig
-
-
-def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
-  # TODO this will break if cli.py is ever moved within web-tests
-  web_tests_root: Path = Path(
-      __file__).resolve().parent.parent.parent.parent.parent
-
-  if not (web_tests_root / "cuj" / "crossbench").is_dir():
-    logging.error(
-        "web-tests does not have the expected layout. Did this file move?")
-    sys.exit(1)
-
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--platform", type=TargetPlatform, required=True)
-  parser.add_argument(
-      "--device",
-      type=ObjectParser.any_str,
-      default=None,
-  )
-  parser.add_argument(
-      "--browser",
-      type=ObjectParser.any_str,
-      default=None,
-  )
-  parser.add_argument(
-      "--secrets",
-      type=PathParser.hjson_file_path,
-      default=None,
-  )
-  parser.add_argument("--playback", type=ObjectParser.any_str, default=None)
-  parser.add_argument("--tests", type=ObjectParser.non_empty_str, default=".*")
-  parser.add_argument(
-      "--variants", type=ObjectParser.non_empty_str, default=".*")
-  parser.add_argument("--debug", action="store_true", default=False)
-  parser.add_argument("--dry-run", action="store_true", default=False)
-  parser.add_argument(
-      "--results-prefix", type=ObjectParser.any_str, default=None)
-  parser.add_argument("--wait-for-debugger", action="store_true", default=False)
-
-  parsed = parser.parse_args(argv)
-
-  results_root: Path = web_tests_root / "cuj/crossbench/runner/results/"
-  results_prefix = f"{parsed.results_prefix}_" if parsed.results_prefix else ""
-  run_results_path: Path = results_root / dt.now().strftime(
-      f"{results_prefix}%Y-%m-%d_%H%M%S")
-  run_results_path.mkdir(parents=True)
-
-  latest_results: Path = results_root / "latest"
-  latest_results.unlink(missing_ok=True)
-  latest_results.symlink_to(run_results_path, target_is_directory=True)
-
-  secrets_file = None
-  if parsed.secrets:
-    secrets_file: Path = parsed.secrets.resolve()
-
-  return WebTestsRunConfig(
-      platform=parsed.platform,
-      device_id=parsed.device,
-      browser=parsed.browser,
-      secrets_file=secrets_file,
-      playback=parsed.playback,
-      tests_regex=re.compile(parsed.tests),
-      variants_regex=re.compile(parsed.variants),
-      results_path=run_results_path,
-      web_tests_root=web_tests_root,
-      debug=parsed.debug,
-      dry_run=parsed.dry_run,
-      wait_for_debugger=parsed.wait_for_debugger)
+from runner.config import (Benchmark, BenchmarkGroup, BenchmarkInvocation,
+                           CliConfig, Cuj, CujGroup, CujInvocation, RunConfig,
+                           TestGroupConfig, TestInvocation, Tests)
+from runner.paths import (BENCHMARKS, CUJS, LATEST_RESULTS, RESULTS,
+                          WEB_TESTS_ROOT)
+from runner.runner import run_test
 
 
-def runner_cli(argv: List[str]) -> None:
-  logging.getLogger().setLevel(logging.INFO)
+def is_page_config(file: Path) -> bool:
+  return file.name.endswith("page-config.hjson")
 
-  failed_tests: List[str] = []
 
-  run_config = get_run_config_from_args(argv)
+def get_test_variant(page_config: Path) -> str:
+  name_sections: list[str] = page_config.name.split(".")
 
-  if run_config.wait_for_debugger:
+  if len(name_sections) <= 2:
+    return ""
+
+  return name_sections[0]
+
+
+def enumerate_all_tests() -> Tests:
+  tests: Tests = Tests(cujs=[], benchmarks=[])
+
+  for benchmark_path in BENCHMARKS.iterdir():
+    if not benchmark_path.is_dir():
+      continue
+
+    extensions: Path = benchmark_path / "extensions.hjson"
+
+    cb_args = ""
+    cb_args_file = benchmark_path / "cb-args"
+    if cb_args_file.is_file():
+      cb_args = cb_args_file.read_text()
+
+    benchmark = Benchmark(
+        name=benchmark_path.name,
+        path=benchmark_path,
+        probe_config=(benchmark_path / "probe-config.hjson"),
+        browser_flags=(benchmark_path / "browser-flags.hjson"),
+        extensions=(extensions if extensions.is_file() else None),
+        crossbench_args=cb_args)
+
+    tests.benchmarks.append(benchmark)
+
+  for cuj_path in CUJS.iterdir():
+
+    if not cuj_path.is_dir():
+      continue
+
+    for page_config in cuj_path.iterdir():
+      if not is_page_config(page_config):
+        continue
+
+      variant: str = get_test_variant(page_config)
+
+      probe_config = cuj_path / f"{variant}.probe-config.hjson"
+
+      if not probe_config.is_file():
+        probe_config = cuj_path / "probe-config.hjson"
+
+      browser_flags = cuj_path / f"{variant}.browser-flags.hjson"
+
+      if not browser_flags.is_file():
+        browser_flags = cuj_path / "browser-flags.hjson"
+
+      extensions = cuj_path / f"{variant}.extensions.hjson"
+
+      if not extensions.is_file():
+        extensions = cuj_path / "extensions.hjson"
+
+      cb_args_file = cuj_path / f"{variant}.cb-args"
+
+      if not cb_args_file.is_file():
+        cb_args_file = cuj_path / "cb-args"
+
+      if not cb_args_file.is_file():
+        cb_args = ""
+      else:
+        cb_args = cb_args_file.read_text()
+
+      cb_args = cb_args.replace("$[WEB_TESTS]", str(WEB_TESTS_ROOT))
+
+      tests.cujs.append(
+          Cuj(name=cuj_path.name,
+              variant=variant,
+              path=cuj_path,
+              page_config=page_config,
+              probe_config=probe_config,
+              browser_flags=browser_flags,
+              extensions=(extensions if extensions.is_file() else None),
+              crossbench_args=cb_args))
+
+  return tests
+
+
+def generate_benchmark_invocations(
+    benchmark_groups: list[BenchmarkGroup],
+    potential_benchmarks: list[Benchmark]) -> list[BenchmarkInvocation]:
+  benchmark_invocations: list[BenchmarkInvocation] = []
+
+  for potential_benchmark in potential_benchmarks:
+    for benchmark_group in benchmark_groups:
+      if re.fullmatch(benchmark_group.filter_regex, potential_benchmark.name):
+        benchmark_invocations.append(
+            BenchmarkInvocation.from_benchmark(
+                potential_benchmark, benchmark_group.min_successes,
+                benchmark_group.max_consecutive_failures))
+
+  return benchmark_invocations
+
+
+def generate_cuj_invocations(cuj_groups: list[CujGroup],
+                             potential_cujs: list[Cuj]) -> list[CujInvocation]:
+  cuj_invocations: list[CujInvocation] = []
+
+  for potential_cuj in potential_cujs:
+    for cuj_group in cuj_groups:
+      if re.fullmatch(
+          cuj_group.filter_regex, potential_cuj.name) and re.fullmatch(
+              cuj_group.variants_filter_regex, potential_cuj.variant):
+        cuj_invocations.append(
+            CujInvocation.from_cuj(potential_cuj, cuj_group.min_successes,
+                                   cuj_group.max_consecutive_failures,
+                                   cuj_group.playback))
+
+  return cuj_invocations
+
+
+def generate_run_config(argv: list[str]) -> RunConfig:
+
+  cli_config = CliConfig.from_cmdline(argv)
+
+  if cli_config.wait_for_debugger:
     debug_port = 5678
     debugpy.listen(("localhost", debug_port))
     logging.info("Waiting for python debugger on port %d...", debug_port)
     debugpy.wait_for_client()
 
+  results_prefix = (f"{cli_config.results_prefix}_"
+                    if cli_config.results_prefix else "")
+  results_root: Path = RESULTS / dt.now().strftime(
+      f"{results_prefix}%Y-%m-%d_%H%M%S")
+  results_root.mkdir(parents=True)
 
-  for benchmark_path in (run_config.web_tests_root /
-                         "cuj/crossbench/benchmarks").iterdir():
+  LATEST_RESULTS.unlink(missing_ok=True)
+  LATEST_RESULTS.symlink_to(results_root, target_is_directory=True)
 
-    if not benchmark_path.is_dir() or not run_config.tests_regex.match(
-        benchmark_path.name):
-      continue
+  if Path(cli_config.tests).is_file():
+    test_group_config = TestGroupConfig.parse(cli_config.tests)
+  else:
+    test_group_config = TestGroupConfig.from_cmdline_flags(
+        tests=cli_config.tests,
+        variants=cli_config.variants,
+        playback=cli_config.playback)
 
-    failed_benchmarks = run_benchmark(
-        benchmark_path=benchmark_path,
-        run_config=run_config,
-    )
+  all_tests = enumerate_all_tests()
 
-    failed_tests.extend(failed_benchmarks)
+  tests: tuple[BenchmarkInvocation | CujInvocation, ...] = tuple(
+      generate_benchmark_invocations(
+          test_group_config.benchmark_groups, all_tests.benchmarks)) + tuple(
+              generate_cuj_invocations(test_group_config.cuj_groups,
+                                       all_tests.cujs))
 
-  for cuj_path in (run_config.web_tests_root / "cuj/crossbench/cujs").iterdir():
+  return RunConfig(
+      platform=cli_config.platform,
+      device=cli_config.device,
+      browser=cli_config.browser,
+      secrets=cli_config.secrets,
+      results_root=results_root,
+      debug=cli_config.debug,
+      dry_run=cli_config.dry_run,
+      tests=tests)
 
-    if not cuj_path.is_dir() or not run_config.tests_regex.fullmatch(
-        cuj_path.name):
-      continue
 
-    failed_cujs = run_cuj(
-        cuj_path=cuj_path,
-        run_config=run_config,
-    )
+def runner_cli(argv: list[str]) -> None:
+  logging.getLogger().setLevel(logging.INFO)
 
-    failed_tests.extend(failed_cujs)
+  run_config = generate_run_config(argv)
+
+  failed_tests: list[TestInvocation] = []
+  for test_invocation in run_config.tests:
+    successes, _ = run_test(test_invocation, run_config)
+    if not successes or (test_invocation.min_successes and
+                         successes != test_invocation.min_successes):
+      failed_tests.append(test_invocation)
+
+  for failed_test in failed_tests:
+    logging.error("Test failed: %s", failed_test.full_name)
 
   if failed_tests:
-    for failed_test in failed_tests:
-      logging.error("Test failed: %s", failed_test)
     sys.exit(1)
 
   sys.exit(0)

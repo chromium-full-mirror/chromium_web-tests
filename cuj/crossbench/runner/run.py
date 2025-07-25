@@ -5,7 +5,7 @@
 
 import sys
 
-from pathlib import Path
+from runner.paths import THIRD_PARTY_CROSSBENCH
 
 # This is the earliest entrypoint into the runner.
 # Try to import some simple crossbench package here to
@@ -17,9 +17,9 @@ except ImportError:
   # Manually add crossbench to the path.
   # This is necessary when running under vpython within web-tests
   # (such as when running presubmit).
-  web_tests_root = Path(__file__).resolve().parent.parent.parent.parent
-  sys.path.append(str(web_tests_root / "third_party" / "crossbench"))
+  sys.path.append(str(THIRD_PARTY_CROSSBENCH))
 
+# pylint: disable=ungrouped-imports
 from runner.cli import runner_cli
 
 if __name__ == "__main__":

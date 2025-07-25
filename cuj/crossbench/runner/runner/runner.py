@@ -2,20 +2,21 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from __future__ import annotations
+
 import json
 import logging
 import shlex
 import tempfile
 import urllib
-
+from datetime import datetime as dt
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from crossbench import hjson as cb_hjson
 from crossbench.cli.cli import CrossBenchCLI
 from crossbench.helper.cwd import ChangeCWD
-
-from runner.run_config import TargetPlatform, WebTestsRunConfig
+from runner.config import RunConfig, TargetPlatform, TestInvocation
 
 
 def execute_crossbench(
@@ -26,15 +27,15 @@ def execute_crossbench(
     debug: bool,
     dry_run: bool,
     results_path: Path,
-    playback: Optional[str] = None,
-    page_config_file: Optional[Path] = None,
-    secrets_file: Optional[Path] = None,
+    playback: str | None = None,
+    page_config_file: Path | None = None,
+    secrets_file: Path | None = None,
 ) -> None:
   with tempfile.NamedTemporaryFile() as browser_config_file:
     browser_config_file.write(browser_config.encode("utf-8"))
     browser_config_file.seek(0)
 
-    crossbench_args: List[str] = []
+    crossbench_args: list[str] = []
 
     crossbench_args.append(cb_benchmark_name)
 
@@ -77,22 +78,8 @@ def execute_crossbench(
     CrossBenchCLI().run(crossbench_args)
 
 
-def is_page_config(filename: str) -> bool:
-  return filename.endswith("page-config.hjson")
-
-
-def get_test_variant(page_config_filename: str) -> str:
-  name_sections: List[str] = page_config_filename.split(".")
-
-  if len(name_sections) <= 2:
-    return ""
-
-  return name_sections[0]
-
-
-def get_android_browser_config(run_config: WebTestsRunConfig,
-                               browser_flags_file: Path,
-                               extensions: Any) -> Dict[str, Any]:
+def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
+                               extensions: Any) -> dict[str, Any]:
   # Default to normal chrome for android
   browser_string = "chrome"
 
@@ -108,23 +95,22 @@ def get_android_browser_config(run_config: WebTestsRunConfig,
               "extensions": extensions,
               "driver": {
                   "type": "adb",
-                  "device_id": run_config.device_id
+                  "device_id": run_config.device
               }
           }
       }
   }
 
 
-def get_chromeos_browser_config(run_config: WebTestsRunConfig,
-                                browser_flags_file: Path,
-                                extensions: Any) -> Dict[str, Any]:
+def get_chromeos_browser_config(run_config: RunConfig, browser_flags_file: Path,
+                                extensions: Any) -> dict[str, Any]:
   # Default to normal chrome for ChromeOS
   browser_string = "/opt/google/chrome/chrome"
 
   if run_config.browser:
     browser_string = run_config.browser
 
-  ssh_info = urllib.parse.urlparse(f"ssh://{run_config.device_id}")
+  ssh_info = urllib.parse.urlparse(f"ssh://{run_config.device}")
 
   return {
       "flags": str(browser_flags_file),
@@ -146,9 +132,8 @@ def get_chromeos_browser_config(run_config: WebTestsRunConfig,
   }
 
 
-def get_local_browser_config(run_config: WebTestsRunConfig,
-                             browser_flags_file: Path,
-                             extensions: Any) -> Dict[str, Any]:
+def get_local_browser_config(run_config: RunConfig, browser_flags_file: Path,
+                             extensions: Any) -> dict[str, Any]:
   logging.warning(
       "The 'local' platform is not officially supported by this script. "
       "You may need to tweak the probe config manually for some tests to pass."
@@ -172,7 +157,7 @@ def get_local_browser_config(run_config: WebTestsRunConfig,
   }
 
 
-def get_browser_config(run_config: WebTestsRunConfig, browser_flags_file: Path,
+def get_browser_config(run_config: RunConfig, browser_flags_file: Path,
                        extensions: Any) -> str:
   # TODO support different chrome versions (i.e. dev/beta)
 
@@ -191,23 +176,8 @@ def get_browser_config(run_config: WebTestsRunConfig, browser_flags_file: Path,
   return json.dumps(config_dict)
 
 
-def get_additional_crossbench_args(test_path: Path,
-                                   web_tests_root: Path,
-                                   test_variant: str = "") -> str:
-  additional_crossbench_args_file: Path = test_path / f"{test_variant}.cb-args"
-
-  if not additional_crossbench_args_file.is_file():
-    additional_crossbench_args_file = test_path / "cb-args"
-
-  additional_crossbench_args: str = ""
-  if additional_crossbench_args_file.is_file():
-    additional_crossbench_args = additional_crossbench_args_file.read_text()
-
-  return additional_crossbench_args.replace("$[WEB_TESTS]", str(web_tests_root))
-
-
-def load_extensions(extension_config_file: Path) -> Any:
-  if not extension_config_file.is_file():
+def load_extensions(extension_config_file: Path | None) -> Any:
+  if not extension_config_file:
     return None
 
   with extension_config_file.open(encoding="utf-8") as f:
@@ -218,108 +188,68 @@ def load_extensions(extension_config_file: Path) -> Any:
       extensions = load_extensions(Path(extensions))
   return extensions
 
-def run_benchmark(
-    benchmark_path: Path,
-    run_config: WebTestsRunConfig,
-) -> List[str]:
-  with ChangeCWD(benchmark_path):
-    benchmark_name: str = benchmark_path.name
-    benchmark_results_path: Path = run_config.results_path / benchmark_name
-    probe_config_file: Path = benchmark_path / "probe-config.hjson"
-    browser_flags_file: Path = benchmark_path / "browser-flags.hjson"
-    extensions = load_extensions(benchmark_path / "extensions.hjson")
-    browser_config = get_browser_config(run_config, browser_flags_file,
+
+def run_test(test_invocation: TestInvocation,
+             run_config: RunConfig) -> tuple[int, int]:
+  successes = 0
+  failures = 0
+  consecutive_failures = 0
+
+  test_results_root = run_config.results_root / test_invocation.full_name
+
+  success_path = test_results_root / "pass"
+  success_path.mkdir(parents=True, exist_ok=True)
+  fail_path = test_results_root / "fail"
+  fail_path.mkdir(parents=True, exist_ok=True)
+
+  with ChangeCWD(test_invocation.path):
+    extensions = load_extensions(test_invocation.extensions)
+    browser_config = get_browser_config(run_config,
+                                        test_invocation.browser_flags,
                                         extensions)
 
-    logging.info("Executing crossbench for CUJ: %s", benchmark_name)
+    while True:
+      timestamp = dt.now().strftime("%Y-%m-%d_%H%M%S")
+      current_results_path: Path = test_results_root / timestamp
 
-    try:
-      execute_crossbench(
-          cb_benchmark_name=benchmark_name,
-          probe_config_file=probe_config_file,
-          browser_config=browser_config,
-          additional_crossbench_args=get_additional_crossbench_args(
-              benchmark_path, run_config.web_tests_root),
-          debug=run_config.debug,
-          dry_run=run_config.dry_run,
-          results_path=benchmark_results_path,
-      )
-    # pylint: disable=broad-exception-caught
-    except Exception as e:
-      logging.error(e)
-      logging.error("Crossbench invocation for %s failed.", benchmark_name)
-      return [benchmark_name]
-
-    return []
-
-
-def run_cuj(
-    cuj_path: Path,
-    run_config: WebTestsRunConfig,
-) -> List[str]:
-  with ChangeCWD(cuj_path):
-    cuj_name: str = cuj_path.name
-
-    failed_cujs: List[str] = []
-
-    for config_file in cuj_path.iterdir():
-      filename: str = config_file.name
-
-      if not is_page_config(filename):
-        continue
-
-      cuj_variant: str = get_test_variant(filename)
-
-      if not run_config.variants_regex.fullmatch(cuj_variant):
-        continue
-
-      full_cuj_name = cuj_name
-
-      if cuj_variant:
-        full_cuj_name = full_cuj_name + f"_{cuj_variant}"
-
-      variant_results_path: Path = run_config.results_path / full_cuj_name
-
-      page_config_file: Path = config_file
-
-      probe_config_file: Path = cuj_path / f"{cuj_variant}.probe-config.hjson"
-
-      if not probe_config_file.is_file():
-        probe_config_file = cuj_path / "probe-config.hjson"
-
-      browser_flags_file: Path = cuj_path / f"{cuj_variant}.browser-flags.hjson"
-
-      if not browser_flags_file.is_file():
-        browser_flags_file = cuj_path / "browser-flags.hjson"
-
-      extension_config_file: Path = cuj_path / f"{cuj_variant}.extensions.hjson"
-      if not extension_config_file.is_file():
-        extension_config_file = cuj_path / "extensions.hjson"
-      extensions = load_extensions(extension_config_file)
-
-      browser_config = get_browser_config(run_config, browser_flags_file,
-                                          extensions)
-
-      logging.info("Executing crossbench for CUJ: %s", full_cuj_name)
+      logging.info("Executing crossbench for Test: %s",
+                   test_invocation.full_name)
 
       try:
         execute_crossbench(
-            cb_benchmark_name="loading",
-            probe_config_file=probe_config_file,
+            cb_benchmark_name=test_invocation.crossbench_command,
+            probe_config_file=test_invocation.probe_config,
             browser_config=browser_config,
-            additional_crossbench_args=get_additional_crossbench_args(
-                cuj_path, run_config.web_tests_root, cuj_variant),
+            additional_crossbench_args=test_invocation.crossbench_args,
             debug=run_config.debug,
             dry_run=run_config.dry_run,
-            results_path=variant_results_path,
-            playback=run_config.playback,
-            page_config_file=page_config_file,
-            secrets_file=run_config.secrets_file,
+            results_path=current_results_path,
+            playback=test_invocation.playback,
+            page_config_file=test_invocation.page_config,
+            secrets_file=run_config.secrets,
         )
+        if current_results_path.is_dir():
+          current_results_path.rename(success_path / timestamp)
+        successes += 1
+        consecutive_failures = 0
       # pylint: disable=broad-exception-caught
       except Exception as e:
         logging.error(e)
-        logging.error("Crossbench invocation for %s failed.", full_cuj_name)
-        failed_cujs.append(full_cuj_name)
+        logging.error("Crossbench invocation for Test: %s failed",
+                      test_invocation.full_name)
+        failures += 1
+        consecutive_failures += 1
+        try:
+          current_results_path.rename(fail_path / timestamp)
+        except Exception:
+          pass
 
-    return failed_cujs
+      if (test_invocation.max_consecutive_failures and
+          consecutive_failures >= test_invocation.max_consecutive_failures):
+        break
+
+      if (not test_invocation.min_successes or
+          successes >= test_invocation.min_successes):
+        break
+
+  return successes, failures
