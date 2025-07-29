@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ../../browser-flags/common-flags.hjson
+  template: ../../browser-flags/video/video-base.hjson
   args: {
-    CHROME_FLAGS: " --disable-accelerated-video-decode --autoplay-policy=no-user-gesture-required --remote-allow-origins=* --suppress-message-center-popups --disable-gpu-driver-bug-workarounds --enable-features=WebRTCHardwareVideoEncoderFrameDrop --disable-features=ResolutionBasedDecoderPriority,VaapiEnforceVideoMinMaxResolution,VaapiVideoMinResolutionForPerformance"
+    VIDEO_CHROME_FLAGS: --disable-accelerated-video-decode
   }
 }
