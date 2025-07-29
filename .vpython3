@@ -24,8 +24,13 @@ wheel: <
 >
 
 wheel: <
+  name: "infra/python/wheels/types-psutil-py3"
+  version: "version:5.8.23"
+>
+
+wheel: <
   name: "infra/python/wheels/selenium-py3"
-  version: "version:4.28.1"
+  version: "version:4.34.0"
 >
 
 wheel: <
@@ -51,6 +56,11 @@ wheel: <
 wheel: <
   name: "infra/python/wheels/py-py2_py3"
   version: "version:1.11.0"
+>
+
+wheel: <
+  name: "infra/python/wheels/isort-py3"
+  version: "version:5.10.1"
 >
 
 wheel: <
@@ -125,7 +135,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/typing-extensions-py3"
-  version: "version:4.12.2"
+  version: "version:4.14.0"
 >
 
 wheel: <
@@ -155,12 +165,12 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/trio-py3"
-  version: "version:0.22.1"
+  version: "version:0.30.0"
 >
 
 wheel: <
   name: "infra/python/wheels/trio-websocket-py3"
-  version: "version:0.10.3"
+  version: "version:0.12.2"
 >
 
 wheel: <
@@ -170,7 +180,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/urllib3-py3"
-  version: "version:2.1.0"
+  version: "version:2.4.0"
 >
 
 wheel: <
@@ -205,7 +215,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/certifi-py3"
-  version: "version:2024.7.4"
+  version: "version:2025.6.15"
 >
 
 wheel: <
