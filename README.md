@@ -14,6 +14,7 @@
 ```
 mkdir src
 cd src
+gcloud auth login
 fetch web-tests
 cd web-tests
 ```
@@ -21,10 +22,9 @@ Don't forget to run `gclient sync` every time you pull new changes from origin.
 
 ### Poetry
 web-tests uses [poetry](https://python-poetry.org/)
-manage python dependencies.
+to manage python dependencies.
 ```bash
-# python3.11-dev is required for pandas
-sudo apt-get install python3.11 python3.11-dev python3-poetry
+sudo apt install python3.11 python3-poetry
 ```
 
 Alternatively, install poetry in a python venv:
