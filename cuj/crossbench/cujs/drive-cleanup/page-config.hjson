@@ -75,10 +75,10 @@
           files-in-trash: {
             actions: [
               {
-                // Click the review link in the "File in Trash" card.
+                // Click the review link in the "Large Drive files" card.
                 action: click
                 position: {
-                  selector: a[aria-label='review and clean up Files in Trash']
+                  selector: a[aria-label='review and clean up Large Drive files']
                   wait: true
                   scroll_into_view: true
                 }
@@ -88,20 +88,30 @@
                 timeout: 5s
               }
               {
-                // Click the "Delete all" button.
+                // Select the tab "Files in Trash"
                 action: click
                 position: {
-                  selector: button[aria-label='Delete all']
+                  selector: a[aria-label='Files in Trash']
                   wait: true
                 }
                 source: $[CLICK_INPUT_SOURCE]
-                verify: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items']"
-                attempts: 3
                 timeout: 5s
+              }
+              {
+                // Click the "Delete all" button.
+                action: click
+                position: {
+                  selector: button[aria-label='Delete all']:not([disabled])
+                  wait: true
+                  required: false
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                verify: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items']"
+                timeout: 10s
               }
             ]
           }
-          confirm-delete-file-in-track: ./action-blocks/confirm-delete.hjson
+          confirm-delete-file-in-trash: ./action-blocks/confirm-delete.hjson
         }
       }
     }
