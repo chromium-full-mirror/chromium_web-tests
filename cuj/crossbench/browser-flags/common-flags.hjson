@@ -2,5 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  flags: --request-desktop-sites --allow-background-interventions --disable-features=ServiceGroupImportance --enable-features=BackgroundNotPerceptibleBinding $[CHROME_FLAGS]
+  // WebContentsDiscard works around an issue with legacy discarding
+  // on ChromeOS that causes webdriver to lock up.
+  flags: --request-desktop-sites --allow-background-interventions --disable-features=ServiceGroupImportance --enable-features=BackgroundNotPerceptibleBinding --enable-features=WebContentsDiscard $[CHROME_FLAGS]
 }
