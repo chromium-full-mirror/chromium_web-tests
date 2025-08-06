@@ -2,10 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  probes: {
-    screenshot: {}
-    dump_html: {}
-    trace_processor: {
+  probes: [
+    {
+      name: screenshot
+    }
+    {
+      name: dump_html
+    }
+    {
+      name: trace_processor
       queries: $[TRACE_PROCESSOR_QUERIES]
       module_paths: [
         ./sql_packages
@@ -18,10 +23,16 @@
         $[...METRIC_DEFINITIONS]
       ]
     }
-    perfetto: {
+    {
+      name: perfetto
       textproto: $[TRACE_CONFIG]
     }
-    downloads: {}
-    meminfo: {}
-  }
+    {
+      name: downloads
+    }
+    {
+      name: meminfo
+    }
+    $[...ADDITIONAL_PROBES]
+  ]
 }

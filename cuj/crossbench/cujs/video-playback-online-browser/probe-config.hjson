@@ -18,5 +18,6 @@
       ../../common-metrics/v2/video_dropped_frames.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

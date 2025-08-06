@@ -32,5 +32,6 @@
     ]
     METRIC_DEFINITIONS: []
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

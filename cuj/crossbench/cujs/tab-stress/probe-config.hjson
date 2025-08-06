@@ -52,5 +52,6 @@
       ../../common-metrics/v2/dom_complete.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

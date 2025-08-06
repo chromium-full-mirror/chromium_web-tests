@@ -18,8 +18,10 @@
       ../../common-metrics/v2/video_dropped_frames.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
-  }
-  probes: {
-    video_acceleration: {}
+    ADDITIONAL_PROBES: [
+      {
+        name: video_acceleration
+      }
+    ]
   }
 }

@@ -28,5 +28,6 @@
       ../../common-metrics/v2/tab_open_latency.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

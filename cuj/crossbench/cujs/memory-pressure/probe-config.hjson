@@ -34,5 +34,6 @@
     METRIC_DEFINITIONS: [
       ./metrics.textproto
     ]
+    ADDITIONAL_PROBES: []
   }
 }

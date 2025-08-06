@@ -7,5 +7,6 @@
     TRACE_PROCESSOR_QUERIES: []
     METRIC_DEFINITIONS: []
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

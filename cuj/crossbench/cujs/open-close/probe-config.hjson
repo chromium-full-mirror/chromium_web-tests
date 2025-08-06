@@ -27,5 +27,6 @@
       ../../common-metrics/v2/meminfo_per_iteration.textproto
     ]
     TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }

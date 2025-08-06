@@ -61,5 +61,6 @@
       ../../common-metrics/v2/scroll_duration.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
+    ADDITIONAL_PROBES: []
   }
 }
