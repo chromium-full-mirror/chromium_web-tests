@@ -1,7 +1,7 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-INCLUDE PERFETTO MODULE sql_packages.web_tests_common.histograms;
+INCLUDE PERFETTO MODULE chrome.histograms;
 INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_constants;
 
 DROP TABLE IF EXISTS uma_histogram_summaries;
