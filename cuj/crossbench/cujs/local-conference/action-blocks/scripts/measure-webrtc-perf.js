@@ -6,7 +6,7 @@ const numPeople = $[NUM_PEOPLE];
 const numDecoders = numPeople - 1;
 
 await waitForStabilized(numPeople);
-// Sleep 5s to eliminate the performance effect of rtc peer connection start up.
+// Sleep to eliminate the performance effect of rtc peer connection start up.
 await new Promise(r => setTimeout(r, webRTCCoolDownDuration));
 
 let [decodePromises, encodePromise] = measureRTCStats(numDecoders);

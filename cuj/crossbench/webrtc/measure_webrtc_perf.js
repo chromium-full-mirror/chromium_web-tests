@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-const webRTCCoolDownDuration = 5000;
+const webRTCCoolDownDuration = 15000;
 
 // Wait for peer connection stabilized.
 async function readCodec(peerConnection) {
