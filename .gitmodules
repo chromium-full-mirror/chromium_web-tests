@@ -3,7 +3,7 @@
 	url = https://chromium.googlesource.com/crossbench
 [submodule "third_party/hjson_js"]
 	path = third_party/hjson_js
-	url = https://github.com/hjson/hjson-js
+	url = https://chromium.googlesource.com/external/github.com/hjson/hjson-js
 [submodule "third_party/webpagereplay"]
 	path = third_party/webpagereplay
 	url = https://chromium.googlesource.com/webpagereplay
