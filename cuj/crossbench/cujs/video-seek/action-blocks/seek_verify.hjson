@@ -19,6 +19,12 @@
           selector: .videotile
           timeout: 10s
         }
+        // We need to wait to ensure video is loaded properly. Otherwise we may encounter error
+        // from attempting to seek before video can return valid duration.
+        {
+          action: wait
+          duration: 3s
+        }
         {
           action: js
           timeout: 1000
@@ -26,10 +32,6 @@
           replacements: {
             NUM_SEEK: $[NUM_SEEK]
           }
-        }
-        {
-          action: wait
-          duration: 15s
         }
         {
           action: js
