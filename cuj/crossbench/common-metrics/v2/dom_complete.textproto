@@ -14,7 +14,7 @@ query {
 }
 
 metric_spec: {
-  id: "cuj.common-metrics.dom_complete"
+  id: "no-crosbolt.cuj.common-metrics.dom_complete_by_tab"
   dimensions: "id"
   dimensions: "it_id"
   value: "dom_complete"
@@ -24,8 +24,26 @@ metric_spec: {
 }
 
 metric_spec: {
-  id: "cuj.common-metrics.dom_interactive"
+  id: "no-crosbolt.cuj.common-metrics.dom_interactive_by_tab"
   dimensions: "id"
+  dimensions: "it_id"
+  value: "dom_interactive"
+  query: {
+    inner_query_id: "dom_complete_output_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.dom_complete"
+  dimensions: "it_id"
+  value: "dom_complete"
+  query: {
+    inner_query_id: "dom_complete_output_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.dom_interactive"
   dimensions: "it_id"
   value: "dom_interactive"
   query: {
