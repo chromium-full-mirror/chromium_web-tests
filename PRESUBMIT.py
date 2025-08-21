@@ -5,11 +5,11 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import platform
 import subprocess
-from typing import List
+from pathlib import Path
 
+import sqlparse
 
 USE_PYTHON3 = True
 
@@ -17,6 +17,10 @@ USE_PYTHON3 = True
 def CheckChange(input_api, output_api):
   tests = []
   results = []
+  modified_hjson_files: list[str] | None = ModifiedFiles(
+      input_api, False, filename_pattern="*.hjson")
+  modified_sql_files: list[str] | None = ModifiedFiles(
+      input_api, False, filename_pattern="*.sql")
   # ---------------------------------------------------------------------------
   # Validate the vpython spec:
   # ---------------------------------------------------------------------------
@@ -40,28 +44,13 @@ def CheckChange(input_api, output_api):
   # ---------------------------------------------------------------------------
   # hjson:
   # ---------------------------------------------------------------------------
-  for hjson_file in AllHjsonFiles(input_api):
-    try:
-      formatted_contents: str = FormatHjsonFile(input_api, hjson_file)
-    except ValueError as e:
-      results.append(
-          output_api.PresubmitPromptWarning(
-              "Malformed hjson file:",
-              items=[str(hjson_file)],
-              long_text=str(e)))
-      continue
+  FormatFiles(input_api, output_api, results, modified_hjson_files,
+              FormatHjsonFile)
 
-    original_contents = input_api.ReadFile(str(hjson_file), "r")
-
-    if original_contents != formatted_contents:
-      results.append(
-          output_api.PresubmitPromptWarning(
-              "Unformatted hjson file:",
-              items=[str(hjson_file)],
-              long_text=(
-                  "Run format_hjson.py to automatically fix this error.\n"
-                  f"Expected:\n{formatted_contents}"
-                  f"Got:\n{original_contents}")))
+  # ---------------------------------------------------------------------------
+  # sql:
+  # ---------------------------------------------------------------------------
+  FormatFiles(input_api, output_api, results, modified_sql_files, FormatSqlFile)
 
   # ---------------------------------------------------------------------------
   # crossbench:
@@ -98,22 +87,52 @@ def CheckChange(input_api, output_api):
   return results
 
 
-def AllHjsonFiles(input_api) -> List[Path]:
-  hjson_files = []
-  for file in input_api.change.AllFiles():
-    if file.endswith(".hjson"):
-      hjson_files.append(Path(input_api.change.RepositoryRoot()) / file)
+def ModifiedFiles(input_api, on_commit: bool,
+                  filename_pattern: str) -> list[str] | None:
+  if on_commit:
+    return None
+  files = [file.AbsoluteLocalPath() for file in input_api.AffectedFiles()]
+  files_to_check = []
+  for file_path in files:
+    if not input_api.fnmatch.fnmatch(file_path, filename_pattern):
+      continue
+    if not input_api.os_path.exists(file_path):
+      continue
+    file_path = input_api.os_path.relpath(file_path,
+                                          input_api.PresubmitLocalPath())
+    files_to_check.append(file_path)
+  return files_to_check
 
-  return hjson_files
 
+def FormatFiles(input_api, output_api, results, modified_files, format_func):
+  for file in (modified_files or []):
+    full_path = Path(input_api.change.RepositoryRoot()) / file
+
+    try:
+      formatted_contents: str = format_func(input_api, full_path)
+    except ValueError as e:
+      results.append(
+          output_api.PresubmitPromptWarning(
+              "Malformed file:", items=[str(full_path)], long_text=str(e)))
+      continue
+
+    original_contents = input_api.ReadFile(str(full_path), "r")
+    if original_contents != formatted_contents:
+      full_path.write_text(formatted_contents)
+      results.append(
+          output_api.PresubmitPromptWarning(
+              "Unformatted file:",
+              items=[str(full_path)],
+              long_text="Please update your commit with the formatted file."))
 
 def FormatHjsonFile(input_api, hjson_file: Path) -> str:
   node_bin = str(
       Path(input_api.change.RepositoryRoot()) /
       "third_party/node/linux/node-linux-x64/bin/node")
+
   hjson_js_bin = str(
-      Path(input_api.change.RepositoryRoot()) /
-      "third_party/hjson_js/bin/hjson")
+      Path(input_api.change.RepositoryRoot()) / "third_party" / "hjson_js" /
+      "bin" / "hjson")
 
   try:
     return subprocess.run([
@@ -126,6 +145,11 @@ def FormatHjsonFile(input_api, hjson_file: Path) -> str:
     error = e.stderr.decode(encoding="utf=8")
     raise ValueError(f"Failed to parse hjson file: {error}") from e
 
+
+def FormatSqlFile(input_api, sql_file: Path) -> str:
+  del input_api
+  return sqlparse.format(
+      sql_file.read_text(), reindent=False, keyword_case="upper")
 
 def CheckChangeOnUpload(input_api, output_api):
   return CheckChange(input_api, output_api)
