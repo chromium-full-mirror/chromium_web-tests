@@ -26,6 +26,7 @@
           condition: return document.querySelector('video#video').ended
           timeout: 60s
         }
+        $[...ADDITIONAL_ACTIONS]
       ]
     }
   }

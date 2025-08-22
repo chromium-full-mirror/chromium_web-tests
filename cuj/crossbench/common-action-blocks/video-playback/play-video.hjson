@@ -26,6 +26,7 @@
           condition: return document.querySelector('.videotile').ended
           timeout: 60s
         }
+        $[...ADDITIONAL_ACTIONS]
       ]
     }
   }
