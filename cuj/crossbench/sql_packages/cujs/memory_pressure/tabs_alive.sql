@@ -2,97 +2,97 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 
-include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-drop view if exists tabs_alive;
+DROP VIEW IF EXISTS tabs_alive;
 
-create view tabs_alive
-as
-with
-  page_loaded_events as (
+CREATE VIEW tabs_alive
+AS
+WITH
+  page_loaded_events AS (
     -- 1. Get all page-loaded events with their process info
-    select
-      cast(substr(s.name, instr(s.name, '~') + 1) as integer) as page_loaded_tab_index,
-      s.ts as page_loaded_ts,
-      p.pid as page_loaded_pid
-    from slice s
-    join thread_track tt
-      on s.track_id = tt.id
-    join thread t
-      using (utid)
-    join process p
-      using (upid)
-    where s.cat = 'blink.user_timing' and s.name glob 'page-loaded~*'
+    SELECT
+      cast(substr(s.name, instr(s.name, '~') + 1) AS integer) AS page_loaded_tab_index,
+      s.ts AS page_loaded_ts,
+      p.pid AS page_loaded_pid
+    FROM slice s
+    JOIN thread_track tt
+      ON s.track_id = tt.id
+    JOIN THREAD t
+      USING (utid)
+    JOIN process p
+      USING (upid)
+    WHERE s.cat = 'blink.user_timing' AND s.name glob 'page-loaded~*'
   ),
-  process_lifetimes as (
+  process_lifetimes AS (
     -- 2. Determine the start and end timestamps for all processes
     --    Note: process.end_ts might be NULL if process is alive at trace end.
     --    We'll use trace_end as a fallback for 'alive' processes.
-    select
-      ple.page_loaded_tab_index as tab_index,
+    SELECT
+      ple.page_loaded_tab_index AS tab_index,
       p.pid,
-      p.name as process_name,
+      p.name AS process_name,
       p.start_ts,
-      coalesce(p.end_ts, (select max(ts) from slice)) as end_ts_effective,
-      ple.page_loaded_ts as page_loaded_ts
-    from process p
-    join page_loaded_events ple
+      coalesce(p.end_ts, (SELECT max(ts) FROM slice)) AS end_ts_effective,
+      ple.page_loaded_ts AS page_loaded_ts
+    FROM process p
+    JOIN page_loaded_events ple
       ON p.pid = ple.page_loaded_pid
-    where ple.page_loaded_ts between p.start_ts and coalesce(p.end_ts, (select max(ts) from slice))
+    WHERE ple.page_loaded_ts BETWEEN p.start_ts AND coalesce(p.end_ts, (SELECT max(ts) FROM slice))
   )
-select
+SELECT
   pl_outer.tab_index,
   pl_outer.page_loaded_ts,
   pl_outer.pid,
   pl_outer.process_name,
   (
-    select count(*)
-    from process_lifetimes pl_inner
-    where
+    SELECT count(*)
+    FROM process_lifetimes pl_inner
+    WHERE
       -- Process must be emitted a 'page-loaded' event before the current tab's
       -- 'page-loaded' event and must still be alive
       pl_inner.page_loaded_ts <= pl_outer.page_loaded_ts
-      and pl_inner.end_ts_effective >= pl_outer.page_loaded_ts
-  ) as tabs_alive
-from process_lifetimes pl_outer
-order by pl_outer.tab_index;
+      AND pl_inner.end_ts_effective >= pl_outer.page_loaded_ts
+  ) AS tabs_alive
+FROM process_lifetimes pl_outer
+ORDER BY pl_outer.tab_index;
 
-drop view if exists tabs_alive_by_iteration;
+DROP VIEW IF EXISTS tabs_alive_by_iteration;
 
-create view tabs_alive_by_iteration
-as
-select
-  iterations.id as it_id,
+CREATE VIEW tabs_alive_by_iteration
+AS
+SELECT
+  iterations.id AS it_id,
   tabs_alive.tab_index,
   tabs_alive.tabs_alive,
   tabs_alive.pid,
   tabs_alive.process_name
-from iterations
-join tabs_alive
-  on tabs_alive.page_loaded_ts >= iterations.start and tabs_alive.page_loaded_ts <= iterations.end;
+FROM iterations
+JOIN tabs_alive
+  ON tabs_alive.page_loaded_ts >= iterations.start AND tabs_alive.page_loaded_ts <= iterations.end;
 
-create table avg_tabs_alive_after_first_kill
-as
-with
-  tabs_alive_with_prev_count as (
-    select
+CREATE TABLE avg_tabs_alive_after_first_kill
+AS
+WITH
+  tabs_alive_with_prev_count AS (
+    SELECT
       it_id,
       tab_index,
       tabs_alive,
-      lag(tabs_alive, 1, -1) over (partition by it_id order by tab_index) as prev_tabs_alive
-    from tabs_alive_by_iteration
+      lag(tabs_alive, 1, -1) OVER (PARTITION BY it_id ORDER BY tab_index) AS prev_tabs_alive
+    FROM tabs_alive_by_iteration
   ),
-  first_kill_point as (
-    select it_id, min(tab_index) as first_kill_tab_index
-    from tabs_alive_with_prev_count
-    where
+  first_kill_point AS (
+    SELECT it_id, min(tab_index) AS first_kill_tab_index
+    FROM tabs_alive_with_prev_count
+    WHERE
       tabs_alive <= prev_tabs_alive  -- condition for no increase (i.e., decrease or stay the same)
-    group by it_id
+    GROUP BY it_id
   )
-select fkp.it_id, fkp.first_kill_tab_index, avg(tai.tabs_alive) as average_tabs_alive_after_kill
-from first_kill_point fkp
-join tabs_alive_by_iteration tai
-  on fkp.it_id = tai.it_id and tai.tab_index >= fkp.first_kill_tab_index
-group by
+SELECT fkp.it_id, fkp.first_kill_tab_index, avg(tai.tabs_alive) AS average_tabs_alive_after_kill
+FROM first_kill_point fkp
+JOIN tabs_alive_by_iteration tai
+  ON fkp.it_id = tai.it_id AND tai.tab_index >= fkp.first_kill_tab_index
+GROUP BY
   fkp.it_id, fkp.first_kill_tab_index  -- group by this to ensure it's in the output if needed
-order by fkp.it_id;
+ORDER BY fkp.it_id;

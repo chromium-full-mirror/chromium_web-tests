@@ -1,46 +1,46 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-drop view if exists renderer_created;
+DROP VIEW IF EXISTS renderer_created;
 
-create view
-  renderer_created as
-select
-  extract_arg (ftrace_event.arg_set_id, 'pid') as forked_pid,
-  process.cmdline as process_cmdline,
+CREATE VIEW
+  renderer_created AS
+SELECT
+  extract_arg (ftrace_event.arg_set_id, 'pid') AS forked_pid,
+  process.cmdline AS process_cmdline,
   ts
-from
+FROM
   ftrace_event
-  join process on forked_pid = process.pid
-where
+  JOIN process ON forked_pid = process.pid
+WHERE
   ftrace_event.name = 'task_newtask'
-  and (
+  AND (
     -- Android Chrome process cmd format
     process.cmdline glob '*org.chromium.content.app.SandboxedProcessService*'
     -- ChromeOS Chrome process cmd format
-    or process.cmdline glob '/opt/google/chrome/chrome --type=renderer*'
+    OR process.cmdline glob '/opt/google/chrome/chrome --type=renderer*'
   );
 
-drop view if exists renderers_by_iteration;
+DROP VIEW IF EXISTS renderers_by_iteration;
 
-create view
-  renderers_by_iteration as
-select
-  iterations.id as it_id,
+CREATE VIEW
+  renderers_by_iteration AS
+SELECT
+  iterations.id AS it_id,
   process_cmdline
-from
+FROM
   iterations
-  join renderer_created on renderer_created.ts >= iterations.start
-  and renderer_created.ts <= iterations.end;
+  JOIN renderer_created ON renderer_created.ts >= iterations.start
+  AND renderer_created.ts <= iterations.end;
 
 DROP TABLE IF EXISTS total_renderers_output;
 CREATE PERFETTO TABLE total_renderers_output AS
-select
+SELECT
   it_id,
-  count(*) as total_renderers
-from
+  count(*) AS total_renderers
+FROM
   renderers_by_iteration
-group by
+GROUP BY
   it_id

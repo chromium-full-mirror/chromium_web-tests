@@ -7,8 +7,8 @@ INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_constants;
 DROP TABLE IF EXISTS uma_histogram_summaries;
 CREATE PERFETTO TABLE uma_histogram_summaries AS
 SELECT
-  hist.name as hist_name,
-  enum_table.enum_name as 'enum_name',
+  hist.name AS hist_name,
+  enum_table.enum_name AS 'enum_name',
   AVG(hist.value) AS 'avg',
   COUNT(*) AS 'count',
   SUM(hist.value) AS 'total',
@@ -29,7 +29,7 @@ CREATE PERFETTO MACRO
 RETURNS TableOrSubquery AS (
   SELECT
     enum_name AS name,
-    count
+    [count]
   FROM
     uma_histogram_summaries
   WHERE
@@ -42,10 +42,10 @@ CREATE PERFETTO MACRO
 RETURNS TableOrSubquery
 AS (
   SELECT
-    avg / $units_in_ms AS 'avg_ms',
-    count,
+    [avg] / $units_in_ms AS 'avg_ms',
+    [count],
     total / $units_in_ms AS 'sum_ms',
-    max / $units_in_ms AS 'max_ms',
+    [max] / $units_in_ms AS 'max_ms',
     p90 / $units_in_ms AS 'p90_ms',
     p50 / $units_in_ms AS 'p50_ms'
   FROM
@@ -59,10 +59,10 @@ CREATE PERFETTO MACRO
   uma_histogram_count_macro(hist_name Expr)
 RETURNS TableOrSubquery AS (
   SELECT
-    avg,
-    count,
+    [avg],
+    [count],
     total,
-    max,
+    [max],
     p90,
     p50
   FROM

@@ -22,5 +22,5 @@ SELECT
   MAX(dur_ms) AS max_dur,
   PERCENTILE(dur_ms, 90) AS p90_dur,
   PERCENTILE(dur_ms, 50) AS p50_dur,
-  COUNT(dur_ms) AS count
+  COUNT(dur_ms) AS [count]
 FROM task_duration_ms;

@@ -1,146 +1,146 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-drop view if exists page_load_start_end;
+DROP VIEW IF EXISTS page_load_start_end;
 
-create view
-  page_load_start_end as
-select
+CREATE VIEW
+  page_load_start_end AS
+SELECT
   *
-from
+FROM
   (
-    select
-      row_number() over (
-        order by
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as page_load_start
-    from
+      ) AS id,
+      ts AS page_load_start
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'page-load'
+      AND name = 'page-load'
   )
-  join (
-    select
-      row_number() over (
-        order by
+  JOIN (
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as page_load_end
-    from
+      ) AS id,
+      ts AS page_load_end
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'page-loaded'
-  ) using (id);
+      AND name = 'page-loaded'
+  ) USING (id);
 
-drop view if exists page_load_dur;
+DROP VIEW IF EXISTS page_load_dur;
 
-create view
-  page_load_dur as
-select
+CREATE VIEW
+  page_load_dur AS
+SELECT
   id,
   (
-    select
+    SELECT
       dur / 1000000
-    from
+    FROM
       slice s
-    where
+    WHERE
       s.name = 'PageLoadMetrics.NavigationToLargestContentfulPaint'
-      and s.ts > plse.page_load_start
-      and s.ts + dur < plse.page_load_end
-  ) as page_load_time
-from
+      AND s.ts > plse.page_load_start
+      AND s.ts + dur < plse.page_load_end
+  ) AS page_load_time
+FROM
   page_load_start_end plse;
 
-drop view if exists link_click_start_end;
+DROP VIEW IF EXISTS link_click_start_end;
 
-create view
-  link_click_start_end as
-select
+CREATE VIEW
+  link_click_start_end AS
+SELECT
   *
-from
+FROM
   (
-    select
-      row_number() over (
-        order by
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as link_click_start
-    from
+      ) AS id,
+      ts AS link_click_start
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'click-link-on-page'
+      AND name = 'click-link-on-page'
   )
-  join (
-    select
-      row_number() over (
-        order by
+  JOIN (
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as link_click_end
-    from
+      ) AS id,
+      ts AS link_click_end
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'click-link-on-page-loaded'
-  ) using (id);
+      AND name = 'click-link-on-page-loaded'
+  ) USING (id);
 
-drop view if exists link_click_time;
+DROP VIEW IF EXISTS link_click_time;
 
-create view
-  link_click_time as
-select
+CREATE VIEW
+  link_click_time AS
+SELECT
   id,
   (
-    select
+    SELECT
       s.ts
-    from
+    FROM
       slice s
-    where
+    WHERE
       s.name = 'EventLatency'
-      and extract_arg (s.arg_set_id, 'event_latency.event_type') = 'GESTURE_TAP_DOWN'
-      and s.ts > lcse.link_click_start
-      and s.ts + s.dur < lcse.link_click_end
-  ) as link_click_ts
-from
+      AND extract_arg (s.arg_set_id, 'event_latency.event_type') = 'GESTURE_TAP_DOWN'
+      AND s.ts > lcse.link_click_start
+      AND s.ts + s.dur < lcse.link_click_end
+  ) AS link_click_ts
+FROM
   link_click_start_end lcse;
 
-drop view if exists link_click_loaded;
+DROP VIEW IF EXISTS link_click_loaded;
 
-create view
-  link_click_loaded as
-select
+CREATE VIEW
+  link_click_loaded AS
+SELECT
   id,
   (
-    select
+    SELECT
       s.ts + s.dur
-    from
+    FROM
       slice s
-    where
+    WHERE
       s.name = 'PageLoadMetrics.NavigationToLargestContentfulPaint'
-      and s.ts > lcse.link_click_start
-      and s.ts + s.dur < lcse.link_click_end
-  ) as link_click_loaded_ts
-from
+      AND s.ts > lcse.link_click_start
+      AND s.ts + s.dur < lcse.link_click_end
+  ) AS link_click_loaded_ts
+FROM
   link_click_start_end lcse;
 
-drop view if exists link_click_dur;
+DROP VIEW IF EXISTS link_click_dur;
 
-create view
-  link_click_dur as
-select
+CREATE VIEW
+  link_click_dur AS
+SELECT
   id,
-  ((link_click_loaded_ts - link_click_ts) / 1000000) as link_load_time
-from
+  ((link_click_loaded_ts - link_click_ts) / 1000000) AS link_load_time
+FROM
   link_click_time
-  join link_click_loaded using (id);
+  JOIN link_click_loaded USING (id);
 
-create perfetto table page_click_output as
-select
+CREATE perfetto TABLE page_click_output AS
+SELECT
   *
-from
+FROM
   page_load_dur
-  join link_click_dur using (id);
+  JOIN link_click_dur USING (id);

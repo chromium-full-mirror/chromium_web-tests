@@ -5,9 +5,9 @@ INCLUDE PERFETTO MODULE chrome.histograms;
 
 DROP TABLE IF EXISTS dropped_frames_output;
 CREATE PERFETTO TABLE dropped_frames_output AS
-select
-  AVG(value) as 'avg_percent_dropped'
-from
+SELECT
+  AVG(value) AS 'avg_percent_dropped'
+FROM
   chrome_histograms
-where
+WHERE
   name = 'Graphics.Smoothness.PercentDroppedFrames3.AllSequences'

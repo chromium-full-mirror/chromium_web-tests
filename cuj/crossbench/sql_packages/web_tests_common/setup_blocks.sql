@@ -2,21 +2,21 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 DROP VIEW IF EXISTS setup_blocks_start;
-CREATE view setup_blocks_start AS
-SELECT ts, EXTRACT_ARG(slice.arg_set_id, 'debug.data.detail') as name
+CREATE VIEW setup_blocks_start AS
+SELECT ts, EXTRACT_ARG(slice.arg_set_id, 'debug.data.detail') AS name
 FROM slice
 WHERE category = 'blink.user_timing'
   AND name = 'crossbench-setup-start';
 
 DROP VIEW IF EXISTS setup_blocks_end;
-CREATE view setup_blocks_end AS
-SELECT ts, EXTRACT_ARG(slice.arg_set_id, 'debug.data.detail') as name
+CREATE VIEW setup_blocks_end AS
+SELECT ts, EXTRACT_ARG(slice.arg_set_id, 'debug.data.detail') AS name
 FROM slice
 WHERE slice.category = 'blink.user_timing'
   AND slice.name = 'crossbench-setup-end';
 
 DROP VIEW IF EXISTS setup_blocks;
-CREATE view
+CREATE VIEW
   setup_blocks AS
 SELECT
   concat(
@@ -26,7 +26,7 @@ SELECT
     --quotes.
     substr(setup_blocks_start.name, 2, length(setup_blocks_start.name) - 2)
   ) AS name,
-  setup_blocks_start.ts AS start,
-  setup_blocks_end.ts AS end
+  setup_blocks_start.ts AS [start],
+  setup_blocks_end.ts AS [end]
 FROM setup_blocks_start JOIN setup_blocks_end
   ON setup_blocks_start.name = setup_blocks_end.name;

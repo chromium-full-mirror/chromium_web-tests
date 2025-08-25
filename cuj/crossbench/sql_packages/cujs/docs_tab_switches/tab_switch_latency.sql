@@ -25,5 +25,5 @@ SELECT
   -- Note that there *should* be 18 values per run, but we output the count here
   -- because there are cases where we get fewer values. Left as a follow-up
   -- to investigate why.
-  COUNT(value) AS count
+  COUNT(value) AS [count]
 FROM tab_switch_latency;

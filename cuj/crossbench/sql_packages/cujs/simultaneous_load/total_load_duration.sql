@@ -1,67 +1,67 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE sql_packages.page_load.page_load_start_end_by_iteration;
+INCLUDE PERFETTO MODULE sql_packages.page_load.page_load_start_end_by_iteration;
 
 -- Get only the first page_load_start for each iteration
-drop view if exists first_page_load_starts;
+DROP VIEW IF EXISTS first_page_load_starts;
 
-create view
-  first_page_load_starts as
-select
+CREATE VIEW
+  first_page_load_starts AS
+SELECT
   it_id,
   page_load_start
-from
+FROM
   (
-    select
+    SELECT
       it_id,
       page_load_start,
-      row_number() over (
-        partition by
+      row_number() OVER (
+        PARTITION BY
           it_id
-        order by
+        ORDER BY
           page_load_start
-      ) as rn
-    from
+      ) AS rn
+    FROM
       page_load_start_end_by_iteration
-  ) as ranked_rows
-where
+  ) AS ranked_rows
+WHERE
   rn = 1;
 
 -- Get only the last page_load_end for each iteration
-drop view if exists last_page_load_ends;
+DROP VIEW IF EXISTS last_page_load_ends;
 
-create view
-  last_page_load_ends as
-select
+CREATE VIEW
+  last_page_load_ends AS
+SELECT
   it_id,
   page_load_end
-from
+FROM
   (
-    select
+    SELECT
       it_id,
       page_load_end,
-      row_number() over (
-        partition by
+      row_number() OVER (
+        PARTITION BY
           it_id
-        order by
-          page_load_end desc
-      ) as rn
-    from
+        ORDER BY
+          page_load_end DESC
+      ) AS rn
+    FROM
       page_load_start_end_by_iteration
-  ) as ranked_rows
-where
+  ) AS ranked_rows
+WHERE
   rn = 1;
 
 -- Get the time difference of the first page load starts
 -- and last page load ends for each iteration
 DROP TABLE IF EXISTS total_load_duration_output;
 CREATE PERFETTO TABLE total_load_duration_output AS
-select
+SELECT
   first_page_load_starts.it_id,
   (
     last_page_load_ends.page_load_end - first_page_load_starts.page_load_start
-  ) / 1000000 as iteration_load_duration
-from
+  ) / 1000000 AS iteration_load_duration
+FROM
   first_page_load_starts
-  join last_page_load_ends on first_page_load_starts.it_id = last_page_load_ends.it_id
+  JOIN last_page_load_ends ON first_page_load_starts.it_id = last_page_load_ends.it_id

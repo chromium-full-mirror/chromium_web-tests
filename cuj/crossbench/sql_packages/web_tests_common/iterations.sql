@@ -2,56 +2,56 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 
-include PERFETTO MODULE sql_packages.web_tests_common.setup_blocks;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.setup_blocks;
 
 -- The test may have been run multiple times in the same trace.
 -- Grab the start and end ts for each iteration.
-drop view if exists iterations_no_startup;
+DROP VIEW IF EXISTS iterations_no_startup;
 
-create view
-  iterations_no_startup as
-select
+CREATE VIEW
+  iterations_no_startup AS
+SELECT
   *
-from
+FROM
   (
-    select
-      row_number() over (
-        order by
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as start
-    from
+      ) AS id,
+      ts AS [start]
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'crossbench-iteration-start'
+      AND name = 'crossbench-iteration-start'
   )
-  join (
-    select
-      row_number() over (
-        order by
+  JOIN (
+    SELECT
+      row_number() OVER (
+        ORDER BY
           ts
-      ) as id,
-      ts as end
-    from
+      ) AS id,
+      ts AS [end]
+    FROM
       slice
-    where
+    WHERE
       category = 'blink.user_timing'
-      and name = 'crossbench-iteration-end'
-  ) using (id)
-order by
+      AND name = 'crossbench-iteration-end'
+  ) USING (id)
+ORDER BY
   id;
 
-drop view if exists iterations;
+DROP VIEW IF EXISTS iterations;
 
-create view
-  iterations as
-select
-  name as id, start, end
-from setup_blocks
-union
-select
-  cast(id as TEXT) as id,
-  start,
-  end
-from iterations_no_startup;
+CREATE VIEW
+  iterations AS
+SELECT
+  name AS id, [start], [end]
+FROM setup_blocks
+UNION
+SELECT
+  cast(id AS TEXT) AS id,
+  [start],
+  [end]
+FROM iterations_no_startup;

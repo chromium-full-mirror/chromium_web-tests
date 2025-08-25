@@ -8,33 +8,33 @@ INCLUDE PERFETTO MODULE sql_packages.queries.meminfo_total;
 -- x-axis: it_id; slope is change in memory per iteration
 -- y-axis: pss_total_mb + swap_total_mb, combine pss and swap to track memory
 
-drop view if exists per_iteration;
+DROP VIEW IF EXISTS per_iteration;
 
 -- First, average multiple meminfo samples in the same iteration with the same
 -- title together so that there is only one y value per iteration.
-create view per_iteration as
-select
+CREATE VIEW per_iteration AS
+SELECT
   title,
-  CAST(it_id as REAL) as x,
-  AVG(pss_total_mb + swap_total_mb) as process_mb,
-  AVG(dma_buf_mb) as dma_buf_mb,
-  AVG(free_mb) as free_mb
-from meminfo_total_output
+  CAST(it_id AS REAL) AS x,
+  AVG(pss_total_mb + swap_total_mb) AS process_mb,
+  AVG(dma_buf_mb) AS dma_buf_mb,
+  AVG(free_mb) AS free_mb
+FROM meminfo_total_output
 -- Filter out setup iterations, keeping only integer it_ids.
-where it_id = CAST(CAST(it_id as INTEGER) as TEXT)
-group by x, title;
+WHERE it_id = CAST(CAST(it_id AS INTEGER) AS TEXT)
+GROUP BY x, title;
 
-drop view if exists mean;
+DROP VIEW IF EXISTS mean;
 
-create view mean as
-select
+CREATE VIEW mean AS
+SELECT
   title,
-  AVG(x) as x,
-  AVG(process_mb) as process_mb,
-  AVG(dma_buf_mb) as dma_buf_mb,
-  AVG(free_mb) as free_mb
-from per_iteration
-group by title;
+  AVG(x) AS x,
+  AVG(process_mb) AS process_mb,
+  AVG(dma_buf_mb) AS dma_buf_mb,
+  AVG(free_mb) AS free_mb
+FROM per_iteration
+GROUP BY title;
 
 DROP TABLE IF EXISTS meminfo_per_iteration_output;
 
@@ -44,9 +44,9 @@ DROP TABLE IF EXISTS meminfo_per_iteration_output;
 -- We do this by computing the mean above and joining it to each sample.
 CREATE PERFETTO TABLE meminfo_per_iteration_output AS
 SELECT
-  per_iteration.title as title,
-  SUM((per_iteration.x - mean.x) * (per_iteration.process_mb - mean.process_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as process_mb,
-  SUM((per_iteration.x - mean.x) * (per_iteration.dma_buf_mb - mean.dma_buf_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as dma_buf_mb,
-  SUM((per_iteration.x - mean.x) * (per_iteration.free_mb - mean.free_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) as free_mb
-FROM per_iteration join mean on per_iteration.title = mean.title
+  per_iteration.title AS title,
+  SUM((per_iteration.x - mean.x) * (per_iteration.process_mb - mean.process_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) AS process_mb,
+  SUM((per_iteration.x - mean.x) * (per_iteration.dma_buf_mb - mean.dma_buf_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) AS dma_buf_mb,
+  SUM((per_iteration.x - mean.x) * (per_iteration.free_mb - mean.free_mb)) / SUM((per_iteration.x - mean.x) * (per_iteration.x - mean.x)) AS free_mb
+FROM per_iteration JOIN mean ON per_iteration.title = mean.title
 GROUP BY per_iteration.title;

@@ -1,33 +1,33 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-drop view if exists meminfo;
+DROP VIEW IF EXISTS meminfo;
 
-create view
-  meminfo as
-select
+CREATE VIEW
+  meminfo AS
+SELECT
   ts,
-  EXTRACT_ARG (arg_set_id, 'debug.data.detail') AS json
-from
+  EXTRACT_ARG (arg_set_id, 'debug.data.detail') AS [json]
+FROM
   slice
-where
+WHERE
   category = 'blink.user_timing'
-  and name = 'crossbench-meminfo';
+  AND name = 'crossbench-meminfo';
 
-drop view if exists meminfo_with_iteration;
+DROP VIEW IF EXISTS meminfo_with_iteration;
 
-create view
-  meminfo_with_iteration as
-select
-  iterations.id as it_id,
+CREATE VIEW
+  meminfo_with_iteration AS
+SELECT
+  iterations.id AS it_id,
   ts,
-  json
-from
+  [json]
+FROM
   iterations
-  join meminfo on meminfo.ts >= iterations.start
-  and meminfo.ts <= iterations.end;
+  JOIN meminfo ON meminfo.ts >= iterations.start
+  AND meminfo.ts <= iterations.end;
 
 DROP TABLE IF EXISTS meminfo_total_output;
 

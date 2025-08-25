@@ -1,47 +1,47 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-drop view if exists lmk_kill_occurred;
+DROP VIEW IF EXISTS lmk_kill_occurred;
 
-create view
-  lmk_kill_occurred as
-select
+CREATE VIEW
+  lmk_kill_occurred AS
+SELECT
   ts,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.oom_adj_score') as oom_adj_score,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.min_oom_score') as min_oom_score,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.page_fault') as page_fault,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.page_major_fault') as page_major_fault,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.rss_in_bytes') as rss_in_bytes,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.cache_in_bytes') as cache_in_bytes,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.swap_in_bytes') as swap_in_bytes,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.free_mem_kb') as free_mem_kb,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.free_swap_kb') as free_swap_kb,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.reason') as reason,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.thrashing') as thrashing,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.max_thrashing') as max_thrashing,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.oom_adj_score') AS oom_adj_score,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.min_oom_score') AS min_oom_score,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.page_fault') AS page_fault,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.page_major_fault') AS page_major_fault,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.rss_in_bytes') AS rss_in_bytes,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.cache_in_bytes') AS cache_in_bytes,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.swap_in_bytes') AS swap_in_bytes,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.free_mem_kb') AS free_mem_kb,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.free_swap_kb') AS free_swap_kb,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.reason') AS reason,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.thrashing') AS thrashing,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.max_thrashing') AS max_thrashing,
   extract_arg (
     arg_set_id,
     'lmk_kill_occurred.total_foreground_services'
-  ) as total_foreground_services,
+  ) AS total_foreground_services,
   extract_arg (
     arg_set_id,
     'lmk_kill_occurred.procs_with_foreground_services'
-  ) as procs_with_foreground_services,
-  extract_arg (arg_set_id, 'lmk_kill_occurred.process_name') as process_name
-from
+  ) AS procs_with_foreground_services,
+  extract_arg (arg_set_id, 'lmk_kill_occurred.process_name') AS process_name
+FROM
   slice
-where
+WHERE
   name = 'lmk_kill_occurred';
 
-drop view if exists lmk_kill_list_output;
-create view
-  lmk_kill_list_output as
-select
-  iterations.id as it_id,
+DROP VIEW IF EXISTS lmk_kill_list_output;
+CREATE VIEW
+  lmk_kill_list_output AS
+SELECT
+  iterations.id AS it_id,
   lmk_kill_occurred.*
-from
+FROM
   iterations
-  join lmk_kill_occurred on lmk_kill_occurred.ts >= iterations.start
-  and lmk_kill_occurred.ts <= iterations.end
+  JOIN lmk_kill_occurred ON lmk_kill_occurred.ts >= iterations.start
+  AND lmk_kill_occurred.ts <= iterations.end

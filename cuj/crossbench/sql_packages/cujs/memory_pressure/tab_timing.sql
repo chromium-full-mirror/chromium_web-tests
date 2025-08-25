@@ -1,76 +1,76 @@
 -- Copyright 2025 The Chromium Authors
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
-include PERFETTO MODULE sql_packages.web_tests_common.iterations;
+INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
-drop view if exists open_latency;
+DROP VIEW IF EXISTS open_latency;
 
-create view open_latency
-as
-with
-  page_load_end_events as (
-    select substr(name, instr(name, '~') + 1) AS id, ts as page_load_end_ts
-    from slice
-    where category = 'blink.user_timing' and name glob 'page-loaded~*'
+CREATE VIEW open_latency
+AS
+WITH
+  page_load_end_events AS (
+    SELECT substr(name, instr(name, '~') + 1) AS id, ts AS page_load_end_ts
+    FROM slice
+    WHERE category = 'blink.user_timing' AND name glob 'page-loaded~*'
   ),
-  page_load_start_events as (
-    select substr(name, instr(name, '~') + 1) AS id, ts as page_load_start_ts
-    from slice
-    where category = 'blink.user_timing' and name glob 'page-load~*'
+  page_load_start_events AS (
+    SELECT substr(name, instr(name, '~') + 1) AS id, ts AS page_load_start_ts
+    FROM slice
+    WHERE category = 'blink.user_timing' AND name glob 'page-load~*'
   )
-select
+SELECT
   ple.id,
-  (ple.page_load_end_ts - pls.page_load_start_ts) / 1000000 as page_load_duration_ms,
+  (ple.page_load_end_ts - pls.page_load_start_ts) / 1000000 AS page_load_duration_ms,
   pls.page_load_start_ts
-from page_load_end_events ple
-join page_load_start_events pls
-  on ple.id = pls.id
-order by ple.id;
+FROM page_load_end_events ple
+JOIN page_load_start_events pls
+  ON ple.id = pls.id
+ORDER BY ple.id;
 
-drop view if exists allocation_latency;
+DROP VIEW IF EXISTS allocation_latency;
 
-create view allocation_latency
-as
-with
-  allocation_done_events as (
-    select substr(name, instr(name, '~') + 1) AS id, ts as page_load_end_ts
-    from slice
-    where category = 'blink.user_timing' and name glob 'allocation-done~*'
+CREATE VIEW allocation_latency
+AS
+WITH
+  allocation_done_events AS (
+    SELECT substr(name, instr(name, '~') + 1) AS id, ts AS page_load_end_ts
+    FROM slice
+    WHERE category = 'blink.user_timing' AND name glob 'allocation-done~*'
   ),
-  allocation_start_events as (
-    select substr(name, instr(name, '~') + 1) AS id, ts as page_load_start_ts
-    from slice
-    where category = 'blink.user_timing' and name glob 'allocation-start~*'
+  allocation_start_events AS (
+    SELECT substr(name, instr(name, '~') + 1) AS id, ts AS page_load_start_ts
+    FROM slice
+    WHERE category = 'blink.user_timing' AND name glob 'allocation-start~*'
   )
-select
+SELECT
   alloc_done.id,
-  (alloc_done.page_load_end_ts - alloc_start.page_load_start_ts) / 1000000 as allocation_duration_ms
-from allocation_done_events alloc_done
-join allocation_start_events alloc_start
-  on alloc_done.id = alloc_start.id
-order by alloc_done.id;
+  (alloc_done.page_load_end_ts - alloc_start.page_load_start_ts) / 1000000 AS allocation_duration_ms
+FROM allocation_done_events alloc_done
+JOIN allocation_start_events alloc_start
+  ON alloc_done.id = alloc_start.id
+ORDER BY alloc_done.id;
 
-drop view if exists tab_timing;
+DROP VIEW IF EXISTS tab_timing;
 
-create view tab_timing
-as
-select ol.id, ol.page_load_duration_ms, al.allocation_duration_ms, ol.page_load_start_ts
-from open_latency ol
-join allocation_latency al
-  on ol.id = al.id
-order by ol.id;
+CREATE VIEW tab_timing
+AS
+SELECT ol.id, ol.page_load_duration_ms, al.allocation_duration_ms, ol.page_load_start_ts
+FROM open_latency ol
+JOIN allocation_latency al
+  ON ol.id = al.id
+ORDER BY ol.id;
 
-drop view if exists tab_timing_by_iteration;
+DROP VIEW IF EXISTS tab_timing_by_iteration;
 
-create view tab_timing_by_iteration
-as
-select
-  iterations.id as it_id,
-  tab_timing.id as tab_index,
-  tab_timing.page_load_duration_ms as page_load_duration_ms,
-  tab_timing.allocation_duration_ms as allocation_duration_ms
-from iterations
-join tab_timing
-  on
+CREATE VIEW tab_timing_by_iteration
+AS
+SELECT
+  iterations.id AS it_id,
+  tab_timing.id AS tab_index,
+  tab_timing.page_load_duration_ms AS page_load_duration_ms,
+  tab_timing.allocation_duration_ms AS allocation_duration_ms
+FROM iterations
+JOIN tab_timing
+  ON
     tab_timing.page_load_start_ts >= iterations.start
-    and tab_timing.page_load_start_ts <= iterations.end;
+    AND tab_timing.page_load_start_ts <= iterations.end;
