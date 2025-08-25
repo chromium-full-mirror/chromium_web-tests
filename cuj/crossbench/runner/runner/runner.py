@@ -6,6 +6,7 @@ import json
 import logging
 import shlex
 import tempfile
+import urllib
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -123,6 +124,8 @@ def get_chromeos_browser_config(run_config: WebTestsRunConfig,
   if run_config.browser:
     browser_string = run_config.browser
 
+  ssh_info = urllib.parse.urlparse(f'ssh://{run_config.device_id}')
+
   return {
       "flags": str(browser_flags_file),
       "browsers": {
@@ -133,9 +136,8 @@ def get_chromeos_browser_config(run_config: WebTestsRunConfig,
               "driver": {
                   "type": "chromeos-ssh",
                   "settings": {
-                      "host": run_config.device_id,
-                      # TODO support different ports
-                      "ssh_port": 22,
+                      "host": ssh_info.hostname,
+                      "ssh_port": ssh_info.port if ssh_info.port else 22,
                       "ssh_user": "root",
                   }
               }
