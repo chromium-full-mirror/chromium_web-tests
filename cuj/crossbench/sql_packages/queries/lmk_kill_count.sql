@@ -4,21 +4,20 @@
 INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
 DROP VIEW IF EXISTS lmk_kill_ts;
-CREATE VIEW
-  lmk_kill_ts AS
+
+CREATE VIEW lmk_kill_ts AS
 SELECT
   ts
-FROM
-  slice
+FROM slice
 WHERE
   name = 'lmk_kill_occurred';
 
 DROP TABLE IF EXISTS lmk_kill_count_output;
+
 CREATE PERFETTO TABLE lmk_kill_count_output AS
 SELECT
   iterations.id AS it_id,
   count(lmk_kill_ts.ts) AS kill_count
-FROM
-  iterations
-  LEFT JOIN lmk_kill_ts ON lmk_kill_ts.ts >= iterations.start
-  AND lmk_kill_ts.ts <= iterations.end;
+FROM iterations
+LEFT JOIN lmk_kill_ts
+  ON lmk_kill_ts.ts >= iterations.start AND lmk_kill_ts.ts <= iterations.end;

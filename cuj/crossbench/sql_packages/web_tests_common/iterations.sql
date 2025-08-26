@@ -8,50 +8,40 @@ INCLUDE PERFETTO MODULE sql_packages.web_tests_common.setup_blocks;
 -- Grab the start and end ts for each iteration.
 DROP VIEW IF EXISTS iterations_no_startup;
 
-CREATE VIEW
-  iterations_no_startup AS
+CREATE VIEW iterations_no_startup AS
 SELECT
   *
-FROM
-  (
-    SELECT
-      row_number() OVER (
-        ORDER BY
-          ts
-      ) AS id,
-      ts AS [start]
-    FROM
-      slice
-    WHERE
-      category = 'blink.user_timing'
-      AND name = 'crossbench-iteration-start'
-  )
-  JOIN (
-    SELECT
-      row_number() OVER (
-        ORDER BY
-          ts
-      ) AS id,
-      ts AS [end]
-    FROM
-      slice
-    WHERE
-      category = 'blink.user_timing'
-      AND name = 'crossbench-iteration-end'
-  ) USING (id)
+FROM (
+  SELECT
+    row_number() OVER (ORDER BY ts) AS id,
+    ts AS "start"
+  FROM slice
+  WHERE
+    category = 'blink.user_timing' AND name = 'crossbench-iteration-start'
+)
+JOIN (
+  SELECT
+    row_number() OVER (ORDER BY ts) AS id,
+    ts AS "end"
+  FROM slice
+  WHERE
+    category = 'blink.user_timing' AND name = 'crossbench-iteration-end'
+)
+  USING (id)
 ORDER BY
   id;
 
 DROP VIEW IF EXISTS iterations;
 
-CREATE VIEW
-  iterations AS
+CREATE VIEW iterations AS
 SELECT
-  name AS id, [start], [end]
+  name AS id,
+  "start",
+  "end"
 FROM setup_blocks
 UNION
 SELECT
-  cast(id AS TEXT) AS id,
-  [start],
-  [end]
+  CAST(id AS STRING) AS id,
+  "start",
+  "end"
 FROM iterations_no_startup;

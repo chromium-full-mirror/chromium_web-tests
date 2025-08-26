@@ -8,20 +8,15 @@ INCLUDE PERFETTO MODULE sql_packages.page_load.page_load_start_by_iteration;
 -- Note that this query will output NULL for the first tab of each
 -- iteration since there is no previous tab to compare against.
 DROP TABLE IF EXISTS tab_open_latency_output;
+
 CREATE PERFETTO TABLE tab_open_latency_output AS
 SELECT
   it_id,
   id,
   (
-    page_load_start - lag (page_load_start, 1, NULL) OVER (
-      PARTITION BY
-        it_id
-      ORDER BY
-        page_load_start
-    )
+    page_load_start - lag(page_load_start, 1, NULL) OVER (PARTITION BY it_id ORDER BY page_load_start)
   ) / 1000000 AS open_latency
-FROM
-  page_load_start_by_iteration
+FROM page_load_start_by_iteration
 ORDER BY
   it_id,
   id;

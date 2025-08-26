@@ -3,14 +3,14 @@
 -- found in the LICENSE file.
 DROP TABLE IF EXISTS scroll_duration_output;
 
-CREATE PERFETTO TABLE scroll_duration_output
-AS
+CREATE PERFETTO TABLE scroll_duration_output AS
 SELECT
   (
     SELECT
-      (dur / 1000000)
-    FROM
-      slice
+      (
+        dur / 1000000
+      )
+    FROM slice
     WHERE
       slice.name = 'scroll'
-  ) AS 'duration_ms';
+  ) AS "duration_ms";

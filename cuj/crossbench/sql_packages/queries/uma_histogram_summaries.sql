@@ -2,71 +2,74 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 INCLUDE PERFETTO MODULE chrome.histograms;
+
 INCLUDE PERFETTO MODULE sql_packages.queries.uma_histogram_constants;
 
 DROP TABLE IF EXISTS uma_histogram_summaries;
+
 CREATE PERFETTO TABLE uma_histogram_summaries AS
 SELECT
   hist.name AS hist_name,
-  enum_table.enum_name AS 'enum_name',
-  AVG(hist.value) AS 'avg',
-  COUNT(*) AS 'count',
-  SUM(hist.value) AS 'total',
-  MAX(hist.value) AS 'max',
-  PERCENTILE (hist.value, 90) AS 'p90',
-  PERCENTILE (hist.value, 50) AS 'p50'
-FROM
-  chrome_histograms hist
-  LEFT JOIN enum_table
-    ON hist.name = enum_table.histogram_name AND
-       hist.value = enum_table.enum_value
+  enum_table.enum_name AS "enum_name",
+  avg(hist.value) AS "avg",
+  count(*) AS "count",
+  sum(hist.value) AS "total",
+  max(hist.value) AS "max",
+  percentile(hist.value, 90) AS "p90",
+  percentile(hist.value, 50) AS "p50"
+FROM chrome_histograms AS hist
+LEFT JOIN enum_table
+  ON hist.name = enum_table.histogram_name AND hist.value = enum_table.enum_value
 GROUP BY
   hist_name;
 
 -- Create a macro to extract the enum name and count from an enum histogram.
-CREATE PERFETTO MACRO
-  uma_histogram_enum_macro(hist_name Expr)
-RETURNS TableOrSubquery AS (
+CREATE PERFETTO MACRO uma_histogram_enum_macro(
+    hist_name Expr
+)
+RETURNS TableOrSubquery AS
+(
   SELECT
     enum_name AS name,
-    [count]
-  FROM
-    uma_histogram_summaries
+    "count"
+  FROM uma_histogram_summaries
   WHERE
     hist_name = $hist_name
 );
 
 -- Create a macro to extract the summary stats in ms for a time histogram.
-CREATE PERFETTO MACRO
-    uma_histogram_times_macro(hist_name Expr, units_in_ms Expr)
-RETURNS TableOrSubquery
-AS (
+CREATE PERFETTO MACRO uma_histogram_times_macro(
+    hist_name Expr,
+    units_in_ms Expr
+)
+RETURNS TableOrSubquery AS
+(
   SELECT
-    [avg] / $units_in_ms AS 'avg_ms',
-    [count],
-    total / $units_in_ms AS 'sum_ms',
-    [max] / $units_in_ms AS 'max_ms',
-    p90 / $units_in_ms AS 'p90_ms',
-    p50 / $units_in_ms AS 'p50_ms'
-  FROM
-    uma_histogram_summaries
+    "avg" / $units_in_ms AS "avg_ms",
+    "count",
+    total / $units_in_ms AS "sum_ms",
+    "max" / $units_in_ms AS "max_ms",
+    p90 / $units_in_ms AS "p90_ms",
+    p50 / $units_in_ms AS "p50_ms"
+  FROM uma_histogram_summaries
   WHERE
     hist_name = $hist_name
 );
 
 -- Create a macro to extract the summary stats for a count histogram.
-CREATE PERFETTO MACRO
-  uma_histogram_count_macro(hist_name Expr)
-RETURNS TableOrSubquery AS (
+CREATE PERFETTO MACRO uma_histogram_count_macro(
+    hist_name Expr
+)
+RETURNS TableOrSubquery AS
+(
   SELECT
-    [avg],
-    [count],
+    "avg",
+    "count",
     total,
-    [max],
+    "max",
     p90,
     p50
-  FROM
-    uma_histogram_summaries
+  FROM uma_histogram_summaries
   WHERE
     hist_name = $hist_name
 );

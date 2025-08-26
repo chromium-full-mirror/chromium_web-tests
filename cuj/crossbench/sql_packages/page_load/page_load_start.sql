@@ -5,24 +5,17 @@
 -- row_number() will be the tab open index.
 DROP VIEW IF EXISTS page_load_start;
 
-CREATE VIEW
-  page_load_start AS
+CREATE VIEW page_load_start AS
 SELECT
   *
-FROM
-  (
-    SELECT
-      row_number() OVER (
-        ORDER BY
-          ts
-      ) AS id,
-      ts AS page_load_start,
-      extract_arg (arg_set_id, 'debug.data.detail') AS detail
-    FROM
-      slice
-    WHERE
-      category = 'blink.user_timing'
-      AND name = 'page-load'
-  )
+FROM (
+  SELECT
+    row_number() OVER (ORDER BY ts) AS id,
+    ts AS page_load_start,
+    extract_arg(arg_set_id, 'debug.data.detail') AS detail
+  FROM slice
+  WHERE
+    category = 'blink.user_timing' AND name = 'page-load'
+)
 ORDER BY
   id;

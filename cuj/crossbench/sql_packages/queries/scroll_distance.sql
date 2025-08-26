@@ -3,17 +3,16 @@
 -- found in the LICENSE file.
 DROP TABLE IF EXISTS scroll_distance_output;
 
-CREATE PERFETTO TABLE scroll_distance_output
-AS
+CREATE PERFETTO TABLE scroll_distance_output AS
 SELECT
   (
     SELECT
-      CAST(string_value AS float)
-    FROM
-      slice
-      JOIN args ON slice.arg_set_id = args.arg_set_id
+      CAST(string_value AS REAL)
+    FROM slice
+    JOIN args
+      ON slice.arg_set_id = args.arg_set_id
     WHERE
       slice.name = 'scroll-end'
-      AND [key] = 'debug.data.detail'
+      AND "key" = 'debug.data.detail'
       AND value_type = 'string'
   ) AS distance_px;

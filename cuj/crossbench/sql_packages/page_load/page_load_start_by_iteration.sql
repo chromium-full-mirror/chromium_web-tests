@@ -8,15 +8,13 @@ INCLUDE PERFETTO MODULE sql_packages.page_load.page_load_start;
 -- Add the iteration id to the page load start table.
 DROP VIEW IF EXISTS page_load_start_by_iteration;
 
-CREATE VIEW
-  page_load_start_by_iteration AS
+CREATE VIEW page_load_start_by_iteration AS
 SELECT
   page_load_start.id,
   iterations.id AS it_id,
   page_load_start.page_load_start,
   page_load_start.detail
-FROM
-  iterations
-  -- Join for all page loads that started during this iteration
-  JOIN page_load_start ON page_load_start.page_load_start >= iterations.start
+FROM iterations
+JOIN page_load_start
+  ON page_load_start.page_load_start >= iterations.start
   AND page_load_start.page_load_start <= iterations.end;

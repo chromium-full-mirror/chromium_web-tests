@@ -3,14 +3,14 @@
 -- found in the LICENSE file.
 DROP TABLE IF EXISTS comment_opened_output;
 
-CREATE PERFETTO TABLE comment_opened_output
-AS
+CREATE PERFETTO TABLE comment_opened_output AS
 SELECT
   (
     SELECT
-      (dur / 1000000)
-    FROM
-      slice
+      (
+        dur / 1000000
+      )
+    FROM slice
     WHERE
       slice.name = 'comment-opened'
-  ) AS 'duration_ms';
+  ) AS "duration_ms";

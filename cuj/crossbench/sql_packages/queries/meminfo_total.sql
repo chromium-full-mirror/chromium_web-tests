@@ -5,29 +5,24 @@ INCLUDE PERFETTO MODULE sql_packages.web_tests_common.iterations;
 
 DROP VIEW IF EXISTS meminfo;
 
-CREATE VIEW
-  meminfo AS
+CREATE VIEW meminfo AS
 SELECT
   ts,
-  EXTRACT_ARG (arg_set_id, 'debug.data.detail') AS [json]
-FROM
-  slice
+  extract_arg(arg_set_id, 'debug.data.detail') AS "json"
+FROM slice
 WHERE
-  category = 'blink.user_timing'
-  AND name = 'crossbench-meminfo';
+  category = 'blink.user_timing' AND name = 'crossbench-meminfo';
 
 DROP VIEW IF EXISTS meminfo_with_iteration;
 
-CREATE VIEW
-  meminfo_with_iteration AS
+CREATE VIEW meminfo_with_iteration AS
 SELECT
   iterations.id AS it_id,
   ts,
-  [json]
-FROM
-  iterations
-  JOIN meminfo ON meminfo.ts >= iterations.start
-  AND meminfo.ts <= iterations.end;
+  "json"
+FROM iterations
+JOIN meminfo
+  ON meminfo.ts >= iterations.start AND meminfo.ts <= iterations.end;
 
 DROP TABLE IF EXISTS meminfo_total_output;
 
@@ -56,40 +51,25 @@ SELECT
   it_id,
   ts,
   title,
-  SUM(pss_total_kb) / 1024.0 AS pss_total_mb,
-  SUM(rss_total_kb) / 1024.0 AS rss_total_mb,
-  SUM(swap_total_kb) / 1024.0 AS swap_total_mb,
+  sum(pss_total_kb) / 1024.0 AS pss_total_mb,
+  sum(rss_total_kb) / 1024.0 AS rss_total_mb,
+  sum(swap_total_kb) / 1024.0 AS swap_total_mb,
   free_kb / 1024.0 AS free_mb,
   dma_buf_kb / 1024.0 AS dma_buf_mb
-FROM
-  (
-    -- Extract the per-process objects and join them to their meminfo rows, to get
-    -- a row per process per meminfo event.
-    SELECT
-      meminfo_with_iteration.it_id AS it_id,
-      meminfo_with_iteration.ts AS ts,
-      json_extract (meminfo_with_iteration.json, '$.title') AS title,
-      CAST(
-        json_extract (per_process_meminfo_json.value, '$.pss_total') AS FLOAT
-      ) AS pss_total_kb,
-      CAST(
-        json_extract (per_process_meminfo_json.value, '$.rss_total') AS FLOAT
-      ) AS rss_total_kb,
-      CAST(
-        json_extract (per_process_meminfo_json.value, '$.swap_total') AS FLOAT
-      ) AS swap_total_kb,
-      CAST(
-        json_extract (meminfo_with_iteration.json, '$.system.free_kb') AS FLOAT
-      ) AS free_kb,
-      CAST(
-        json_extract (meminfo_with_iteration.json, '$.system.dma_buf_kb') AS FLOAT
-      ) AS dma_buf_kb
-    FROM
-      meminfo_with_iteration,
-      json_each (
-        json_extract (meminfo_with_iteration.json, '$.processes')
-      ) AS per_process_meminfo_json
-  )
+FROM (
+  -- Extract the per-process objects and join them to their meminfo rows, to get
+  -- a row per process per meminfo event.
+  SELECT
+    meminfo_with_iteration.it_id AS it_id,
+    meminfo_with_iteration.ts AS ts,
+    meminfo_with_iteration.json -> '$.title' AS title,
+    CAST(per_process_meminfo_json.value -> '$.pss_total' AS REAL) AS pss_total_kb,
+    CAST(per_process_meminfo_json.value -> '$.rss_total' AS REAL) AS rss_total_kb,
+    CAST(per_process_meminfo_json.value -> '$.swap_total' AS REAL) AS swap_total_kb,
+    CAST(meminfo_with_iteration.json -> '$.system.free_kb' AS REAL) AS free_kb,
+    CAST(meminfo_with_iteration.json -> '$.system.dma_buf_kb' AS REAL) AS dma_buf_kb
+  FROM meminfo_with_iteration, json_each(meminfo_with_iteration.json -> '$.processes') AS per_process_meminfo_json
+)
 GROUP BY
   it_id,
   ts,
