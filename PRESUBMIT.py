@@ -9,7 +9,6 @@ import platform
 import subprocess
 from pathlib import Path
 
-import sqlparse
 
 USE_PYTHON3 = True
 
@@ -108,24 +107,26 @@ def FormatFiles(input_api, output_api, results, modified_files, format_func):
   for file in (modified_files or []):
     full_path = Path(input_api.change.RepositoryRoot()) / file
 
+    original_contents = input_api.ReadFile(str(full_path), "r")
+
     try:
-      formatted_contents: str = format_func(input_api, full_path)
+      format_func(input_api, full_path)
+      formatted_contents = input_api.ReadFile(str(full_path), "r")
     except ValueError as e:
       results.append(
           output_api.PresubmitPromptWarning(
               "Malformed file:", items=[str(full_path)], long_text=str(e)))
       continue
 
-    original_contents = input_api.ReadFile(str(full_path), "r")
     if original_contents != formatted_contents:
-      full_path.write_text(formatted_contents)
       results.append(
           output_api.PresubmitPromptWarning(
               "Unformatted file:",
               items=[str(full_path)],
               long_text="Please update your commit with the formatted file."))
 
-def FormatHjsonFile(input_api, hjson_file: Path) -> str:
+
+def FormatHjsonFile(input_api, hjson_file: Path) -> None:
   node_bin = str(
       Path(input_api.change.RepositoryRoot()) /
       "third_party/node/linux/node-linux-x64/bin/node")
@@ -135,21 +136,34 @@ def FormatHjsonFile(input_api, hjson_file: Path) -> str:
       "bin" / "hjson")
 
   try:
-    return subprocess.run([
-        node_bin, hjson_js_bin, "-rt", "-sl", "-nocol", "-cond=0",
-        str(hjson_file)
-    ],
-                          check=True,
-                          capture_output=True).stdout.decode(encoding="utf-8")
+    formatted = subprocess.run(
+        [
+            node_bin, hjson_js_bin, "-rt", "-sl", "-nocol", "-cond=0",
+            str(hjson_file)
+        ],
+        check=True,
+        capture_output=True).stdout.decode(encoding="utf-8")
+    hjson_file.write_text(formatted)
   except subprocess.CalledProcessError as e:
     error = e.stderr.decode(encoding="utf=8")
     raise ValueError(f"Failed to parse hjson file: {error}") from e
 
 
-def FormatSqlFile(input_api, sql_file: Path) -> str:
-  del input_api
-  return sqlparse.format(
-      sql_file.read_text(), reindent=False, keyword_case="upper")
+def FormatSqlFile(input_api, sql_file: Path) -> None:
+  perfetto_sql_formatter = str(
+      Path(input_api.change.RepositoryRoot()) / "third_party" / "perfetto" /
+      "tools" / "format-sql-sources")
+  try:
+    subprocess.run(
+        [perfetto_sql_formatter, str(sql_file)],
+        check=True,
+        capture_output=True,
+        cwd=(Path(input_api.change.RepositoryRoot()) / "third_party" /
+             "perfetto"))
+  except subprocess.CalledProcessError as e:
+    error = e.stderr.decode(encoding="utf=8")
+    raise ValueError(f"Failed to parse sql file: {error}") from e
+
 
 def CheckChangeOnUpload(input_api, output_api):
   return CheckChange(input_api, output_api)

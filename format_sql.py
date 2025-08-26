@@ -5,10 +5,9 @@
 # found in the LICENSE file.
 
 import logging
+import subprocess
 import sys
 from pathlib import Path
-
-import sqlparse
 
 
 def format_sql() -> None:
@@ -22,10 +21,19 @@ def format_sql() -> None:
 
   web_tests_root = Path(__file__).resolve().parent
 
-  for sql_file in web_tests_root.glob("cuj/**/*.sql"):
-    formatted = sqlparse.format(
-        sql_file.read_text(), reindent=False, keyword_case="upper")
-    sql_file.write_text(formatted, encoding="utf-8")
+  for sql_file in (web_tests_root / "cuj").rglob("*.sql"):
+    try:
+      subprocess.run([
+          str(web_tests_root / "third_party" / "perfetto" / "tools" /
+              "format-sql-sources"),
+          str(sql_file)
+      ],
+                     cwd=web_tests_root / "third_party" / "perfetto",
+                     check=True)
+    except subprocess.CalledProcessError as e:
+      error = e.stderr.decode(encoding="utf=8")
+      logging.error("Failed to parse SQL file (%s): %s", str(sql_file), error)
+      continue
 
 
 if __name__ == "__main__":
