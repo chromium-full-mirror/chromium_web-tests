@@ -124,7 +124,7 @@ def get_chromeos_browser_config(run_config: WebTestsRunConfig,
   if run_config.browser:
     browser_string = run_config.browser
 
-  ssh_info = urllib.parse.urlparse(f'ssh://{run_config.device_id}')
+  ssh_info = urllib.parse.urlparse(f"ssh://{run_config.device_id}")
 
   return {
       "flags": str(browser_flags_file),
