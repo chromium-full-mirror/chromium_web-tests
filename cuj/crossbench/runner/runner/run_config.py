@@ -32,3 +32,4 @@ class WebTestsRunConfig:
   web_tests_root: pth.AnyPath
   debug: bool
   dry_run: bool
+  wait_for_debugger: bool

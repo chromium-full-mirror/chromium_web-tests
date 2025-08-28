@@ -12,6 +12,7 @@ import sys
 from typing import List
 
 from crossbench.parse import ObjectParser, PathParser
+import debugpy
 
 from runner.runner import run_benchmark, run_cuj
 from runner.run_config import TargetPlatform, WebTestsRunConfig
@@ -52,6 +53,7 @@ def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
   parser.add_argument("--dry-run", action="store_true", default=False)
   parser.add_argument(
       "--results-prefix", type=ObjectParser.any_str, default=None)
+  parser.add_argument("--wait-for-debugger", action="store_true", default=False)
 
   parsed = parser.parse_args(argv)
 
@@ -80,7 +82,8 @@ def get_run_config_from_args(argv: List[str]) -> WebTestsRunConfig:
       results_path=run_results_path,
       web_tests_root=web_tests_root,
       debug=parsed.debug,
-      dry_run=parsed.dry_run)
+      dry_run=parsed.dry_run,
+      wait_for_debugger=parsed.wait_for_debugger)
 
 
 def runner_cli(argv: List[str]) -> None:
@@ -89,6 +92,13 @@ def runner_cli(argv: List[str]) -> None:
   failed_tests: List[str] = []
 
   run_config = get_run_config_from_args(argv)
+
+  if run_config.wait_for_debugger:
+    debug_port = 5678
+    debugpy.listen(("localhost", debug_port))
+    logging.info("Waiting for python debugger on port %d...", debug_port)
+    debugpy.wait_for_client()
+
 
   for benchmark_path in (run_config.web_tests_root /
                          "cuj/crossbench/benchmarks").iterdir():
