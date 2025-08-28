@@ -23,28 +23,21 @@
           url: about:blank
           target: _new_window
         }
-        // TODO: A work around to open new tabs in specific order.
-        // This should be removed from here once the '_new_tab' works in
-        // a sperate window.
         {
           action: get
           url: about:blank
-          target: _blank
-        }
-        {
-          action: switch_tab
-          tab_index: -1
+          target: _new_tab
         }
         {
           action: get
           url: about:blank
-          target: _blank
+          target: _new_tab
         }
       ]
       actions: [
         {
-          action: wait_for_ready_state
-          ready_state: complete
+          action: wait
+          duration: 5s
         }
       ]
     }
