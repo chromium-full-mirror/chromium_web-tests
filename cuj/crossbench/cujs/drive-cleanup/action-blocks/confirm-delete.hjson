@@ -5,12 +5,18 @@
   // Google One Storage Management, confirm delete and navigate back.
   actions: [
     {
+      // Wait for UI elements within the dialog to become interactive.
+      action: wait
+      duration: 5s
+    }
+    {
       // Click the "I understand that deleted items can't be recovered" checkbox.
       action: click
       position: {
         required: false
         selector: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items'] input[type='checkbox']"
         wait: true
+        scroll_into_view: true
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: xpath///*[@aria-modal='true'][@aria-label='Confirmation dialog to delete selected items']//button[not(@disabled)]//span[text()='Permanently delete']
@@ -41,7 +47,7 @@
     {
       action: wait_for_element
       selector: body:not(:has([aria-modal='true']))
-      timeout: 5s
+      timeout: 15s
     }
     {
       // Click the go back arrow at the top to return to the Google One Storage Manager page.

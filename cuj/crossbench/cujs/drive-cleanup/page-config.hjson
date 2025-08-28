@@ -95,7 +95,15 @@
                   wait: true
                 }
                 source: $[CLICK_INPUT_SOURCE]
+                verify: button[aria-label='Delete all']
+                attempts: 3
                 timeout: 5s
+              }
+              {
+                // Wait until the UI settles.
+                action: wait_for_condition
+                condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
+                timeout: 10s
               }
               {
                 // Click the "Delete all" button.
