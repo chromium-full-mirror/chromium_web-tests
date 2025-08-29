@@ -2,6 +2,11 @@
 -- Use of this source code is governed by a BSD-style license that can be
 -- found in the LICENSE file.
 
+-- the sql formatter will attempt to re-type the id column to STRING which
+-- is not correct. STRING will automatically convert numeric values to a
+-- numeric type but id needs to always remain as text.
+-- sqlformat file off
+
 INCLUDE PERFETTO MODULE sql_packages.web_tests_common.setup_blocks;
 
 -- The test may have been run multiple times in the same trace.
@@ -41,7 +46,7 @@ SELECT
 FROM setup_blocks
 UNION
 SELECT
-  CAST(id AS STRING) AS id,
+  CAST(id AS TEXT) AS id,
   "start",
   "end"
 FROM iterations_no_startup;
