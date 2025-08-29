@@ -8,6 +8,7 @@ package-mode = false
 python = ">=3.11,<3.12"
 crossbench = { path = "../../../third_party/crossbench", develop = true }
 pytype = "^2024.10.11"
+debugpy = "^1.8.16"
 
 
 [build-system]
