@@ -229,7 +229,9 @@ def run_test(test_invocation: TestInvocation,
             secrets_file=run_config.secrets,
         )
         if current_results_path.is_dir():
-          current_results_path.rename(success_path / timestamp)
+          success_results_dest = success_path / timestamp
+          current_results_path.rename(success_results_dest)
+          current_results_path = success_results_dest
         successes += 1
         consecutive_failures = 0
       # pylint: disable=broad-exception-caught
@@ -240,9 +242,13 @@ def run_test(test_invocation: TestInvocation,
         failures += 1
         consecutive_failures += 1
         try:
-          current_results_path.rename(fail_path / timestamp)
+          fail_results_dest = fail_path / timestamp
+          current_results_path.rename(fail_results_dest)
+          current_results_path = fail_results_dest
         except Exception:
           pass
+
+      logging.info("Web tests results: %s", str(current_results_path))
 
       if (test_invocation.max_consecutive_failures and
           consecutive_failures >= test_invocation.max_consecutive_failures):
