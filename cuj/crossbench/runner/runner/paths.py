@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 from pathlib import Path
 
 WEB_TESTS_ROOT: Path = Path(
@@ -13,9 +12,8 @@ WEB_TESTS_ROOT: Path = Path(
 THIRD_PARTY_CROSSBENCH: Path = WEB_TESTS_ROOT / "third_party" / "crossbench"
 
 if not (THIRD_PARTY_CROSSBENCH).is_dir():
-  logging.error(
-      "web-tests does not have the expected layout. Did this file move?")
-  sys.exit(1)
+  logging.warning(
+      "web-tests does not have the expected layout. Imports may fail.")
 
 BENCHMARKS: Path = WEB_TESTS_ROOT / "cuj" / "crossbench" / "benchmarks"
 CUJS: Path = WEB_TESTS_ROOT / "cuj" / "crossbench" / "cujs"
