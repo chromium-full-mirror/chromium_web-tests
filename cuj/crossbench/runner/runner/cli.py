@@ -39,7 +39,8 @@ def enumerate_all_tests() -> Tests:
     if not benchmark_path.is_dir():
       continue
 
-    extensions: Path = benchmark_path / "extensions.hjson"
+    maybe_extensions: Path = benchmark_path / "extensions.hjson"
+    maybe_probe_config: Path = benchmark_path / "probe-config.hjson"
 
     cb_args = ""
     cb_args_file = benchmark_path / "cb-args"
@@ -49,9 +50,10 @@ def enumerate_all_tests() -> Tests:
     benchmark = Benchmark(
         name=benchmark_path.name,
         path=benchmark_path,
-        probe_config=(benchmark_path / "probe-config.hjson"),
+        probe_config=(maybe_probe_config
+                      if maybe_probe_config.is_file() else None),
         browser_flags=(benchmark_path / "browser-flags.hjson"),
-        extensions=(extensions if extensions.is_file() else None),
+        extensions=(maybe_extensions if maybe_extensions.is_file() else None),
         crossbench_args=cb_args)
 
     tests.benchmarks.append(benchmark)

@@ -21,7 +21,7 @@ from runner.config import RunConfig, TargetPlatform, TestInvocation
 
 def execute_crossbench(
     cb_benchmark_name: str,
-    probe_config_file: Path,
+    probe_config_file: Path | None,
     browser_config: str,
     additional_crossbench_args: str,
     debug: bool,
@@ -46,8 +46,9 @@ def execute_crossbench(
       crossbench_args.append("--page-config")
       crossbench_args.append(str(page_config_file))
 
-    crossbench_args.append("--probe-config")
-    crossbench_args.append(str(probe_config_file))
+    if probe_config_file:
+      crossbench_args.append("--probe-config")
+      crossbench_args.append(str(probe_config_file))
 
     crossbench_args.append("--browser-config")
     crossbench_args.append(str(browser_config_file.name))

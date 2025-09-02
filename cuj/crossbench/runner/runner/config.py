@@ -26,7 +26,7 @@ class TargetPlatform(ConfigEnum):
 class Test:
   name: str
   path: Path
-  probe_config: Path
+  probe_config: Path | None
   browser_flags: Path
   extensions: Path | None
   crossbench_args: str

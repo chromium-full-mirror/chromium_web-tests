@@ -101,15 +101,20 @@ def CheckChange(input_api, output_api):
   # ---------------------------------------------------------------------------
   # crossbench:
   # ---------------------------------------------------------------------------
-  dry_run_py_path = str(
+  runner_path = str(
       Path(input_api.change.RepositoryRoot()) / "cuj" / "crossbench" /
       "runner" / "run.py")
   tests.append(
       input_api.Command(
           name="crossbench dry run",
           cmd=[
-              input_api.python3_executable, dry_run_py_path, "--platform=local",
-              "--dry-run"
+              input_api.python3_executable,
+              runner_path,
+              "--platform=local",
+              "--dry-run",
+              # Loadline does not cooporate with --dry-run, so ignore it.
+              "--tests",
+              "^(?!.*loadline).*$"
           ],
           message=output_api.PresubmitError,
           kwargs={},
