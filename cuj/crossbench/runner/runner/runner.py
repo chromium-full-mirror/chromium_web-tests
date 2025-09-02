@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import logging
 import shlex
+import sys
 import tempfile
 import urllib
 from datetime import datetime as dt
@@ -76,7 +77,13 @@ def execute_crossbench(
 
     logging.info("Running crossbench with args: %s", crossbench_args)
 
-    CrossBenchCLI().run(crossbench_args)
+    try:
+      CrossBenchCLI().run(crossbench_args)
+    finally:
+      # Crossbench sometimes tears down logging when tests fail,
+      # so reinitialize it here.
+      logging.getLogger().addHandler(logging.StreamHandler(sys.stderr))
+      logging.getLogger().setLevel(logging.INFO)
 
 
 def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
