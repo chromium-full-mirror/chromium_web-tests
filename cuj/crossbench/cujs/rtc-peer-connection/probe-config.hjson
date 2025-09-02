@@ -6,16 +6,16 @@
   args: {
     TRACE_PROCESSOR_QUERIES: [
       {
-        name: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
+        name: RTC Peer Connection Metrics
         sql:
           '''
-            INCLUDE PERFETTO MODULE sql_packages.cujs.video.dropped_frames;
-            SELECT * FROM dropped_frames_output;
+            INCLUDE PERFETTO MODULE sql_packages.cujs.video.rtc;
+            SELECT * FROM rtc_peer_connection_output;
           '''
       }
     ]
     METRIC_DEFINITIONS: [
-      ../../common-metrics/v2/video_dropped_frames.textproto
+      ./metrics.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
     ADDITIONAL_PROBES: []

@@ -35,6 +35,10 @@
             VERIFY_HW_DECODE: $[VERIFY_HW_DECODE]
           }
         }
+        {
+          action: js
+          path: ./script/collect_perf.js
+        }
       ]
     }
   }
