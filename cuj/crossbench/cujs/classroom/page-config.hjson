@@ -83,12 +83,12 @@
               scroll_into_view: true
             }
             source: $[CLICK_INPUT_SOURCE]
-            verify: xpath///div[text() = 'Open in new window']
+            verify: xpath///div[text() = 'Open in new tab']
           }
           {
             action: click
             position: {
-              selector: xpath///div[text() = 'Open in new window']
+              selector: xpath///div[text() = 'Open in new tab']
               scroll_into_view: true
             }
             source: $[CLICK_INPUT_SOURCE]
