@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 from typing import Callable
 
+from eslint import PERFETTO, PERFETTO_UI, WEB_TESTS_ROOT, eslint
 from immutabledict import immutabledict
 
-WEB_TESTS_ROOT = Path(__file__).resolve().parent.parent
 NODE_BIN = (
     WEB_TESTS_ROOT / "third_party" / "node" / "linux" / "node-linux-x64" /
     "bin" / "node")
@@ -20,14 +20,12 @@ HJSON_JS_BIN = WEB_TESTS_ROOT / "third_party" / "hjson_js" / "bin" / "hjson"
 
 
 def format_sql_file(sql_file: Path) -> None:
-  subprocess.run([
-      str(WEB_TESTS_ROOT / "third_party" / "perfetto" / "tools" /
-          "format-sql-sources"),
-      str(sql_file)
-  ],
-                 check=True,
-                 cwd=WEB_TESTS_ROOT / "third_party" / "perfetto",
-                 capture_output=True)
+  subprocess.run(
+      [str(PERFETTO / "tools" / "format-sql-sources"),
+       str(sql_file)],
+      check=True,
+      cwd=PERFETTO,
+      capture_output=True)
 
 
 def format_hjson_file(hjson_file: Path) -> None:
@@ -41,15 +39,30 @@ def format_hjson_file(hjson_file: Path) -> None:
   hjson_file.write_text(formatted_file, encoding="utf-8")
 
 
+def format_js_file(js_file: Path) -> None:
+
+  subprocess.run([str(PERFETTO_UI / "prettier"), "--write",
+                  str(js_file)],
+                 check=True,
+                 capture_output=True)
+
+  try:
+    eslint(js_files=[str(js_file)], fix=True)
+  except subprocess.CalledProcessError:
+    # eslint formatting is best effort here.
+    # If there are additional errors beyond automatically fixable
+    # formatting errors, they will be caught by presubmit later.
+    pass
+
+
 FORMATTERS: immutabledict[str, Callable] = immutabledict({
     ".sql": format_sql_file,
-    ".hjson": format_hjson_file
+    ".hjson": format_hjson_file,
+    ".js": format_js_file,
 })
 
 
 def format_files(files: list[str]) -> None:
-  logging.getLogger().setLevel(logging.INFO)
-
   for file in files:
     full_path: Path = Path(file).resolve()
 
@@ -66,4 +79,5 @@ def format_files(files: list[str]) -> None:
 
 
 if __name__ == "__main__":
+  logging.getLogger().setLevel(logging.INFO)
   format_files(sys.argv[1:])

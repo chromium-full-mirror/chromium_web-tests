@@ -79,6 +79,25 @@ def CheckChange(input_api, output_api):
       ))
 
   # ---------------------------------------------------------------------------
+  # JS eslint:
+  # ---------------------------------------------------------------------------
+  modified_js_files: list[str] | None = ModifiedFiles(
+      input_api, filename_pattern="*.js")
+  tests.append(
+      input_api.Command(
+          name="eslint",
+          cmd=[
+              input_api.python3_executable,
+              str(
+                  Path(input_api.change.RepositoryRoot()) / "tools" /
+                  "eslint.py"),
+          ] + (modified_js_files if modified_js_files else []),
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=True,
+      ))
+
+  # ---------------------------------------------------------------------------
   # isort:
   # ---------------------------------------------------------------------------
   SortImports(input_api, output_api, results, modified_py_files)

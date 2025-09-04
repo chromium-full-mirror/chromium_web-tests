@@ -109,6 +109,6 @@ hooks = [
   {
     'name': 'perfetto_venv',
     'pattern': '.',
-    'action': ['third_party/perfetto/tools/install-build-deps']
+    'action': ['third_party/perfetto/tools/install-build-deps', '--ui']
   }
 ]
