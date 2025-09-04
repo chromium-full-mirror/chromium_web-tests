@@ -25,10 +25,6 @@ def GlobalSkipChecks(input_api, file_path: str):
 def CheckChange(input_api, output_api):
   tests = []
   results = []
-  modified_hjson_files: list[str] | None = ModifiedFiles(
-      input_api, filename_pattern="*.hjson")
-  modified_sql_files: list[str] | None = ModifiedFiles(
-      input_api, filename_pattern="*.sql")
   modified_py_files: list[str] | None = ModifiedFiles(
       input_api, filename_pattern="*.py")
   # ---------------------------------------------------------------------------
@@ -88,15 +84,10 @@ def CheckChange(input_api, output_api):
   SortImports(input_api, output_api, results, modified_py_files)
 
   # ---------------------------------------------------------------------------
-  # hjson:
+  # format all supported files:
   # ---------------------------------------------------------------------------
-  FormatFiles(input_api, output_api, results, modified_hjson_files,
-              FormatHjsonFile)
-
-  # ---------------------------------------------------------------------------
-  # sql:
-  # ---------------------------------------------------------------------------
-  FormatFiles(input_api, output_api, results, modified_sql_files, FormatSqlFile)
+  FormatFiles(input_api, output_api, results,
+              ModifiedFiles(input_api, filename_pattern="*"))
 
   # ---------------------------------------------------------------------------
   # crossbench:
@@ -169,19 +160,28 @@ def SortImports(input_api, output_api, results, modified_py_files):
               long_text="Please update your commit with the formatted file."))
 
 
-def FormatFiles(input_api, output_api, results, modified_files, format_func):
-  for file in (modified_files or []):
-    full_path = Path(input_api.change.RepositoryRoot()) / file
+def FormatFiles(input_api, output_api, results, modified_files):
+  repo_root = Path(input_api.change.RepositoryRoot())
+  formatter = repo_root / "tools" / "format_files.py"
 
+  for file in (modified_files or []):
+    full_path = repo_root / file
     original_contents = input_api.ReadFile(str(full_path), "r")
 
     try:
-      format_func(input_api, full_path)
+      subprocess.run(
+          [input_api.python_executable,
+           str(formatter),
+           str(full_path)],
+          check=True,
+          capture_output=True)
       formatted_contents = input_api.ReadFile(str(full_path), "r")
-    except ValueError as e:
+    except subprocess.CalledProcessError as e:
       results.append(
           output_api.PresubmitPromptWarning(
-              "Malformed file:", items=[str(full_path)], long_text=str(e)))
+              "Failed to format file:",
+              items=[str(full_path)],
+              long_text=str(e)))
       continue
 
     if original_contents != formatted_contents:
@@ -190,46 +190,6 @@ def FormatFiles(input_api, output_api, results, modified_files, format_func):
               "Unformatted file:",
               items=[str(full_path)],
               long_text="Please update your commit with the formatted file."))
-
-
-def FormatHjsonFile(input_api, hjson_file: Path) -> None:
-  node_bin = str(
-      Path(input_api.change.RepositoryRoot()) /
-      "third_party/node/linux/node-linux-x64/bin/node")
-
-  hjson_js_bin = str(
-      Path(input_api.change.RepositoryRoot()) / "third_party" / "hjson_js" /
-      "bin" / "hjson")
-
-  try:
-    formatted = subprocess.run(
-        [
-            node_bin, hjson_js_bin, "-rt", "-sl", "-nocol", "-cond=0",
-            str(hjson_file)
-        ],
-        check=True,
-        capture_output=True).stdout.decode(encoding="utf-8")
-    hjson_file.write_text(formatted)
-  except subprocess.CalledProcessError as e:
-    error = e.stderr.decode(encoding="utf=8")
-    raise ValueError(f"Failed to parse hjson file: {error}") from e
-
-
-def FormatSqlFile(input_api, sql_file: Path) -> None:
-  perfetto_sql_formatter = str(
-      Path(input_api.change.RepositoryRoot()) / "third_party" / "perfetto" /
-      "tools" / "format-sql-sources")
-  try:
-    subprocess.run(
-        [perfetto_sql_formatter, str(sql_file)],
-        check=True,
-        capture_output=True,
-        cwd=(Path(input_api.change.RepositoryRoot()) / "third_party" /
-             "perfetto"))
-  except subprocess.CalledProcessError as e:
-    error = e.stderr.decode(encoding="utf=8")
-    raise ValueError(f"Failed to parse sql file: {error}") from e
-
 
 def CheckChangeOnUpload(input_api, output_api):
   return CheckChange(input_api, output_api)
