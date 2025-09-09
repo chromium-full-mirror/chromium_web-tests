@@ -15,12 +15,12 @@ Web Page Replay can be found under `third_party/webpagereplay` of this repo.
 ## Adding new pages to the archive
 
 ### Record new page loads in a new archive
-Run `src/wpr.go` in recording mode. Run the following under `realpath ~/go/pkg/mod/github.com/catapult-project/catapult/web_page_replay_go@*`:
+Run `src/wpr.go` in recording mode. Run the following under `realpath ~/go/pkg/mod/go.chromium.org/webpagereplay@*`:
 
 ```bash
 # If wpr is in your PATH:
 # wpr replay --http_port=8080 --https_port=8081 /tmp/new_pages.wprgo
-# Or, from the web_page_replay_go source directory:
+# Or, from the webpagereplay source directory:
 go run src/wpr.go replay --http_port=8080 --https_port=8081 /tmp/new_pages.wprgo
 ```
 
@@ -132,4 +132,4 @@ When finished updating the archive (e.g., `existing.wprgo`):
 2.  Finally, update the `wpr-setup.sh` script (located in this directory) to point to the new archive filename in Google Cloud Storage.
 
 ## Reference
-See [https://chromium.googlesource.com/catapult/+/HEAD/web_page_replay_go/README.md](https://chromium.googlesource.com/catapult/+/HEAD/web_page_replay_go/README.md) for the official WprGo documentation.
+See [https://chromium.googlesource.com/webpagereplay/+/HEAD/README.md](https://chromium.googlesource.com/webpagereplay/+/HEAD/README.md) for the official WprGo documentation.
