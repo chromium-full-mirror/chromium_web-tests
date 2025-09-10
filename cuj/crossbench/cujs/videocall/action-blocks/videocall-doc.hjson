@@ -15,7 +15,6 @@
         {
           action: wait_for_condition
           condition: return Array.from(document.getElementsByTagName('video')).every(v => v.currentTime >= 0.001)
-          timeout: 10s
         }
         {
           action: get
