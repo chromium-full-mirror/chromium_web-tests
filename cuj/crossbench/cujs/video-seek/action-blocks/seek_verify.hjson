@@ -35,7 +35,7 @@
         }
         {
           action: js
-          script: if(globalThis.seekCount+1 !== $[NUM_SEEK]) { throw new Error(`Not all seeks are performed. Expect: ${$[NUM_SEEK]}, Got: ${globalThis.seekCount}}. Logs: ${globalThis.logs}`) }
+          script: if(globalThis.seekCount+1 !== $[NUM_SEEK]) { throw new Error(`Not all seeks are performed. Expect: ${$[NUM_SEEK]}, Got: ${globalThis.seekCount}}.`) }
         }
       ]
     }
