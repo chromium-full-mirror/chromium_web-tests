@@ -5,7 +5,7 @@
 - Configuration files for running benchmarks that are built in to crossbench (such as speedometer)
 - Metric definitions and queries for CUJs and benchmarks.
 
-## Setup
+# Setup
 
 **Do not `git clone` web-tests**. Use the `fetch` command included with `depot_tools`.
 
@@ -122,49 +122,6 @@ poetry run python run.py --platform adb --device <DEVICE ID> --tests tab-stress 
 poetry run python run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 2h
 ```
 
+# Contributing
 
-## Test Definitions
-
-All test definitions and supporting files for crossbench based tests should be within the `cuj/crossbench` directory.
-
-### Benchmarks
-
-Benchmarks are tests that are directly supported by and integrated into crossbench. Examples of benchmarks are speedometer, motionmark, and jetstream.
-
-Every directory within `cuj/crossbench/benchmarks` defines a crossbench benchmark that is supported by web-tests.
-
-For example, `cuj/crossbench/benchmarks/speedometer_3.0` contains the necessary configuration files for running the speedometer_3.0 benchmark as a web-test using crossbench.
-
-Within a benchmark directory, the following files can be present:
-
-- `browser-flags.hjson`
-  - Defines the browser flags used when running the benchmark
-- `probe-config.hjson`
-  - Defines the probe config used when running the benchmark
-- `cb-args` (Optional)
-  - Single-line (no trailing newline) file that specifies extra arguments to pass to Crossbench.
-
-### CUJs
-
-CUJs are tests that are implemented on top of crossbench's loading benchmark. These tests use `page-config.hjson` files to define a list of actions to perform in the browser.
-
-Every directory within `cuj/crossbench/cujs` defines a CUJ that can be run using crossbench.
-
-Within a CUJ directory, the following files determine how a CUJ is run:
-
-- `page-config.hjson`
-  - Contains the page configuration for the loading benchmark.
-  - Optionally several page configurations can be specified using the format `<variant>.page-config.hjson` if several similar tests should be grouped together under a single CUJ directory.
-  - Page configs define one configuration of a test. If you want variants of a test
-that differ only in probe configs or args, you will need a new page config file
-as well.
-- `probe-config.hjson` or `<variant>.probe-config.hjson`
-  - Defines the probe config used when running the CUJ
-  - When running `<variant>.page-config.hjson`, if `<variant>.probe-config.hjson`
-exists it will be used, otherwise `probe-config.hjson` will be used.
-- `browser-flags.hjson` or `<variant>.browser-flags.hjson`
-  - Defines the browser flags used when running the benchmark
-  - When running `<variant>.page-config.hjson`, if `<variant>.browser-flags.hjson`
-exists it will be used, otherwise `browser-flags.hjson` will be used.
-- `cb-args` (Optional)
-  - Single-line (no trailing newline) file that specifies extra arguments to pass to Crossbench.
+To get started contributing to web-tests, refer to the [docs](./docs/).
