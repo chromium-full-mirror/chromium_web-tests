@@ -8,6 +8,7 @@
       url: $[URL]
       target: $[TARGET]
       ready_state: complete
+      timeout: 2m
     }
     {
       action: close_tab
