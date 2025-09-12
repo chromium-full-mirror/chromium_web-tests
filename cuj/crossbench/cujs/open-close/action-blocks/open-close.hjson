@@ -19,4 +19,13 @@
       title: closed
     }
   ]
+  teardown: [
+    {
+      action: probe
+      probe: dump_heap
+      kwargs: {
+        type: java
+      }
+    }
+  ]
 }
