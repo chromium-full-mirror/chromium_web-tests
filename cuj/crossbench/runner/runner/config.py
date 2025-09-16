@@ -8,7 +8,7 @@ import argparse
 import dataclasses
 import enum
 from pathlib import Path
-from typing import Any, Self
+from typing import Self
 
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
@@ -22,9 +22,10 @@ class TargetPlatform(ConfigEnum):
   LOCAL = ("local", "local browser")
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
+@dataclasses.dataclass(frozen=True)
 class Test:
   name: str
+  variant: str
   path: Path
   probe_config: Path | None
   browser_flags: Path
@@ -34,6 +35,9 @@ class Test:
 
   @property
   def full_name(self) -> str:
+    if self.variant:
+      return f"{self.name}_{self.variant}"
+
     return self.name
 
   @property
@@ -41,23 +45,14 @@ class Test:
     return self.name
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
+@dataclasses.dataclass(frozen=True)
 class Benchmark(Test):
   pass
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
+@dataclasses.dataclass(frozen=True)
 class Cuj(Test):
-  variant: str
   page_config: Path
-
-  @property
-  @override
-  def full_name(self) -> str:
-    if self.variant:
-      return f"{self.name}_{self.variant}"
-
-    return super().full_name
 
   @property
   @override
@@ -65,59 +60,21 @@ class Cuj(Test):
     return "loading"
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class TestInvocation(Test):
+@dataclasses.dataclass(frozen=True)
+class TestInvocation:
+  test: Test
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class BenchmarkInvocation(TestInvocation, Benchmark):
-
-  @classmethod
-  def from_benchmark(
-      cls, benchmark: Benchmark, min_successes: int | None,
-      max_consecutive_failures: int | None) -> BenchmarkInvocation:
-    benchmark_fields: dict[str, Any] = {
-        field.name: getattr(benchmark, field.name)
-        for field in dataclasses.fields(Benchmark)
-    }
-    return BenchmarkInvocation(
-        **benchmark_fields,
-        min_successes=min_successes,
-        max_consecutive_failures=max_consecutive_failures)
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class CujInvocation(TestInvocation, Cuj):
-
-  @classmethod
-  def from_cuj(cls, cuj: Cuj, min_successes: int | None,
-               max_consecutive_failures: int | None,
-               playback: str | None) -> CujInvocation:
-    cuj_fields: dict[str, Any] = {
-        # pylint: disable=line-too-long
-        field.name: getattr(cuj, field.name) for field in dataclasses.fields(Cuj)
-    }
-    return CujInvocation(
-        **cuj_fields,
-        min_successes=min_successes,
-        max_consecutive_failures=max_consecutive_failures,
-        playback=playback)
-
-
-@dataclasses.dataclass(frozen=True)
-class Tests:
-  cujs: list[Cuj]
-  benchmarks: list[Benchmark]
-
-
 @dataclasses.dataclass(frozen=True)
 class TestGroup(ConfigObject):
   filter_regex: str = ".*"
+  variants_filter_regex: str = ".*"
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
+  playback: str | None = None
 
   @classmethod
   @override
@@ -126,11 +83,15 @@ class TestGroup(ConfigObject):
     parser.add_argument(
         "filter_regex", type=ObjectParser.non_empty_str, default=".*")
     parser.add_argument(
+        "variants_filter_regex", type=ObjectParser.non_empty_str, default=".*")
+    parser.add_argument(
         "min_successes", type=NumberParser.positive_int, required=False)
     parser.add_argument(
         "max_consecutive_failures",
         type=NumberParser.positive_int,
         required=False)
+    parser.add_argument(
+        "playback", type=ObjectParser.non_empty_str, required=False)
     return parser
 
   @classmethod
@@ -140,38 +101,14 @@ class TestGroup(ConfigObject):
 
 
 @dataclasses.dataclass(frozen=True)
-class BenchmarkGroup(TestGroup):
-  pass
-
-
-@dataclasses.dataclass(frozen=True)
-class CujGroup(TestGroup):
-  variants_filter_regex: str = ".*"
-  playback: str | None = None
-
-  @classmethod
-  @override
-  def config_parser(cls) -> ConfigParser[Self]:
-    parser = super().config_parser()
-    parser.add_argument(
-        "variants_filter_regex", type=ObjectParser.non_empty_str, default=".*")
-    parser.add_argument(
-        "playback", type=ObjectParser.non_empty_str, required=False)
-    return parser
-
-
-@dataclasses.dataclass(frozen=True)
 class TestGroupConfig(ConfigObject):
-  cuj_groups: list[CujGroup]
-  benchmark_groups: list[BenchmarkGroup]
+  groups: list[TestGroup]
 
   @classmethod
   @override
   def config_parser(cls) -> ConfigParser[Self]:
     parser = ConfigParser(cls)
-    parser.add_argument("cuj_groups", type=CujGroup, is_list=True, default=[])
-    parser.add_argument(
-        "benchmark_groups", type=BenchmarkGroup, is_list=True, default=[])
+    parser.add_argument("groups", type=TestGroup, is_list=True, default=[])
     return parser
 
   @classmethod
@@ -182,14 +119,12 @@ class TestGroupConfig(ConfigObject):
   @classmethod
   def from_cmdline_flags(cls, tests: str, variants: str,
                          playback: str | None) -> TestGroupConfig:
-    return TestGroupConfig(
-        benchmark_groups=[BenchmarkGroup(filter_regex=tests)],
-        cuj_groups=[
-            CujGroup(
-                filter_regex=tests,
-                variants_filter_regex=variants,
-                playback=playback)
-        ])
+    return TestGroupConfig(groups=[
+        TestGroup(
+            filter_regex=tests,
+            variants_filter_regex=variants,
+            playback=playback)
+    ])
 
 
 @dataclasses.dataclass(frozen=True)
@@ -256,4 +191,4 @@ class RunConfig:
   results_root: Path
   debug: bool
   dry_run: bool
-  tests: tuple[TestInvocation, ...]
+  tests: list[TestInvocation]

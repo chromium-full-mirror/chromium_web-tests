@@ -203,17 +203,17 @@ def run_test(test_invocation: TestInvocation,
   failures = 0
   consecutive_failures = 0
 
-  test_results_root = run_config.results_root / test_invocation.full_name
+  test_results_root = run_config.results_root / test_invocation.test.full_name
 
   success_path = test_results_root / "pass"
   success_path.mkdir(parents=True, exist_ok=True)
   fail_path = test_results_root / "fail"
   fail_path.mkdir(parents=True, exist_ok=True)
 
-  with ChangeCWD(test_invocation.path):
-    extensions = load_extensions(test_invocation.extensions)
+  with ChangeCWD(test_invocation.test.path):
+    extensions = load_extensions(test_invocation.test.extensions)
     browser_config = get_browser_config(run_config,
-                                        test_invocation.browser_flags,
+                                        test_invocation.test.browser_flags,
                                         extensions)
 
     while True:
@@ -221,19 +221,19 @@ def run_test(test_invocation: TestInvocation,
       current_results_path: Path = test_results_root / timestamp
 
       logging.info("Executing crossbench for Test: %s",
-                   test_invocation.full_name)
+                   test_invocation.test.full_name)
 
       try:
         execute_crossbench(
-            cb_benchmark_name=test_invocation.crossbench_command,
-            probe_config_file=test_invocation.probe_config,
+            cb_benchmark_name=test_invocation.test.crossbench_command,
+            probe_config_file=test_invocation.test.probe_config,
             browser_config=browser_config,
-            additional_crossbench_args=test_invocation.crossbench_args,
+            additional_crossbench_args=test_invocation.test.crossbench_args,
             debug=run_config.debug,
             dry_run=run_config.dry_run,
             results_path=current_results_path,
             playback=test_invocation.playback,
-            page_config_file=test_invocation.page_config,
+            page_config_file=test_invocation.test.page_config,
             secrets_file=run_config.secrets,
         )
         if current_results_path.is_dir():
@@ -246,7 +246,7 @@ def run_test(test_invocation: TestInvocation,
       except Exception as e:
         logging.error(e)
         logging.error("Crossbench invocation for Test: %s failed",
-                      test_invocation.full_name)
+                      test_invocation.test.full_name)
         failures += 1
         consecutive_failures += 1
         try:

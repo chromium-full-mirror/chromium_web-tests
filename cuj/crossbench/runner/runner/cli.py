@@ -9,22 +9,26 @@ import re
 import sys
 from datetime import datetime as dt
 from pathlib import Path
+from typing import Callable, Type, TypeVar
 
 import debugpy
-from runner.config import (Benchmark, BenchmarkGroup, BenchmarkInvocation,
-                           CliConfig, Cuj, CujGroup, CujInvocation, RunConfig,
-                           TestGroupConfig, TestInvocation, Tests)
+from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
+                           TestGroup, TestGroupConfig, TestInvocation)
 from runner.paths import (BENCHMARKS, CUJS, LATEST_RESULTS, RESULTS,
                           WEB_TESTS_ROOT)
 from runner.runner import run_test
+
+
+def is_probe_config(file: Path) -> bool:
+  return file.name.endswith("probe-config.hjson")
 
 
 def is_page_config(file: Path) -> bool:
   return file.name.endswith("page-config.hjson")
 
 
-def get_test_variant(page_config: Path) -> str:
-  name_sections: list[str] = page_config.name.split(".")
+def get_test_variant(config_file: Path) -> str:
+  name_sections: list[str] = config_file.name.split(".")
 
   if len(name_sections) <= 2:
     return ""
@@ -32,114 +36,105 @@ def get_test_variant(page_config: Path) -> str:
   return name_sections[0]
 
 
-def enumerate_all_tests() -> Tests:
-  tests: Tests = Tests(cujs=[], benchmarks=[])
+def get_test_variants(test_path: Path,
+                      defines_variant: Callable[[Path], bool]) -> set[str]:
+  variants: set[str] = set()
 
-  for benchmark_path in BENCHMARKS.iterdir():
-    if not benchmark_path.is_dir():
+  for config_file in test_path.iterdir():
+    if not defines_variant(config_file):
       continue
 
-    maybe_extensions: Path = benchmark_path / "extensions.hjson"
-    maybe_probe_config: Path = benchmark_path / "probe-config.hjson"
+    variant: str = get_test_variant(config_file)
+    variants.add(variant)
 
-    cb_args = ""
-    cb_args_file = benchmark_path / "cb-args"
-    if cb_args_file.is_file():
-      cb_args = cb_args_file.read_text()
+  if not variants:
+    variants.add("")
 
-    benchmark = Benchmark(
-        name=benchmark_path.name,
-        path=benchmark_path,
-        probe_config=(maybe_probe_config
-                      if maybe_probe_config.is_file() else None),
-        browser_flags=(benchmark_path / "browser-flags.hjson"),
-        extensions=(maybe_extensions if maybe_extensions.is_file() else None),
-        crossbench_args=cb_args)
+  return variants
 
-    tests.benchmarks.append(benchmark)
 
-  for cuj_path in CUJS.iterdir():
+def get_variant_config_file(test_path: Path, config_file_basename: str,
+                            variant: str) -> Path | None:
+  config_file = test_path / f"{variant}.{config_file_basename}"
 
-    if not cuj_path.is_dir():
+  if config_file.is_file():
+    return config_file
+
+  config_file = test_path / config_file_basename
+
+  if config_file.is_file():
+    return config_file
+
+  return None
+
+
+TestClass = TypeVar("TestClass", bound=Test)
+
+
+def enumerate_tests(test_base_path: Path, defines_variant: Callable[[Path],
+                                                                    bool],
+                    test_class: Type[TestClass]) -> list[TestClass]:
+  tests: list[TestClass] = []
+  for test_path in test_base_path.iterdir():
+    if not test_path.is_dir():
       continue
 
-    for page_config in cuj_path.iterdir():
-      if not is_page_config(page_config):
-        continue
+    variants: set[str] = get_test_variants(test_path, defines_variant)
 
-      variant: str = get_test_variant(page_config)
+    for variant in variants:
+      page_config = get_variant_config_file(test_path, "page-config.hjson",
+                                            variant)
+      probe_config = get_variant_config_file(test_path, "probe-config.hjson",
+                                             variant)
+      browser_flags = get_variant_config_file(test_path, "browser-flags.hjson",
+                                              variant)
+      if browser_flags is None:
+        raise ValueError(f"Missing browser flags for test: {test_path}")
 
-      probe_config = cuj_path / f"{variant}.probe-config.hjson"
+      extensions = get_variant_config_file(test_path, "extensions.hjson",
+                                           variant)
+      cb_args_file = get_variant_config_file(test_path, "cb-args", variant)
+      cb_args = ""
 
-      if not probe_config.is_file():
-        probe_config = cuj_path / "probe-config.hjson"
-
-      browser_flags = cuj_path / f"{variant}.browser-flags.hjson"
-
-      if not browser_flags.is_file():
-        browser_flags = cuj_path / "browser-flags.hjson"
-
-      extensions = cuj_path / f"{variant}.extensions.hjson"
-
-      if not extensions.is_file():
-        extensions = cuj_path / "extensions.hjson"
-
-      cb_args_file = cuj_path / f"{variant}.cb-args"
-
-      if not cb_args_file.is_file():
-        cb_args_file = cuj_path / "cb-args"
-
-      if not cb_args_file.is_file():
-        cb_args = ""
-      else:
+      if cb_args_file and cb_args_file.is_file():
         cb_args = cb_args_file.read_text()
 
       cb_args = cb_args.replace("$[WEB_TESTS]", str(WEB_TESTS_ROOT))
 
-      tests.cujs.append(
-          Cuj(name=cuj_path.name,
+      tests.append(
+          test_class(
+              name=test_path.name,
               variant=variant,
-              path=cuj_path,
-              page_config=page_config,
+              path=test_path,
               probe_config=probe_config,
               browser_flags=browser_flags,
-              extensions=(extensions if extensions.is_file() else None),
-              crossbench_args=cb_args))
+              extensions=extensions,
+              crossbench_args=cb_args,
+              page_config=page_config))
 
   return tests
 
 
-def generate_benchmark_invocations(
-    benchmark_groups: list[BenchmarkGroup],
-    potential_benchmarks: list[Benchmark]) -> list[BenchmarkInvocation]:
-  benchmark_invocations: list[BenchmarkInvocation] = []
-
-  for potential_benchmark in potential_benchmarks:
-    for benchmark_group in benchmark_groups:
-      if re.fullmatch(benchmark_group.filter_regex, potential_benchmark.name):
-        benchmark_invocations.append(
-            BenchmarkInvocation.from_benchmark(
-                potential_benchmark, benchmark_group.min_successes,
-                benchmark_group.max_consecutive_failures))
-
-  return benchmark_invocations
+def enumerate_all_tests() -> list[Test]:
+  tests: list[Test] = []
+  tests.extend(enumerate_tests(CUJS, is_page_config, Cuj))
+  tests.extend(enumerate_tests(BENCHMARKS, is_probe_config, Benchmark))
+  return tests
 
 
-def generate_cuj_invocations(cuj_groups: list[CujGroup],
-                             potential_cujs: list[Cuj]) -> list[CujInvocation]:
-  cuj_invocations: list[CujInvocation] = []
+def generate_test_invocations(groups: list[TestGroup],
+                              all_tests: list[Test]) -> list[TestInvocation]:
+  test_invocations: list[TestInvocation] = []
 
-  for potential_cuj in potential_cujs:
-    for cuj_group in cuj_groups:
-      if re.fullmatch(
-          cuj_group.filter_regex, potential_cuj.name) and re.fullmatch(
-              cuj_group.variants_filter_regex, potential_cuj.variant):
-        cuj_invocations.append(
-            CujInvocation.from_cuj(potential_cuj, cuj_group.min_successes,
-                                   cuj_group.max_consecutive_failures,
-                                   cuj_group.playback))
+  for test in all_tests:
+    for group in groups:
+      if re.fullmatch(group.filter_regex, test.name) and re.fullmatch(
+          group.variants_filter_regex, test.variant):
+        test_invocations.append(
+            TestInvocation(test, group.min_successes,
+                           group.max_consecutive_failures, group.playback))
 
-  return cuj_invocations
+  return test_invocations
 
 
 def generate_run_config(argv: list[str]) -> RunConfig:
@@ -169,13 +164,8 @@ def generate_run_config(argv: list[str]) -> RunConfig:
         variants=cli_config.variants,
         playback=cli_config.playback)
 
-  all_tests = enumerate_all_tests()
-
-  tests: tuple[BenchmarkInvocation | CujInvocation, ...] = tuple(
-      generate_benchmark_invocations(
-          test_group_config.benchmark_groups, all_tests.benchmarks)) + tuple(
-              generate_cuj_invocations(test_group_config.cuj_groups,
-                                       all_tests.cujs))
+  tests: list[TestInvocation] = generate_test_invocations(
+      test_group_config.groups, enumerate_all_tests())
 
   return RunConfig(
       platform=cli_config.platform,
@@ -201,7 +191,7 @@ def runner_cli(argv: list[str]) -> None:
       failed_tests.append(test_invocation)
 
   for failed_test in failed_tests:
-    logging.error("Test failed: %s", failed_test.full_name)
+    logging.error("Test failed: %s", failed_test.test.full_name)
 
   if failed_tests:
     sys.exit(1)
