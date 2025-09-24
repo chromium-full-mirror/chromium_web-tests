@@ -244,9 +244,9 @@ def run_test(test_invocation: TestInvocation,
         consecutive_failures = 0
       # pylint: disable=broad-exception-caught
       except Exception as e:
-        logging.error(e)
         logging.error("Crossbench invocation for Test: %s failed",
                       test_invocation.test.full_name)
+        logging.error("Failure exception: %s", e)
         failures += 1
         consecutive_failures += 1
         try:
