@@ -16,7 +16,7 @@ from typing import Any
 
 from crossbench import hjson as cb_hjson
 from crossbench.cli.cli import CrossBenchCLI
-from crossbench.helper.cwd import ChangeCWD
+from crossbench.helper.cwd import change_cwd
 from runner.config import RunConfig, TargetPlatform, TestInvocation
 
 
@@ -192,7 +192,7 @@ def load_extensions(extension_config_file: Path | None) -> Any:
     extensions = cb_hjson.load_unique_keys(f)
   # Allow exentions config files to be a reference to another file.
   if isinstance(extensions, str):
-    with ChangeCWD(extension_config_file.parent):
+    with change_cwd(extension_config_file.parent):
       extensions = load_extensions(Path(extensions))
   return extensions
 
@@ -210,7 +210,7 @@ def run_test(test_invocation: TestInvocation,
   fail_path = test_results_root / "fail"
   fail_path.mkdir(parents=True, exist_ok=True)
 
-  with ChangeCWD(test_invocation.test.path):
+  with change_cwd(test_invocation.test.path):
     extensions = load_extensions(test_invocation.test.extensions)
     browser_config = get_browser_config(run_config,
                                         test_invocation.test.browser_flags,
