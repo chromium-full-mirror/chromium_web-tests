@@ -30,6 +30,10 @@
           action: wait
           duration: 70s
         }
+        {
+          action: js
+          path: ../../common-action-blocks/video-playback/scripts/dropped_frames.js
+        }
       ]
     }
   }

@@ -3,14 +3,25 @@
 # found in the LICENSE file.
 
 metric_spec: {
-  id: "cuj.video.dropped_frames_avg_percent"
-  value: "avg_percent_dropped"
+  id: "cuj.video.dropped_frames_percent"
+  value: "dropped_frames_percent"
   query {
-    id: "cuj_video_metrics"
     table {
-      table_name: "dropped_frames_output"
+      table_name: "dropped_frames"
       module_name: "sql_packages.cujs.video.dropped_frames"
-      column_names: "avg_percent_dropped"
+      column_names: "dropped_frames_percent"
+    }
+  }
+}
+
+metric_spec: {
+  id: "cuj.video.dropped_frames_count"
+  value: "dropped_frames_count"
+  query {
+    table {
+      table_name: "dropped_frames"
+      module_name: "sql_packages.cujs.video.dropped_frames"
+      column_names: "dropped_frames_count"
     }
   }
 }

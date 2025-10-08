@@ -6,11 +6,11 @@
   args: {
     TRACE_PROCESSOR_QUERIES: [
       {
-        name: Graphics.Smoothness.PercentDroppedFrames3.AllSequences
+        name: video_dropped_frames
         sql:
           '''
             INCLUDE PERFETTO MODULE sql_packages.cujs.video.dropped_frames;
-            SELECT * FROM dropped_frames_output;
+            SELECT * FROM dropped_frames;
           '''
       }
     ]
