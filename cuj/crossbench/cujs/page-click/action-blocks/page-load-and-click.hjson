@@ -29,8 +29,19 @@
       source: mouse
     }
     {
-      action: wait_for_ready_state
-      ready_state: complete
+      // Waiting for document ready state to ensure the content is painted.
+      // Need to use PerformanceObserver to ensure LCP.
+      action: js
+      script:
+        '''
+          new PerformanceObserver((entryList) => {
+            globalThis.largestContentfulPainted = true;
+          }).observe({type: 'largest-contentful-paint', buffered: true});
+        '''
+    }
+    {
+      action: wait_for_condition
+      condition: return globalThis.largestContentfulPainted === true
       timeout: 3m
     }
     {
