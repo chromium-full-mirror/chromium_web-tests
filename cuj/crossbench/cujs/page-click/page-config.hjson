@@ -4,6 +4,12 @@
 {
   template: ./action-blocks/page-click-template.hjson
   args: {
-    TARGET: _self
+    GLOBAL_SETUP: [
+      {
+        action: inject_new_document_script
+        script_path: ./scripts/register-lcp-observer.js
+      }
+    ]
+    PAGE_LOAD_SETUP: []
   }
 }

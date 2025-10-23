@@ -242,7 +242,6 @@ data_sources: {
       enabled_categories: "blink.user_timing"
       enabled_categories: "input"
       enabled_categories: "loading"
-      enabled_categories: "toplevel"
       enabled_categories: "__metadata"
       timestamp_unit_multiplier: 1000
       filter_debug_annotations: false

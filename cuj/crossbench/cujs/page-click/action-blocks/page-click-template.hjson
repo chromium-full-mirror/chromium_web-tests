@@ -3,6 +3,24 @@
 // found in the LICENSE file.
 {
   pages: {
+    global-setup: {
+      blocks: {
+        global_setup: {
+          template: [
+            {
+              // Empty action blocks are not allowed. Wait 0.1s as a noop action.
+              action: wait
+              // duration must be > 0.
+              duration: 0.001s
+            }
+            $[...GLOBAL_SETUP]
+          ]
+          unbound_args: [
+            GLOBAL_SETUP
+          ]
+        }
+      }
+    }
     page-load-and-click-1: {
       blocks: {
         template: ./page-load-and-click.hjson
@@ -12,7 +30,7 @@
           VERIFY_SELECTOR: div[aria-label='Navigation Tree']
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -25,7 +43,7 @@
           VERIFY_SELECTOR: input#buy-now-button
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -38,7 +56,7 @@
           VERIFY_SELECTOR: div#page > div.rs-storehome
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -51,7 +69,7 @@
           VERIFY_SELECTOR: xpath/(//html/body/div[2]/div[2]/section[1]/h1)[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -64,7 +82,7 @@
           VERIFY_SELECTOR: xpath/(//a[@aria-current='page'])
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -77,7 +95,7 @@
           VERIFY_SELECTOR: xpath/(//button[text()='Start Reading'])[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -90,7 +108,7 @@
           VERIFY_SELECTOR: xpath/(//button[@aria-label='Open menu'])[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -103,7 +121,7 @@
           VERIFY_SELECTOR: xpath/(//h1[text()='Yahoo Finance'])[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -116,7 +134,7 @@
           VERIFY_SELECTOR: xpath/(//div[@id='left-sidebar']/div[1]/nav/ol/li[1]/ol/li[1]/a)[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
     }
@@ -129,7 +147,7 @@
           VERIFY_SELECTOR: xpath/(//li[@id='ca-nstab-main']/a)[1]
         }
         unbound_args: [
-          TARGET
+          PAGE_LOAD_SETUP
         ]
       }
       teardown: [

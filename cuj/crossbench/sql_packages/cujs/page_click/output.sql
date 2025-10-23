@@ -36,7 +36,7 @@ SELECT
     WHERE
       s.name = 'PageLoadMetrics.NavigationToLargestContentfulPaint'
       AND s.ts > plse.page_load_start
-      AND s.ts + dur < plse.page_load_end
+      AND s.ts < plse.page_load_end
   ) AS page_load_time
 FROM page_load_start_end AS plse;
 
@@ -76,7 +76,7 @@ SELECT
       s.name = 'EventLatency'
       AND extract_arg(s.arg_set_id, 'event_latency.event_type') = 'GESTURE_TAP_DOWN'
       AND s.ts > lcse.link_click_start
-      AND s.ts + s.dur < lcse.link_click_end
+      AND s.ts < lcse.link_click_end
   ) AS link_click_ts
 FROM link_click_start_end AS lcse;
 
@@ -92,7 +92,7 @@ SELECT
     WHERE
       s.name = 'PageLoadMetrics.NavigationToLargestContentfulPaint'
       AND s.ts > lcse.link_click_start
-      AND s.ts + s.dur < lcse.link_click_end
+      AND s.ts < lcse.link_click_end
   ) AS link_click_loaded_ts
 FROM link_click_start_end AS lcse;
 
