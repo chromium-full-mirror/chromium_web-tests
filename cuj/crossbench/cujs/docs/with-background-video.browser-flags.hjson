@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/template-page-config.hjson
+  template: ../../browser-flags/common-flags.hjson
   args: {
-    SETUP_ACTIONS: []
+    CHROME_FLAGS: --autoplay-policy=no-user-gesture-required
   }
 }

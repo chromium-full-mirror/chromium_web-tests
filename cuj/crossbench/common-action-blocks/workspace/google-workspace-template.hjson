@@ -6,6 +6,7 @@
     WorkspaceWorkflow: {
       login: google
       blocks: {
+        setup: $[SETUP_ACTIONS]
         copy-doc: {
           template: ./copy-doc.hjson
           args: {
