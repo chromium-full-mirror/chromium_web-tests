@@ -49,7 +49,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
-  'crossbench_revision': '6874c86567d94cdb017c4b8dadf646a48c68c3a8',
+  'crossbench_revision': 'be84bb82daa6a12e6f5e698579a0a84444126701',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling webpagereplay
   # and whatever else without interference from each other.
