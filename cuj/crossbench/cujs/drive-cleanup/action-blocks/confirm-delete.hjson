@@ -53,11 +53,12 @@
       // Click the go back arrow at the top to return to the Google One Storage Manager page.
       action: click
       position: {
-        selector: "[role='button'][aria-label='Go back']"
+        required: false
+        selector: xpath///header[.//span[contains(text(), 'Items from Google Drive')]]//*[contains(@aria-label, 'Go back')]
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
-      verify: xpath///span[@role='heading'][@aria-level='1'][text()='Google One Storage Manager']
+      verify: xpath///header[.//span[contains(text(), 'Google One Storage Manager')]]//*[contains(@aria-label, 'Go back')]
     }
   ]
 }
