@@ -4,8 +4,20 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: []
-    METRIC_DEFINITIONS: []
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        name: Playback Stats
+        sql:
+          '''
+            INCLUDE PERFETTO MODULE
+                sql_packages.cujs.tiktok.playback_stats;
+            SELECT * FROM playback_stats_output;
+          '''
+      }
+    ]
+    METRIC_DEFINITIONS: [
+      ./metrics.textproto
+    ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
     ADDITIONAL_PROBES: []
   }

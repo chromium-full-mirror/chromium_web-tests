@@ -18,8 +18,11 @@
         }
         before-watch: [
           {
-            // Sometimes when we dismiss the captcha while the page is still loading,
-            // another immediately opens. So wait a bit before trying to dismiss.
+            action: wait_for_element
+            selector: "#captcha_close_button"
+            timeout: 2m
+          }
+          {
             action: wait
             duration: 5s
           }
@@ -37,15 +40,24 @@
         ]
         watch-video: [
           {
+            action: wait_for_condition
+            condition: return document.querySelector('video').currentTime > 0.5
+            timeout: 60s
+          }
+          {
             action: js
-            path: ./scripts/watch-video.js
-            replacements: {
-              "$[[VIDEO_TIME]": $[VIDEO_TIME]
-            }
+            script: performance.mark('video-started')
           }
           {
             action: wait
-            duration: $[VIDEO_TIME]
+            duration: $[PLAYBACK_DURATION]
+          }
+          {
+            action: js
+            path: ./scripts/playback-stats.js
+            replacements: {
+              PLAYBACK_DURATION: $[PLAYBACK_DURATION]
+            }
           }
         ]
       }

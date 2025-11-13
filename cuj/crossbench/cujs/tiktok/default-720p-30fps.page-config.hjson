@@ -4,7 +4,7 @@
 {
   args: {
     PAGE_URL: https://www.tiktok.com/@alpnplab00/video/7451872152149593362
-    VIDEO_TIME: 50s
+    PLAYBACK_DURATION: 50
   }
   template: ./action-blocks/default-screen.hjson
 }

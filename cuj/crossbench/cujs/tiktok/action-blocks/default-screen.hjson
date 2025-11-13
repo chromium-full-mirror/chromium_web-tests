@@ -8,6 +8,6 @@
   }
   unbound_args: [
     PAGE_URL
-    VIDEO_TIME
+    PLAYBACK_DURATION
   ]
 }
