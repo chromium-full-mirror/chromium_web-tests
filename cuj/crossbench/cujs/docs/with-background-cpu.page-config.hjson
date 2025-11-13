@@ -4,6 +4,6 @@
 {
   template: ./action-blocks/template-page-config.hjson
   args: {
-    SETUP_ACTIONS: []
+    SETUP_ACTIONS: ../../common-action-blocks/background-load/cpu-100bg.hjson
   }
 }
