@@ -54,7 +54,7 @@
           }
           {
             action: js
-            path: ./scripts/playback-stats.js
+            path: ../../../common-action-blocks/video-streaming/scripts/streaming-stats.js
             replacements: {
               PLAYBACK_DURATION: $[PLAYBACK_DURATION]
             }

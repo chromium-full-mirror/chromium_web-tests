@@ -10,7 +10,7 @@ if (video.currentTime < PLAYBACK_DURATION) {
 
 const quality = video.getVideoPlaybackQuality();
 
-performance.mark('playback-stats', {
+performance.mark('streaming-stats', {
   detail: {
     currentTime: video.currentTime,
     videoHeight: video.videoHeight,

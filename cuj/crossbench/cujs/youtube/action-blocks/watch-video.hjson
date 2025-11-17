@@ -4,17 +4,120 @@
 {
   pages: {
     Youtube: {
+      login: google
       blocks: {
-        play-video: ../../../common-action-blocks/youtube/load-and-play-video.hjson
-        video-wait: [
+        page-load: {
+          template: ../../../common-action-blocks/basic/page-load.hjson
+          args: {
+            READY_STATE: complete
+            PAGE_LOAD_TIMEOUT: 2m
+            TARGET: _self
+          }
+          unbound_args: [
+            PAGE_URL
+          ]
+        }
+        before-watch: [
+          // Sometimes sign-in doesn't propagate to youtube and a click of the sign in button is required.
           {
-            action: wait
-            duration: 120s
+            action: click
+            pos: {
+              selector: "[aria-label='Sign in']"
+              required: false
+              wait: true
+            }
+            timeout: 3s
+            source: touch
           }
           {
             action: wait_for_element
-            selector: .paused-mode video
-            timeout: 5m
+            selector: video
+            timeout: 2m
+          }
+          {
+            action: wait_for_condition
+            condition: return document.querySelector('video').currentTime > 0.5
+            timeout: 60s
+          }
+          {
+            action: js
+            script:
+              '''
+              const video = document.querySelector("video")
+              video.currentTime = 0
+              video.pause()
+              '''
+          }
+          {
+            action: click
+            pos: {
+              selector: "[aria-label='Settings']"
+              required: true
+              wait: true
+            }
+            source: touch
+            verify: xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']
+          }
+          // Wait for the element to finish animating.
+          {
+            action: wait
+            duration: 0.5s
+          }
+          {
+            action: click
+            pos: {
+              selector: xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']
+              required: true
+              wait: true
+            }
+            source: touch
+            verify: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
+          }
+          // Wait for the element to finish animating.
+          {
+            action: wait
+            duration: 0.5s
+          }
+          {
+            action: click
+            pos: {
+              selector: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
+              required: true
+              wait: true
+            }
+            source: touch
+          }
+          {
+            action: text_input
+            text: $[CHANGE_SCREEN_INPUT]
+            duration: 0.5s
+            source: keyboard
+          }
+        ]
+        watch-video: [
+          {
+            action: js
+            script: document.querySelector("video").play()
+          }
+          {
+            action: js
+            script: performance.mark('video-started')
+          }
+          {
+            action: wait_for_condition
+            condition: return document.querySelector('video').currentTime > 0.5
+            timeout: 60s
+          }
+          {
+            action: wait
+            duration: $[PLAYBACK_DURATION]
+          }
+          {
+            action: js
+            path: ../../../common-action-blocks/video-streaming/scripts/streaming-stats.js
+            replacements: {
+              PLAYBACK_DURATION: $[PLAYBACK_DURATION]
+            }
           }
         ]
       }

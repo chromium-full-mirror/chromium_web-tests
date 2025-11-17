@@ -10,13 +10,13 @@
         sql:
           '''
             INCLUDE PERFETTO MODULE
-                sql_packages.cujs.tiktok.playback_stats;
-            SELECT * FROM playback_stats_output;
+                sql_packages.video_streaming.streaming_playback_stats;
+            SELECT * FROM streaming_stats_output;
           '''
       }
     ]
     METRIC_DEFINITIONS: [
-      ./metrics.textproto
+      ../../common-metrics/v2/streaming_playback_stats.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
     ADDITIONAL_PROBES: []

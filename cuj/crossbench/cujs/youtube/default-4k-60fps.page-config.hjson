@@ -3,10 +3,8 @@
 // found in the LICENSE file.
 {
   args: {
-    PAGE_URL: https://www.youtube.com/watch?v=LXb3EKWsInQ
     // No-op key so that the default player is used
     CHANGE_SCREEN_INPUT: !
-    RESOLUTION_TEXT: 2160p60
   }
-  template: ./action-blocks/watch-video.hjson
+  template: ./action-blocks/4k-60fps.hjson
 }
