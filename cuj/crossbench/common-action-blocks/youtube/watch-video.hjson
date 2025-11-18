@@ -7,7 +7,7 @@
       login: google
       blocks: {
         page-load: {
-          template: ../../../common-action-blocks/basic/page-load.hjson
+          template: ../basic/page-load.hjson
           args: {
             READY_STATE: complete
             PAGE_LOAD_TIMEOUT: 2m
@@ -44,8 +44,8 @@
             script:
               '''
               const video = document.querySelector("video")
-              video.currentTime = 0
               video.pause()
+              video.currentTime = 0
               '''
           }
           {
@@ -108,9 +108,17 @@
             condition: return document.querySelector('video').currentTime > 0.5
             timeout: 60s
           }
+        ]
+        during-playback-watch: $[DURING_PLAYBACK_BLOCK]
+        after-playback: [
           {
             action: wait
             duration: $[PLAYBACK_DURATION]
+          }
+          {
+            // Switch back to the youtube tab
+            action: switch_tab
+            tab_index: 0
           }
           {
             action: js

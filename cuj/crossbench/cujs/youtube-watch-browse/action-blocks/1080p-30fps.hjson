@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 {
   args: {
-    CHANGE_SCREEN_INPUT: f
+    RESOLUTION_TEXT: 1080p
   }
-  template: ./action-blocks/4k-60fps.hjson
+  unbound_args: [
+    CHANGE_SCREEN_INPUT
+  ]
+  template: ./30fps.hjson
 }

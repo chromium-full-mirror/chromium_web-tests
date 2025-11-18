@@ -3,9 +3,7 @@
 // found in the LICENSE file.
 {
   args: {
-    PAGE_URL: https://www.youtube.com/watch?v=LXb3EKWsInQ
     CHANGE_SCREEN_INPUT: t
-    RESOLUTION_TEXT: 2160p60
   }
-  template: ./action-blocks/youtube-watch-browse.hjson
+  template: ./action-blocks/4k-60fps.hjson
 }

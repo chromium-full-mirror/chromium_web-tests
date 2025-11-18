@@ -5,10 +5,11 @@
   args: {
     PAGE_URL: https://www.youtube.com/watch?v=CxwJrzEdw1U
     PLAYBACK_DURATION: 120
+    DURING_PLAYBACK_BLOCK: []
   }
   unbound_args: [
     CHANGE_SCREEN_INPUT
     RESOLUTION_TEXT
   ]
-  template: ./watch-video.hjson
+  template: ../../../common-action-blocks/youtube/watch-video.hjson
 }
