@@ -18,11 +18,6 @@
         }
         before-watch: [
           {
-            action: wait_for_element
-            selector: "#captcha_close_button"
-            timeout: 2m
-          }
-          {
             action: wait
             duration: 5s
           }
