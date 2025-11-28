@@ -26,6 +26,7 @@
       ../../common-metrics/v2/meminfo_total.textproto
       ../../common-metrics/v2/meminfo_per_iteration.textproto
       ../../common-metrics/v2/heap_activity.textproto
+      ../../common-metrics/v2/heap_drawable.textproto
       ../../common-metrics/v2/heap_total.textproto
       ../../common-metrics/v2/heap_view.textproto
     ]
