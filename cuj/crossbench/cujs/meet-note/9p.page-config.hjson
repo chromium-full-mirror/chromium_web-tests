@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/meet-note.hjson
+  template: ./action-blocks/no-effects.hjson
   args: {
     CLICK_INPUT_SOURCE: touch
     NUM_BOTS: 8

@@ -10,7 +10,6 @@
           template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
           args: {
             TTL_SECS: 240
-            BACKGROUND_BLUR: "false"
             POST_CREATION_ACTIONS: [
               {
                 action: meet_script
@@ -21,6 +20,7 @@
           unbound_args: [
             CLICK_INPUT_SOURCE
             NUM_BOTS
+            BACKGROUND_BLUR
           ]
         }
         open-new-docs: {
