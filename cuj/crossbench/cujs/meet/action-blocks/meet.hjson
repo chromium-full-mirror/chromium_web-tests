@@ -9,7 +9,7 @@
         meet-setup: {
           args: {
             CLICK_INPUT_SOURCE: touch
-            TTL_SECS: 120
+            TTL_SECS: 240
             POST_CREATION_ACTIONS: []
           }
           unbound_args: [

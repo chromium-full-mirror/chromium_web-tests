@@ -31,11 +31,125 @@
     {
       action: click
       position: {
+        selector: xpath///span[contains(text(), 'Settings')]
+        required: true
+        scroll_into_view: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      verify: button[aria-label='Video']
+    }
+    // Wait for the settings window animation to finish
+    {
+      action: wait
+      duration: 1s
+    }
+    {
+      action: click
+      position: {
+        selector: button[aria-label='Video']
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox']"
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
+      attempts: 3
+      timeout: 5s
+    }
+    // Wait for the dropdown combobox to finish the animation.
+    // TODO: Remove after click action supports waiting for stable position.
+    {
+      action: wait
+      duration: 1s
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='Send resolution (maximum)'] [role='option'][aria-label='High definition (720p)']"
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Send resolution (maximum)'] span[aria-label='High definition (720p)']"
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox']"
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
+      attempts: 1
+      timeout: 5s
+    }
+    // Wait for the dropdown combobox to finish the animation.
+    // TODO: Remove after click action supports waiting for stable position.
+    {
+      action: wait
+      duration: 1s
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='Receive resolution (maximum)'] [role='option'][aria-label='Full high definition (1080p)']"
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Receive resolution (maximum)'] span[aria-label='Full high definition (1080p)']"
+    }
+    {
+      action: click
+      position: {
+        selector: button[aria-label='Close dialog']
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    // Wait for animations to finish
+    {
+      action: wait
+      duration: 1s
+    }
+    {
+      action: click
+      position: {
+        selector: button[aria-label='More options']
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    // Wait for animations to finish
+    {
+      action: wait
+      duration: 1s
+    }
+    {
+      action: click
+      position: {
         selector: xpath///span[contains(text(), 'Backgrounds and effects')]
         required: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+    }
+    // Wait for animations to finish
+    {
+      action: wait
+      duration: 1s
     }
     // The background blur might already be enabled. Only click if it is not enabled.
     {
@@ -85,7 +199,7 @@
       source: $[CLICK_INPUT_SOURCE]
     }
     $[...POST_CREATION_ACTIONS]
-    // With the flag --use-fake-ui-for-media-stream, the camera would
+    // With the flag --use-fake-ui-for-media-stream, the camera should
     // start by itself.
     {
       action: wait_for_element

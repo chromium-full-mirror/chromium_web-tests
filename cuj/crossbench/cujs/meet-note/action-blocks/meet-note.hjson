@@ -9,7 +9,7 @@
         start-new-meeting: {
           template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
           args: {
-            TTL_SECS: 180
+            TTL_SECS: 240
             BACKGROUND_BLUR: "false"
             POST_CREATION_ACTIONS: [
               {
@@ -23,104 +23,6 @@
             NUM_BOTS
           ]
         }
-        switch-resolution: [
-          {
-            action: click
-            position: {
-              selector: "[aria-label='Call controls'] button[aria-label='More options'][aria-haspopup='menu']"
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: xpath///*[text()='Settings']
-          }
-          {
-            action: click
-            position: {
-              selector: xpath///*[text()='Settings']
-              required: true
-              scroll_into_view: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: button[aria-label='Video']
-          }
-          {
-            action: click
-            position: {
-              selector: button[aria-label='Video']
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-          }
-          {
-            action: click
-            position: {
-              selector: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox']"
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
-            attempts: 3
-            timeout: 5s
-          }
-          // Wait for the dropdown combobox to finish the amination.
-          // TODO: Remove after click action supports waiting for stable position.
-          {
-            action: wait
-            duration: 0.5s
-          }
-          {
-            action: click
-            position: {
-              selector: "[aria-label='Send resolution (maximum)'] [role='option'][aria-label='High definition (720p)']"
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[aria-label='Send resolution (maximum)'] span[aria-label='High definition (720p)']"
-          }
-          {
-            action: click
-            position: {
-              selector: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox']"
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
-            attempts: 3
-            timeout: 5s
-          }
-          // Wait for the dropdown combobox to finish the amination.
-          // TODO: Remove after click action supports waiting for stable position.
-          {
-            action: wait
-            duration: 0.5s
-          }
-          {
-            action: click
-            position: {
-              selector: "[aria-label='Receive resolution (maximum)'] [role='option'][aria-label='High definition (720p)']"
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[aria-label='Receive resolution (maximum)'] span[aria-label='High definition (720p)']"
-          }
-          {
-            action: click
-            position: {
-              selector: button[aria-label='Close dialog']
-              required: true
-              wait: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: body:not(:has([aria-modal='true']))
-          }
-        ]
         open-new-docs: {
           actions: [
             {
