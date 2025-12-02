@@ -6,7 +6,7 @@
     {
       action: meet_create
       bots: {
-        num_of_bots: $[NUM_OF_BOTS]
+        num_of_bots: $[NUM_BOTS]
         ttl_secs: $[TTL_SECS]
       }
       timeout: 30s

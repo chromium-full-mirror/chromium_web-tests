@@ -19,7 +19,7 @@
           }
           unbound_args: [
             CLICK_INPUT_SOURCE
-            NUM_OF_BOTS
+            NUM_BOTS
           ]
         }
         switch-resolution: [

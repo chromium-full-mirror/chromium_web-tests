@@ -5,6 +5,6 @@
   template: ./action-blocks/meet-note.hjson
   args: {
     CLICK_INPUT_SOURCE: touch
-    NUM_OF_BOTS: "8"
+    NUM_BOTS: 8
   }
 }

@@ -13,7 +13,7 @@
             POST_CREATION_ACTIONS: []
           }
           unbound_args: [
-            NUM_OF_BOTS
+            NUM_BOTS
           ]
           template: ../../../common-action-blocks/meet/meet-setup.hjson
         }
