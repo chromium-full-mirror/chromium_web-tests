@@ -4,7 +4,6 @@
 {
   template: ./action-blocks/with-background-blur.hjson
   args: {
-    CLICK_INPUT_SOURCE: touch
     NUM_BOTS: 3
   }
 }

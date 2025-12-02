@@ -4,7 +4,6 @@
 {
   template: ./action-blocks/no-effects.hjson
   args: {
-    CLICK_INPUT_SOURCE: touch
     NUM_BOTS: 8
   }
 }

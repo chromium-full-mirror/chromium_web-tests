@@ -7,7 +7,6 @@
     BACKGROUND_BLUR: "true"
   }
   unbound_args: [
-    CLICK_INPUT_SOURCE
     NUM_BOTS
   ]
 }
