@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/no-effects.hjson
+  template: ./meet.hjson
   args: {
-    NUM_BOTS: 48
+    BACKGROUND_BLUR: "true"
   }
+  unbound_args: [
+    NUM_BOTS
+  ]
 }

@@ -16,6 +16,52 @@
       script: performance.mark("meet-created")
     }
     {
+      action: wait_for_ready_state
+      ready_state: complete
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='More options']"
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
+      action: click
+      position: {
+        selector: xpath///span[contains(text(), 'Backgrounds and effects')]
+        required: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    // The background blur might already be enabled. Only click if it is not enabled.
+    {
+      action: click
+      position: {
+        selector: xpath///*[@aria-label='Blur your background' and @aria-pressed!='$[BACKGROUND_BLUR]']
+        required: false
+        wait: true
+      }
+      timeout: 2s
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    // Verify that background blurring is in the correct state.
+    {
+      action: wait_for_element
+      selector: xpath///*[@aria-label='Blur your background' and @aria-pressed='$[BACKGROUND_BLUR]']
+    }
+    {
+      action: click
+      position: {
+        selector: "[aria-label='Close']"
+        required: true
+        wait: true
+      }
+    }
+    {
       action: click
       position: {
         selector: xpath///span[contains(text(), 'Ask to join')]
@@ -44,7 +90,7 @@
     {
       action: wait_for_element
       // At least self video and one bot should be visible before continuing.
-      expected_count: "2"
+      expected_count: 2
       or_more: true
       selector: video:not([data-meet-pip-feed]):not([style*='display: none'])
     }

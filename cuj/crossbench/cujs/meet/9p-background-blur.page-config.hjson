@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./action-blocks/no-effects.hjson
+  template: ./action-blocks/with-background-blur.hjson
   args: {
-    NUM_BOTS: 48
+    NUM_BOTS: 8
   }
 }

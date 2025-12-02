@@ -10,6 +10,7 @@
           template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
           args: {
             TTL_SECS: 180
+            BACKGROUND_BLUR: "false"
             POST_CREATION_ACTIONS: [
               {
                 action: meet_script

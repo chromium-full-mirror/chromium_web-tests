@@ -14,6 +14,7 @@
           }
           unbound_args: [
             NUM_BOTS
+            BACKGROUND_BLUR
           ]
           template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
         }
