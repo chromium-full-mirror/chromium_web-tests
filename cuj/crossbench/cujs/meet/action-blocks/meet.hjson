@@ -15,7 +15,7 @@
           unbound_args: [
             NUM_BOTS
           ]
-          template: ../../../common-action-blocks/meet/meet-setup.hjson
+          template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
         }
         wait: {
           actions: [

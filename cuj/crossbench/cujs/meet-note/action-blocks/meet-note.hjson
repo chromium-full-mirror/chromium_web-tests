@@ -7,7 +7,7 @@
       login: google
       blocks: {
         start-new-meeting: {
-          template: ../../../common-action-blocks/meet/meet-setup.hjson
+          template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
           args: {
             TTL_SECS: 180
             POST_CREATION_ACTIONS: [
