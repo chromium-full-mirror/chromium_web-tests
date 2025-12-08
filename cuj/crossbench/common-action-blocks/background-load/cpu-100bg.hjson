@@ -12,7 +12,9 @@
   // in the background and not visible
   {
     action: get
-    url: about:blank
+    // about:blank when launched via WebDriver doesn't change priority of the
+    // hidden tab. Using a real page works.
+    url: example.com
     ready_state: complete
     // NB: _new_tab will open a tab in the original window, but _blank opens it
     // in the current window, hiding the load CPU tab.
