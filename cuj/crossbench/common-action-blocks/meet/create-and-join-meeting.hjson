@@ -81,6 +81,12 @@
       source: $[CLICK_INPUT_SOURCE]
       verify: "[aria-label='Send resolution (maximum)'] span[aria-label='High definition (720p)']"
     }
+    // Wait for the dropdown combobox to finish the animation.
+    // TODO: Remove after click action supports waiting for stable position.
+    {
+      action: wait
+      duration: 1s
+    }
     {
       action: click
       position: {
@@ -195,7 +201,7 @@
         required: false
         wait: true
       }
-      timeout: 5s
+      timeout: 10s
       source: $[CLICK_INPUT_SOURCE]
     }
     $[...POST_CREATION_ACTIONS]
