@@ -9,16 +9,16 @@
         action: click
         source: touch
         pos: {
-          selector: div[data-e2e='more-menu']
+          selector: "[data-e2e='more-menu-icon']"
           wait: true
         }
-        verify: div[data-e2e='more-menu-popover_full-screen']
+        verify: "[data-e2e='more-menu-popover_full-screen']"
       }
       {
         action: click
         source: touch
         pos: {
-          selector: div[data-e2e='more-menu-popover_full-screen']
+          selector: "[data-e2e='more-menu-popover_full-screen']"
           wait: true
         }
         verify: ":fullscreen"
