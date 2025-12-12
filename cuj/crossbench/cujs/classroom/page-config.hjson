@@ -14,7 +14,7 @@
     APPENDIX_CLICK_INDEX: "1"
 
     // download args
-    DOWNLOAD_CLICK_SELECTOR: "[aria-label='Download'][data-tooltip='Download']"
+    DOWNLOAD_CLICK_SELECTOR: "[aria-label='Download']"
     DOWNLOAD_FILE_TYPE: .*.gz
   }
   template: {
