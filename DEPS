@@ -91,8 +91,13 @@ deps = {
     Var('perfetto_git') + '@' + '52dc460cd7840c4b948d6151fe9a60dfc583df35',
 }
 
-
-hooks = [
+# Contains hooks necessary to run web-tests
+pre_deps_hooks = [
+    {
+    'name': 'wpr_archives',
+    'pattern': '.',
+    'action': ['cuj/crossbench/wpr/wpr-setup.sh']
+  },
   {
     'name': 'vpython3_common',
     'pattern': '.',
@@ -101,11 +106,10 @@ hooks = [
                 '-vpython-tool', 'install',
     ],
   },
-  {
-    'name': 'wpr_archives',
-    'pattern': '.',
-    'action': ['cuj/crossbench/wpr/wpr-setup.sh']
-  },
+]
+
+# Contains hooks necessary to develop web-tests
+hooks = [
   {
     'name': 'perfetto_venv',
     'pattern': '.',
