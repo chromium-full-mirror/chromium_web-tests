@@ -224,7 +224,11 @@ data_sources: {
       atrace_apps: "lmkd"
       atrace_apps: "com.android.vending"
       atrace_categories: "am"
+      # atrace categories for input latency:
+      # "input" for input dispatch latency. "view" for end_to_end latency from
+      # input read time to frame present time.
       atrace_categories: "input"
+      atrace_categories: "view"
       atrace_categories: "wm"
       drain_buffer_percent: 50
     }
