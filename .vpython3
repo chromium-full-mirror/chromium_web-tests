@@ -1,14 +1,9 @@
 # Copyright 2022 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-python_version: "3.11"
-
-wheel: <
-  name: "infra/python/wheels/sqlparse-py3"
-  version: "version:0.4.4"
->
 
 # Mirrors .vpython3 in third_party/crossbench
+python_version: "3.11"
 
 wheel: <
   name: "infra/python/wheels/pytest-py3"
