@@ -78,6 +78,12 @@ data_sources: {
   }
 }
 data_sources: {
+    config {
+        name: "linux.sysfs_power"
+        target_buffer: 2
+    }
+}
+data_sources: {
   config {
     name: "android.power"
     target_buffer: 2

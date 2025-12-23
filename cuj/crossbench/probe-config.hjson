@@ -20,6 +20,7 @@
         ./common-metrics/v2/lmk_kill_list.textproto
         ./common-metrics/v2/lmk_kill_count.textproto
         ./common-metrics/v2/uma_histogram_summaries.textproto
+        ./common-metrics/v2/battery_start_percent.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }
