@@ -28,6 +28,11 @@
       }
       source: $[CLICK_INPUT_SOURCE]
     }
+    // Wait for menu animation to finish
+    {
+      action: wait
+      duration: 1s
+    }
     {
       action: click
       position: {
