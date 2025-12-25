@@ -19,6 +19,30 @@ NODE_BIN = (
 HJSON_JS_BIN = WEB_TESTS_ROOT / "third_party" / "hjson_js" / "bin" / "hjson"
 
 
+def get_txtpbfmt() -> Path:
+  go_bin_path = (Path(
+      subprocess.run(
+          ["go", "env", "GOPATH"], check=True,
+          capture_output=True).stdout.decode(encoding="utf-8").strip())) / "bin"
+  txtpbfmt_bin = go_bin_path / "txtpbfmt"
+
+  if not txtpbfmt_bin.exists():
+    subprocess.run([
+        "go", "install",
+        "github.com/protocolbuffers/txtpbfmt/cmd/txtpbfmt@latest"
+    ],
+                   check=True,
+                   capture_output=True)
+
+  return txtpbfmt_bin
+
+
+def format_textproto_file(textproto_file: Path) -> None:
+  subprocess.run([str(get_txtpbfmt()), str(textproto_file)],
+                 check=True,
+                 capture_output=True)
+
+
 def format_sql_file(sql_file: Path) -> None:
   subprocess.run(
       [str(PERFETTO / "tools" / "format-sql-sources"),
@@ -59,6 +83,8 @@ FORMATTERS: immutabledict[str, Callable] = immutabledict({
     ".sql": format_sql_file,
     ".hjson": format_hjson_file,
     ".js": format_js_file,
+    ".textproto": format_textproto_file,
+    ".pbtxt": format_textproto_file,
 })
 
 

@@ -7,6 +7,12 @@
 
 # Setup
 
+Install `golang` (required for WPR and presubmit upload checks)
+
+```
+sudo apt-get install golang
+```
+
 **Do not `git clone` web-tests**. Use the `fetch` command included with `depot_tools`.
 
 - Install [Chromium depot_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up).
