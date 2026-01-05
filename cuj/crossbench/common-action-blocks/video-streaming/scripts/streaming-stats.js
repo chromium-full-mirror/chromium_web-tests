@@ -5,7 +5,9 @@ const video = document.querySelector('video');
 
 // Fail the test if the necessary playback duration was not achieved
 if (video.currentTime < PLAYBACK_DURATION) {
-  throw new Error('Video did not finish playing.');
+  throw new Error(
+      `Expected > PLAYBACK_DURATIONs. Actual: ${video.currentTime}s`,
+  );
 }
 
 const quality = video.getVideoPlaybackQuality();
