@@ -25,6 +25,7 @@
               selector: "[aria-label='Sign in']"
               required: false
               wait: true
+              scroll_into_view: true
             }
             timeout: 3s
             source: touch
@@ -63,24 +64,13 @@
             action: wait
             duration: 0.5s
           }
-          // The playback quality option is at the bottom of the settings popup.
-          // Scroll the settings popup all the way to the bottom 'quality' is visible.
-          // Ideally we could just use 'scroll_into_view' but that doesn't work on this
-          // div for some reason.
-          {
-            action: js
-            script:
-              '''
-                const settingsDiv = document.querySelector("div.ytp-panel");
-                settingsDiv.scrollTop = settingsDiv.scrollHeight;
-              '''
-          }
           {
             action: click
             pos: {
               selector: xpath///div[@class='ytp-menuitem']//div[@class='ytp-menuitem-label' and text() = 'Quality']
               required: true
               wait: true
+              scroll_into_view: true
             }
             source: touch
             verify: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
@@ -96,6 +86,7 @@
               selector: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
               required: true
               wait: true
+              scroll_into_view: true
             }
             source: touch
           }
