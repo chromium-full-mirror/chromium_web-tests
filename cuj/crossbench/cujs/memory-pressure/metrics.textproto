@@ -17,7 +17,6 @@ query {
 metric_spec: {
   id: "cuj.memory-pressure.page_load_duration"
   dimensions: "it_id"
-  dimensions: "tab_index"
   value: "page_load_duration_ms"
   query {
     inner_query_id: "tab_timing_query"
@@ -26,6 +25,25 @@ metric_spec: {
 
 metric_spec: {
   id: "cuj.memory-pressure.allocation_duration"
+  dimensions: "it_id"
+  value: "allocation_duration_ms"
+  query {
+    inner_query_id: "tab_timing_query"
+  }
+}
+
+metric_spec: {
+  id: "no-crosbolt.cuj.memory-pressure.page_load_duration_by_tab"
+  dimensions: "it_id"
+  dimensions: "tab_index"
+  value: "page_load_duration_ms"
+  query {
+    inner_query_id: "tab_timing_query"
+  }
+}
+
+metric_spec: {
+  id: "no-crosbolt.cuj.memory-pressure.allocation_duration_by_tab"
   dimensions: "it_id"
   dimensions: "tab_index"
   value: "allocation_duration_ms"
@@ -53,7 +71,6 @@ metric_spec: {
     }
   }
 }
-
 
 query {
   id: "avg_tabs_alive_after_first_kill"
