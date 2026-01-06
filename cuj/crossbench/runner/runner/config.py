@@ -66,6 +66,7 @@ class TestInvocation:
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
+  startup_delay: str | None = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -75,6 +76,7 @@ class TestGroup(ConfigObject):
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
+  startup_delay: str | None = None
 
   @classmethod
   @override
@@ -92,6 +94,8 @@ class TestGroup(ConfigObject):
         required=False)
     parser.add_argument(
         "playback", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "startup-delay", type=ObjectParser.non_empty_str, required=False)
     return parser
 
   @classmethod
@@ -117,13 +121,14 @@ class TestGroupConfig(ConfigObject):
     raise ValueError("Cannot parse TestGroupConfig from string")
 
   @classmethod
-  def from_cmdline_flags(cls, tests: str, variants: str,
-                         playback: str | None) -> TestGroupConfig:
+  def from_cmdline_flags(cls, tests: str, variants: str, playback: str | None,
+                         startup_delay: str | None) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
             filter_regex=tests,
             variants_filter_regex=variants,
-            playback=playback)
+            playback=playback,
+            startup_delay=startup_delay)
     ])
 
 
@@ -139,6 +144,7 @@ class CliConfig:
   debug: bool
   dry_run: bool
   playback: str | None
+  startup_delay: str | None
   wait_for_debugger: bool
 
   @classmethod
@@ -151,6 +157,8 @@ class CliConfig:
         "--browser", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--playback", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "--startup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--tests", type=ObjectParser.non_empty_str, default=".*")
     parser.add_argument(
@@ -175,6 +183,7 @@ class CliConfig:
         tests=parsed.tests,
         variants=parsed.variants,
         playback=parsed.playback,
+        startup_delay=parsed.startup_delay,
         secrets=secrets_file,
         results_prefix=parsed.results_prefix,
         debug=parsed.debug,

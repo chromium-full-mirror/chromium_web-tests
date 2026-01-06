@@ -132,7 +132,8 @@ def generate_test_invocations(groups: list[TestGroup],
           group.variants_filter_regex, test.variant):
         test_invocations.append(
             TestInvocation(test, group.min_successes,
-                           group.max_consecutive_failures, group.playback))
+                           group.max_consecutive_failures, group.playback,
+                           group.startup_delay))
 
   return test_invocations
 
@@ -162,7 +163,8 @@ def generate_run_config(argv: list[str]) -> RunConfig:
     test_group_config = TestGroupConfig.from_cmdline_flags(
         tests=cli_config.tests,
         variants=cli_config.variants,
-        playback=cli_config.playback)
+        playback=cli_config.playback,
+        startup_delay=cli_config.startup_delay)
 
   tests: list[TestInvocation] = generate_test_invocations(
       test_group_config.groups, enumerate_all_tests())
