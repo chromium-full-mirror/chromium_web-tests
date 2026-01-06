@@ -63,6 +63,18 @@
             action: wait
             duration: 0.5s
           }
+          // The playback quality option is at the bottom of the settings popup.
+          // Scroll the settings popup all the way to the bottom 'quality' is visible.
+          // Ideally we could just use 'scroll_into_view' but that doesn't work on this
+          // div for some reason.
+          {
+            action: js
+            script:
+              '''
+                const settingsDiv = document.querySelector("div.ytp-panel");
+                settingsDiv.scrollTop = settingsDiv.scrollHeight;
+              '''
+          }
           {
             action: click
             pos: {
