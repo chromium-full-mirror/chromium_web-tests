@@ -4,7 +4,7 @@
 {
   args: {
     // SCROLL args
-    SCROLL_DISTANCE: 300
+    SCROLL_DISTANCE: 400
     SCROLL_DURATION: 0.5s
     SCROLL_SOURCE: touch
   }
