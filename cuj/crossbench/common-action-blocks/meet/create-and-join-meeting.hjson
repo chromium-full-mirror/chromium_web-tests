@@ -19,11 +19,23 @@
       action: wait_for_ready_state
       ready_state: complete
     }
+    // Dismiss the "Receive desktop notifications from Meet" popup.
+    {
+      action: click
+      position: {
+        selector: xpath///span[contains(text(), 'Not now')]
+        required: false
+        wait: true
+      }
+      timeout: 5s
+      source: $[CLICK_INPUT_SOURCE]
+    }
     {
       action: click
       position: {
         selector: "[aria-label='More options']"
         required: true
+        scroll_into_view: true
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
