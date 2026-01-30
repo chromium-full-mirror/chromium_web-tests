@@ -93,6 +93,7 @@ data_sources: {
       battery_counters: BATTERY_COUNTER_CURRENT
       battery_counters: BATTERY_COUNTER_CURRENT_AVG
       battery_counters: BATTERY_COUNTER_VOLTAGE
+      collect_power_rails: true
     }
   }
 }
@@ -144,37 +145,6 @@ data_sources: {
         raw_event: {
           type: 27
           config: 6
-        }
-      }
-    }
-  }
-}
-data_sources: {
-  config {
-    name: "linux.perf"
-    target_buffer: 2
-    perf_event_config {
-      target_cpu: 0
-      timebase {
-        poll_period_ms: 1000
-        name: "power/energy-package/"
-        raw_event: {
-          type: 13
-          config: 2
-        }
-      }
-      followers {
-        name: "power/energy-cores/"
-        raw_event: {
-          type: 13
-          config: 1
-        }
-      }
-      followers {
-        name: "power/energy-gpu/"
-        raw_event: {
-          type: 13
-          config: 4
         }
       }
     }
