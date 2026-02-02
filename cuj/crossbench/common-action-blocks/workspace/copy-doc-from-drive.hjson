@@ -33,7 +33,7 @@
       timeout: 15s
       attempts: 1
     }
-    // Wait for context menu animation.
+    // Wait animation/relayout from closing details.
     {
       action: wait
       duration: 1s
@@ -51,6 +51,11 @@
       source: $[CLICK_INPUT_SOURCE]
       timeout: 10s
       attempts: 3
+    }
+    // Wait for context menu animation.
+    {
+      action: wait
+      duration: 1s
     }
     // Click on "Make a copy" in the more-actions context menu.
     {
@@ -77,7 +82,7 @@
       }
       verify: xpath///*[@aria-selected="true"]//*[starts-with(@aria-label, "Copy of $[DOC_NAME]")]
       source: $[CLICK_INPUT_SOURCE]
-      timeout: 60s
+      timeout: 120s
     }
     // Press enter to open the doc in a new tab.
     {
@@ -86,10 +91,15 @@
       keyevent: KEYCODE_ENTER
       duration: 100ms
     }
+    // Wait for the tab to open before we try to switch to it.
+    {
+      action: wait
+      duration: 3s
+    }
     {
       action: switch_tab
       url: docs.google.com/$[DOC_APP]
-      timeout: 5s
+      timeout: 15s
     }
     {
       action: wait_for_ready_state
