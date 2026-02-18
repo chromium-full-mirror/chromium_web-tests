@@ -78,10 +78,10 @@ data_sources: {
   }
 }
 data_sources: {
-    config {
-        name: "linux.sysfs_power"
-        target_buffer: 2
-    }
+  config {
+    name: "linux.sysfs_power"
+    target_buffer: 2
+  }
 }
 data_sources: {
   config {
@@ -225,6 +225,7 @@ data_sources: {
       enabled_categories: "input"
       enabled_categories: "loading"
       enabled_categories: "__metadata"
+      enabled_categories: "navigation"
       timestamp_unit_multiplier: 1000
       filter_debug_annotations: false
       enable_thread_time_sampling: true
