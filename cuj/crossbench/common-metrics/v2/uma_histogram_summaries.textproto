@@ -17,7 +17,9 @@ query {
     column_names: "count"
     column_names: "total"
     column_names: "max"
+    column_names: "p95"
     column_names: "p90"
+    column_names: "p75"
     column_names: "p50"
   }
 }
@@ -59,9 +61,27 @@ metric_spec: {
 }
 
 metric_spec: {
+  id: "cuj.uma_histogram_summaries.p95"
+  dimensions: "hist_name"
+  value: "p95"
+  query: {
+    inner_query_id: "uma_histogram_summaries_query"
+  }
+}
+
+metric_spec: {
   id: "cuj.uma_histogram_summaries.p90"
   dimensions: "hist_name"
   value: "p90"
+  query: {
+    inner_query_id: "uma_histogram_summaries_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.uma_histogram_summaries.p75"
+  dimensions: "hist_name"
+  value: "p75"
   query: {
     inner_query_id: "uma_histogram_summaries_query"
   }

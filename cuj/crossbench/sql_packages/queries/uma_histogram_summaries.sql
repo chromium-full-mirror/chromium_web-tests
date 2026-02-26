@@ -15,7 +15,9 @@ SELECT
   count(*) AS "count",
   sum(hist.value) AS "total",
   max(hist.value) AS "max",
+  percentile(hist.value, 95) AS "p95",
   percentile(hist.value, 90) AS "p90",
+  percentile(hist.value, 75) AS "p75",
   percentile(hist.value, 50) AS "p50"
 FROM chrome_histograms AS hist
 LEFT JOIN enum_table
@@ -49,7 +51,9 @@ RETURNS TableOrSubquery AS
     "count",
     total / $units_in_ms AS "sum_ms",
     "max" / $units_in_ms AS "max_ms",
+    p95 / $units_in_ms AS "p95_ms"
     p90 / $units_in_ms AS "p90_ms",
+    p75 / $units_in_ms AS "p75_ms",
     p50 / $units_in_ms AS "p50_ms"
   FROM uma_histogram_summaries
   WHERE
@@ -67,7 +71,9 @@ RETURNS TableOrSubquery AS
     "count",
     total,
     "max",
+    p95,
     p90,
+    p75,
     p50
   FROM uma_histogram_summaries
   WHERE
