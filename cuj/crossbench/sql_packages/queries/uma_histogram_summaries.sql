@@ -51,7 +51,7 @@ RETURNS TableOrSubquery AS
     "count",
     total / $units_in_ms AS "sum_ms",
     "max" / $units_in_ms AS "max_ms",
-    p95 / $units_in_ms AS "p95_ms"
+    p95 / $units_in_ms AS "p95_ms",
     p90 / $units_in_ms AS "p90_ms",
     p75 / $units_in_ms AS "p75_ms",
     p50 / $units_in_ms AS "p50_ms"
