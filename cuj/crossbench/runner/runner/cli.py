@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 import re
+import subprocess
 import sys
 from datetime import datetime as dt
 from pathlib import Path
@@ -14,6 +15,7 @@ from typing import Callable, Type, TypeVar
 import debugpy
 from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
                            TestGroup, TestGroupConfig, TestInvocation)
+from runner.logging import setup_logging
 from runner.paths import (BENCHMARKS, CUJS, LATEST_RESULTS, RESULTS,
                           WEB_TESTS_ROOT)
 from runner.runner import run_test
@@ -180,8 +182,43 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       tests=tests)
 
 
+def check_submodules_status():
+  try:
+    # Fetch the status of all submodules (including nested ones)
+    result = subprocess.run(["git", "submodule", "status"],
+                            capture_output=True,
+                            text=True,
+                            check=True)
+
+    for line in result.stdout.splitlines():
+      if not line:
+        continue
+
+      # In 'git submodule status', a leading space means everything is
+      # perfectly synced.
+      # A '+', '-', or 'U' prefix indicates a mismatch or issue.
+      status_prefix = line[0]
+
+      if status_prefix != " ":
+        # Parse the path.
+        # Standard output format: <prefix><sha> <path> (<describe>)
+        parts = line[1:].strip().split()
+        submodule_path = parts[1] if len(parts) > 1 else "unknown_path"
+
+        logging.warning(
+            "Git submodule '%s' does not match the committed version."
+            "Did you forget to run 'gclient sync'?", submodule_path)
+
+  except subprocess.CalledProcessError:
+    logging.error(
+        "Git command failed. Is this a git repository?"
+    )
+  except FileNotFoundError:
+    logging.error("Git executable not found in PATH.")
+
 def runner_cli(argv: list[str]) -> None:
-  logging.getLogger().setLevel(logging.INFO)
+  setup_logging()
+  check_submodules_status()
 
   run_config = generate_run_config(argv)
 
