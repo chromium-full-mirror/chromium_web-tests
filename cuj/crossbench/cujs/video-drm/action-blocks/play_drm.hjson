@@ -22,6 +22,7 @@
         {
           action: js
           path: ./scripts/play_drm.js
+          timeout: 100s
           replacements: {
             FILE_NAME: $[FILE_NAME]
           }
