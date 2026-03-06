@@ -95,7 +95,7 @@ class TestGroup(ConfigObject):
     parser.add_argument(
         "playback", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
-        "startup-delay", type=ObjectParser.non_empty_str, required=False)
+        "startup_delay", type=ObjectParser.non_empty_str, required=False)
     return parser
 
   @classmethod
