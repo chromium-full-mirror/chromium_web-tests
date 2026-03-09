@@ -128,6 +128,20 @@ def generate_test_invocations(groups: list[TestGroup],
                               all_tests: list[Test]) -> list[TestInvocation]:
   test_invocations: list[TestInvocation] = []
 
+  for group in groups:
+    test_match = any(
+        re.fullmatch(group.filter_regex, test.name) for test in all_tests)
+    variant_match = any(
+        re.fullmatch(group.variants_filter_regex, test.variant)
+        for test in all_tests)
+
+    if not test_match:
+      logging.warning("No test found matching filter '%s'", group.filter_regex)
+
+    if not variant_match:
+      logging.warning("No test found matching variant filter '%s'",
+                      group.variants_filter_regex)
+
   for test in all_tests:
     for group in groups:
       if re.fullmatch(group.filter_regex, test.name) and re.fullmatch(
