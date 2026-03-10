@@ -18,4 +18,3 @@ if not (THIRD_PARTY_CROSSBENCH).is_dir():
 BENCHMARKS: Path = WEB_TESTS_ROOT / "cuj" / "crossbench" / "benchmarks"
 CUJS: Path = WEB_TESTS_ROOT / "cuj" / "crossbench" / "cujs"
 RESULTS: Path = WEB_TESTS_ROOT / "cuj" / "crossbench" / "runner" / "results"
-LATEST_RESULTS: Path = RESULTS / "latest"

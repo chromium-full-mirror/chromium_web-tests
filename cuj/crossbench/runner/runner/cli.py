@@ -16,8 +16,7 @@ import debugpy
 from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
                            TestGroup, TestGroupConfig, TestInvocation)
 from runner.logging import setup_logging
-from runner.paths import (BENCHMARKS, CUJS, LATEST_RESULTS, RESULTS,
-                          WEB_TESTS_ROOT)
+from runner.paths import BENCHMARKS, CUJS, RESULTS, WEB_TESTS_ROOT
 from runner.runner import run_test
 
 
@@ -166,12 +165,15 @@ def generate_run_config(argv: list[str]) -> RunConfig:
 
   results_prefix = (f"{cli_config.results_prefix}_"
                     if cli_config.results_prefix else "")
-  results_root: Path = RESULTS / dt.now().strftime(
-      f"{results_prefix}%Y-%m-%d_%H%M%S")
-  results_root.mkdir(parents=True)
 
-  LATEST_RESULTS.unlink(missing_ok=True)
-  LATEST_RESULTS.symlink_to(results_root, target_is_directory=True)
+  out_dir = cli_config.out_dir if cli_config.out_dir else RESULTS
+  results_root: Path = out_dir / dt.now().strftime(
+      f"{results_prefix}%Y-%m-%d_%H%M%S")
+  results_root.mkdir(parents=True, exist_ok=True)
+
+  latest_results = out_dir / "latest"
+  latest_results.unlink(missing_ok=True)
+  latest_results.symlink_to(results_root, target_is_directory=True)
 
   if Path(cli_config.tests).is_file():
     test_group_config = TestGroupConfig.parse(cli_config.tests)

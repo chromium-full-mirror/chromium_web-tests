@@ -140,6 +140,7 @@ class CliConfig:
   tests: str
   variants: str
   secrets: Path | None
+  out_dir: Path | None
   results_prefix: str | None
   debug: bool
   dry_run: bool
@@ -164,6 +165,7 @@ class CliConfig:
     parser.add_argument(
         "--variants", type=ObjectParser.non_empty_str, default=".*")
     parser.add_argument("--secrets", type=Path, required=False)
+    parser.add_argument("--out-dir", type=Path, required=False)
     parser.add_argument(
         "--results-prefix", type=ObjectParser.any_str, default="")
     parser.add_argument("--debug", action="store_true")
@@ -176,6 +178,9 @@ class CliConfig:
     secrets_file: Path | None = parsed.secrets.resolve(
     ) if parsed.secrets else None
 
+    out_dir_path: Path | None = parsed.out_dir.resolve(
+    ) if parsed.out_dir else None
+
     return CliConfig(
         platform=parsed.platform,
         device=parsed.device,
@@ -185,6 +190,7 @@ class CliConfig:
         playback=parsed.playback,
         startup_delay=parsed.startup_delay,
         secrets=secrets_file,
+        out_dir=out_dir_path,
         results_prefix=parsed.results_prefix,
         debug=parsed.debug,
         dry_run=parsed.dry_run,
