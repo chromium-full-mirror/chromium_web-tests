@@ -163,7 +163,7 @@
     {
       action: click
       position: {
-        selector: xpath///span[contains(text(), 'Backgrounds and effects')]
+        selector: "xpath///*[@role='menuitem' and contains(., 'Backgrounds and effects')]"
         required: true
         wait: true
       }
