@@ -27,7 +27,7 @@
         }
         {
           action: js
-          timeout: 1000
+          timeout: 2000
           path: ./scripts/seek.js
           replacements: {
             NUM_SEEK: $[NUM_SEEK]
