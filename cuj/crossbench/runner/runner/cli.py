@@ -190,6 +190,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
   return RunConfig(
       platform=cli_config.platform,
       device=cli_config.device,
+      adb_bin=cli_config.adb_bin,
       browser=cli_config.browser,
       secrets=cli_config.secrets,
       results_root=results_root,

@@ -136,6 +136,7 @@ class TestGroupConfig(ConfigObject):
 class CliConfig:
   platform: TargetPlatform
   device: str | None
+  adb_bin: Path | None
   browser: str | None
   tests: str
   variants: str
@@ -154,6 +155,8 @@ class CliConfig:
     parser.add_argument("--platform", type=TargetPlatform.parse, required=True)
     parser.add_argument(
         "--device", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "--adb-bin", type=Path, required=False)
     parser.add_argument(
         "--browser", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
@@ -181,9 +184,13 @@ class CliConfig:
     out_dir_path: Path | None = parsed.out_dir.resolve(
     ) if parsed.out_dir else None
 
+    adb_bin_path: Path | None = parsed.adb_bin.resolve(
+    ) if parsed.adb_bin else None
+
     return CliConfig(
         platform=parsed.platform,
         device=parsed.device,
+        adb_bin=adb_bin_path,
         browser=parsed.browser,
         tests=parsed.tests,
         variants=parsed.variants,
@@ -201,6 +208,7 @@ class CliConfig:
 class RunConfig:
   platform: TargetPlatform
   device: str | None
+  adb_bin: Path | None
   browser: str | None
   secrets: Path | None
   results_root: Path

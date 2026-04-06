@@ -98,6 +98,13 @@ def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
   if run_config.browser:
     browser_string = run_config.browser
 
+  driver_config: dict[str, Any] = {
+      "type": "adb",
+      "device_id": run_config.device
+  }
+  if run_config.adb_bin:
+    driver_config["adb_bin"] = str(run_config.adb_bin)
+
   return {
       "flags": str(browser_flags_file),
       "browsers": {
@@ -105,10 +112,7 @@ def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
               "browser": browser_string,
               "flags": ["flags"],
               "extensions": extensions,
-              "driver": {
-                  "type": "adb",
-                  "device_id": run_config.device
-              }
+              "driver": driver_config
           }
       }
   }
