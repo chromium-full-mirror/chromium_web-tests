@@ -27,6 +27,7 @@
     {
       name: perfetto
       textproto: $[TRACE_CONFIG]
+      start_tracing_after_start_delay: true
     }
     {
       name: downloads
