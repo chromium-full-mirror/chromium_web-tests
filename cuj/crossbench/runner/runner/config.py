@@ -148,6 +148,7 @@ class CliConfig:
   playback: str | None
   startup_delay: str | None
   wait_for_debugger: bool
+  no_symlinks: bool
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -175,6 +176,8 @@ class CliConfig:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--wait-for-debugger", action="store_true", default=False)
+    parser.add_argument(
+        "--no-symlinks", action="store_true", default=False)
 
     parsed = parser.parse_args(argv)
 
@@ -201,7 +204,9 @@ class CliConfig:
         results_prefix=parsed.results_prefix,
         debug=parsed.debug,
         dry_run=parsed.dry_run,
-        wait_for_debugger=parsed.wait_for_debugger)
+        wait_for_debugger=parsed.wait_for_debugger,
+        no_symlinks=parsed.no_symlinks,
+    )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -214,4 +219,5 @@ class RunConfig:
   results_root: Path
   debug: bool
   dry_run: bool
+  no_symlinks: bool
   tests: list[TestInvocation]

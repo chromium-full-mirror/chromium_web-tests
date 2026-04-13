@@ -172,8 +172,9 @@ def generate_run_config(argv: list[str]) -> RunConfig:
   results_root.mkdir(parents=True, exist_ok=True)
 
   latest_results = out_dir / "latest"
-  latest_results.unlink(missing_ok=True)
-  latest_results.symlink_to(results_root, target_is_directory=True)
+  if not cli_config.no_symlinks:
+    latest_results.unlink(missing_ok=True)
+    latest_results.symlink_to(results_root, target_is_directory=True)
 
   if Path(cli_config.tests).is_file():
     test_group_config = TestGroupConfig.parse(cli_config.tests)
@@ -196,6 +197,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       results_root=results_root,
       debug=cli_config.debug,
       dry_run=cli_config.dry_run,
+      no_symlinks=cli_config.no_symlinks,
       tests=tests)
 
 

@@ -27,6 +27,7 @@ def execute_crossbench(
     additional_crossbench_args: str,
     debug: bool,
     dry_run: bool,
+    no_symlinks: bool,
     results_path: Path,
     playback: str | None = None,
     page_config_file: Path | None = None,
@@ -74,6 +75,9 @@ def execute_crossbench(
       crossbench_args.append("--dry-run")
       crossbench_args.append("--env-validation")
       crossbench_args.append("skip")
+
+    if no_symlinks:
+      crossbench_args.append("--no-symlinks")
 
     crossbench_args.append("--throw")
 
@@ -239,6 +243,7 @@ def run_test(test_invocation: TestInvocation,
             additional_crossbench_args=test_invocation.test.crossbench_args,
             debug=run_config.debug,
             dry_run=run_config.dry_run,
+            no_symlinks=run_config.no_symlinks,
             results_path=current_results_path,
             playback=test_invocation.playback,
             page_config_file=test_invocation.test.page_config,
