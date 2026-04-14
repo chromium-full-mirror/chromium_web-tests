@@ -74,7 +74,7 @@
               {
                 action: click
                 position: {
-                  selector: div[class='kix-page-paginated canvas-first-page']
+                  selector: div.kix-page-paginated.canvas-first-page
                   required: true
                   wait: true
                 }
