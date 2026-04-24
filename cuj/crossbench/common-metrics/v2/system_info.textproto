@@ -1,0 +1,64 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+query {
+  id: "system_info"
+  table {
+    table_name: "system_info"
+    module_name: "sql_packages.web_tests_common.system_info"
+    column_names: "dummy_value"
+    column_names: "system_name"
+    column_names: "system_release"
+    column_names: "system_version"
+    column_names: "system_machine"
+    column_names: "android_build_fingerprint"
+  }
+}
+
+# These metrics are intentionally kept separate to allow for easier
+# filtering once processed and uploaded.
+# During processing, perfetto v2 metrics' dimensions are concatenated
+# with the metric name to form the final metric ID. If we had a single
+# metric with multiple dimensions for each info field, it would be
+# difficult to filter by a specific version since the metric name
+# would need to be split.
+metric_spec: {
+  id: "cuj.common-metrics.system_info.system_name"
+  value: "dummy_value"
+  dimensions: "system_name"
+  query {
+    inner_query_id: "system_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.system_info.system_release"
+  value: "dummy_value"
+  dimensions: "system_release"
+  query {
+    inner_query_id: "system_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.system_info.system_version"
+  value: "dummy_value"
+  dimensions: "system_version"
+  query {
+    inner_query_id: "system_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.system_info.system_machine"
+  value: "dummy_value"
+  dimensions: "system_machine"
+  query {
+    inner_query_id: "system_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.system_info.android_build_fingerprint"
+  value: "dummy_value"
+  dimensions: "android_build_fingerprint"
+  query {
+    inner_query_id: "system_info"
+  }
+}

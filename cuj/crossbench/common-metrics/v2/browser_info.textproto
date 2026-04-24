@@ -1,0 +1,55 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+query {
+  id: "browser_info"
+  table {
+    table_name: "browser_info"
+    module_name: "sql_packages.web_tests_common.browser_info"
+    column_names: "dummy_value"
+    column_names: "cr_os_name"
+    column_names: "cr_os_version"
+    column_names: "cr_version"
+    column_names: "cr_revision"
+  }
+}
+
+# These metrics are intentionally kept separate to allow for easier
+# filtering once processed and uploaded.
+# During processing, perfetto v2 metrics' dimensions are concatenated
+# with the metric name to form the final metric ID. If we had a single
+# metric with multiple dimensions for each info field, it would be
+# difficult to filter by a specific version since the metric name
+# would need to be split.
+metric_spec: {
+  id: "cuj.common-metrics.browser_info.cr_os_name"
+  value: "dummy_value"
+  dimensions: "cr_os_name"
+  query {
+    inner_query_id: "browser_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.browser_info.cr_os_version"
+  value: "dummy_value"
+  dimensions: "cr_os_version"
+  query {
+    inner_query_id: "browser_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.browser_info.cr_version"
+  value: "dummy_value"
+  dimensions: "cr_version"
+  query {
+    inner_query_id: "browser_info"
+  }
+}
+metric_spec: {
+  id: "cuj.common-metrics.browser_info.cr_revision"
+  value: "dummy_value"
+  dimensions: "cr_revision"
+  query {
+    inner_query_id: "browser_info"
+  }
+}

@@ -178,6 +178,12 @@ data_sources: {
 }
 data_sources: {
   config {
+    name: "org.chromium.trace_metadata2"
+    target_buffer: 4
+  }
+}
+data_sources: {
+  config {
     name: "linux.ftrace"
     target_buffer: 5
     ftrace_config {

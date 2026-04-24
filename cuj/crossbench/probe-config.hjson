@@ -21,6 +21,8 @@
         ./common-metrics/v2/lmk_kill_count.textproto
         ./common-metrics/v2/uma_histogram_summaries.textproto
         ./common-metrics/v2/battery_start_percent.textproto
+        ./common-metrics/v2/system_info.textproto
+        ./common-metrics/v2/browser_info.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }

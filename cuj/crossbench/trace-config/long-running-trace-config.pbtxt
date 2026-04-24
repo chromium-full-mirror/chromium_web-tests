@@ -78,10 +78,10 @@ data_sources: {
   }
 }
 data_sources: {
-    config {
-        name: "linux.sysfs_power"
-        target_buffer: 2
-    }
+  config {
+    name: "linux.sysfs_power"
+    target_buffer: 2
+  }
 }
 data_sources: {
   config {
@@ -178,6 +178,12 @@ data_sources: {
 }
 data_sources: {
   config {
+    name: "org.chromium.trace_metadata2"
+    target_buffer: 4
+  }
+}
+data_sources: {
+  config {
     name: "linux.ftrace"
     target_buffer: 5
     ftrace_config {
@@ -221,6 +227,7 @@ data_sources: {
       disabled_categories: "*"
       enabled_categories: "blink.user_timing"
       enabled_categories: "input"
+      enabled_categories: "__metadata"
       timestamp_unit_multiplier: 1000
       filter_debug_annotations: false
       enable_thread_time_sampling: true
