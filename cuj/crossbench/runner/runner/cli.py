@@ -148,7 +148,7 @@ def generate_test_invocations(groups: list[TestGroup],
         test_invocations.append(
             TestInvocation(test, group.min_successes,
                            group.max_consecutive_failures, group.playback,
-                           group.startup_delay))
+                           group.setup_delay, group.startup_delay))
 
   return test_invocations
 
@@ -183,6 +183,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
         tests=cli_config.tests,
         variants=cli_config.variants,
         playback=cli_config.playback,
+        setup_delay=cli_config.setup_delay,
         startup_delay=cli_config.startup_delay)
 
   tests: list[TestInvocation] = generate_test_invocations(

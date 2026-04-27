@@ -66,6 +66,7 @@ class TestInvocation:
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
+  setup_delay: str | None = None
   startup_delay: str | None = None
 
 
@@ -76,6 +77,7 @@ class TestGroup(ConfigObject):
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
+  setup_delay: str | None = None
   startup_delay: str | None = None
 
   @classmethod
@@ -94,6 +96,8 @@ class TestGroup(ConfigObject):
         required=False)
     parser.add_argument(
         "playback", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "setup_delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "startup_delay", type=ObjectParser.non_empty_str, required=False)
     return parser
@@ -122,12 +126,14 @@ class TestGroupConfig(ConfigObject):
 
   @classmethod
   def from_cmdline_flags(cls, tests: str, variants: str, playback: str | None,
+                         setup_delay: str | None,
                          startup_delay: str | None) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
             filter_regex=tests,
             variants_filter_regex=variants,
             playback=playback,
+            setup_delay=setup_delay,
             startup_delay=startup_delay)
     ])
 
@@ -146,6 +152,7 @@ class CliConfig:
   debug: bool
   dry_run: bool
   playback: str | None
+  setup_delay: str | None
   startup_delay: str | None
   wait_for_debugger: bool
   no_symlinks: bool
@@ -164,6 +171,8 @@ class CliConfig:
         "--playback", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--startup-delay", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "--setup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--tests", type=ObjectParser.non_empty_str, default=".*")
     parser.add_argument(
@@ -198,6 +207,7 @@ class CliConfig:
         tests=parsed.tests,
         variants=parsed.variants,
         playback=parsed.playback,
+        setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,
         secrets=secrets_file,
         out_dir=out_dir_path,

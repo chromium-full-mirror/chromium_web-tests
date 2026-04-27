@@ -32,6 +32,7 @@ def execute_crossbench(
     playback: str | None = None,
     page_config_file: Path | None = None,
     secrets_file: Path | None = None,
+    setup_delay: str | None = None,
     startup_delay: str | None = None,
 ) -> None:
   with tempfile.NamedTemporaryFile() as browser_config_file:
@@ -63,6 +64,10 @@ def execute_crossbench(
     if playback:
       crossbench_args.append("--playback")
       crossbench_args.append(playback)
+
+    if setup_delay:
+      crossbench_args.append("--setup-delay")
+      crossbench_args.append(str(setup_delay))
 
     if startup_delay:
       crossbench_args.append("--startup-delay")
@@ -247,6 +252,7 @@ def run_test(test_invocation: TestInvocation,
             results_path=current_results_path,
             playback=test_invocation.playback,
             page_config_file=test_invocation.test.page_config,
+            setup_delay=test_invocation.setup_delay,
             startup_delay=test_invocation.startup_delay,
             secrets_file=run_config.secrets,
         )
