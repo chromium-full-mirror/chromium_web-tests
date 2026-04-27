@@ -88,7 +88,7 @@ deps = {
     ],
   },
   'third_party/perfetto':
-    Var('perfetto_git') + '@' + '52dc460cd7840c4b948d6151fe9a60dfc583df35',
+    Var('perfetto_git') + '@' + '6fca04fc6689d55094dc11135d322f3ea018db61',
 }
 
 # Contains hooks necessary to run web-tests
