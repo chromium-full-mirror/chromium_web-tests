@@ -8,6 +8,7 @@ import logging
 import re
 import subprocess
 import sys
+from collections import defaultdict
 from datetime import datetime as dt
 from pathlib import Path
 from typing import Callable, Type, TypeVar
@@ -153,9 +154,36 @@ def generate_test_invocations(groups: list[TestGroup],
   return test_invocations
 
 
+def _print_tests_tree() -> None:
+  logging.info("Available tests and variants:")
+  logging.info("")
+  tests_by_name = defaultdict(list)
+  for test in enumerate_all_tests():
+    tests_by_name[test.name].append(
+        test.variant if test.variant else "<default>")
+
+  for name, variants in tests_by_name.items():
+    logging.info(name)
+    for i, variant in enumerate(variants):
+      prefix = "├── " if i < len(variants) - 1 else "└── "
+      logging.info("  %s%s", prefix, variant)
+
+
+def _print_usage_and_available_tests() -> None:
+  logging.error("Usage:")
+  logging.error("  --tests <test_regex> : Specify which tests to run.")
+  logging.error("  --variants <variant_regex> : Specify which variants to run.")
+  logging.error("")
+  _print_tests_tree()
+  sys.exit(1)
+
+
 def generate_run_config(argv: list[str]) -> RunConfig:
 
   cli_config = CliConfig.from_cmdline(argv)
+
+  if cli_config.tests is None:
+    _print_usage_and_available_tests()
 
   if cli_config.wait_for_debugger:
     debug_port = 5678
@@ -240,6 +268,10 @@ def check_submodules_status():
 def runner_cli(argv: list[str]) -> None:
   setup_logging()
   check_submodules_status()
+
+  if argv and argv[0] == "list":
+    _print_tests_tree()
+    sys.exit(0)
 
   run_config = generate_run_config(argv)
 

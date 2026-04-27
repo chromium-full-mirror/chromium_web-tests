@@ -175,7 +175,7 @@ class CliConfig:
     parser.add_argument(
         "--setup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
-        "--tests", type=ObjectParser.non_empty_str, default=".*")
+        "--tests", type=ObjectParser.non_empty_str, default=None)
     parser.add_argument(
         "--variants", type=ObjectParser.non_empty_str, default=".*")
     parser.add_argument("--secrets", type=Path, required=False)
