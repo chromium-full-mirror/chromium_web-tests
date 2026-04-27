@@ -156,6 +156,7 @@ class CliConfig:
   startup_delay: str | None
   wait_for_debugger: bool
   no_symlinks: bool
+  run_tast_analyzer: bool
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -187,6 +188,8 @@ class CliConfig:
         "--wait-for-debugger", action="store_true", default=False)
     parser.add_argument(
         "--no-symlinks", action="store_true", default=False)
+    parser.add_argument(
+        "--run-tast-analyzer", action="store_true", default=False)
 
     parsed = parser.parse_args(argv)
 
@@ -216,6 +219,7 @@ class CliConfig:
         dry_run=parsed.dry_run,
         wait_for_debugger=parsed.wait_for_debugger,
         no_symlinks=parsed.no_symlinks,
+        run_tast_analyzer=parsed.run_tast_analyzer,
     )
 
 
@@ -230,4 +234,5 @@ class RunConfig:
   debug: bool
   dry_run: bool
   no_symlinks: bool
+  run_tast_analyzer: bool
   tests: list[TestInvocation]

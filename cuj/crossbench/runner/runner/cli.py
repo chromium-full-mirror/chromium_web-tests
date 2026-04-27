@@ -199,6 +199,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       debug=cli_config.debug,
       dry_run=cli_config.dry_run,
       no_symlinks=cli_config.no_symlinks,
+      run_tast_analyzer=cli_config.run_tast_analyzer,
       tests=tests)
 
 
@@ -251,6 +252,27 @@ def runner_cli(argv: list[str]) -> None:
 
   for failed_test in failed_tests:
     logging.error("Test failed: %s", failed_test.test.full_name)
+
+  if run_config.run_tast_analyzer:
+    # Call tast-analyzer via wrapper script to merge results
+    results_root = run_config.results_root
+    helper_script = WEB_TESTS_ROOT / "run_tast_analyzer.py"
+
+    try:
+      subprocess.run([
+          sys.executable,
+          str(helper_script), "--output-path",
+          str(results_root / "tast_analyzer_results.json"),
+          "--unspecified-direction", "DOWN",
+          str(results_root)
+      ],
+                     check=True,
+                     capture_output=True,
+                     text=True)
+    except subprocess.CalledProcessError as e:
+      logging.error("Failed to run tast-analyzer wrapper: %s", e)
+      logging.error("Stdout:\n%s", e.stdout)
+      logging.error("Stderr:\n%s", e.stderr)
 
   if failed_tests:
     sys.exit(1)

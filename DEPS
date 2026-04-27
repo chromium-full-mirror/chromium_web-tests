@@ -43,6 +43,7 @@ vars = {
   'chromium_webpagereplay_git': 'https://chromium.googlesource.com/webpagereplay',
   'hjson_js_git': 'https://chromium.googlesource.com/external/github.com/hjson/hjson-js',
   'perfetto_git': 'https://chromium.googlesource.com/external/github.com/google/perfetto.git',
+  'tast_tests_git': 'https://chromium.googlesource.com/chromiumos/platform/tast-tests',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
 
@@ -58,6 +59,10 @@ vars = {
   # the commit queue can handle CLs rolling webpagereplay
   # and whatever else without interference from each other.
   'hjson_js_revision': '5734a70a17b94f12b59081aa6fdf966aac066b23',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling webpagereplay
+  # and whatever else without interference from each other.
+  'tast_tests_revision': '981924ad513c1192db05db5c39041188d9e5a65c',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -89,6 +94,7 @@ deps = {
   },
   'third_party/perfetto':
     Var('perfetto_git') + '@' + '6fca04fc6689d55094dc11135d322f3ea018db61',
+  'third_party/tast-tests': Var('tast_tests_git') + '@' + Var('tast_tests_revision'),
 }
 
 # Contains hooks necessary to run web-tests
