@@ -40,6 +40,22 @@ git add poetry.lock
 git commit --amend
 ```
 
+### Step 4: Roll webpagereplay
+
+Both web-tests and crossbench have a dependency on webpagereplay.
+
+Check the version of webpagereplay needed by crossbench:
+
+`third_party/crossbench/DEPS`:
+```
+'webpagereplay_revision': '088a0a17fe12aef0ccc4bae79169cfa8ad92e742',
+```
+
+If it does not match the version in `web-tests/DEPS`, you need to also roll-deps on webpagereplay:
+```bash
+roll-dep third_party/webpagereplay --roll-to <Version in third_party/crossbench/DEPS>
+```
+
 ### Step 4: Verify the Update
 
 After `roll-dep` completes, run the presubmit checks to ensure that the new
