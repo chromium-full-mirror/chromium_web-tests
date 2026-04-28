@@ -62,7 +62,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling webpagereplay
   # and whatever else without interference from each other.
-  'tast_tests_revision': '981924ad513c1192db05db5c39041188d9e5a65c',
+  'tast_tests_revision': '17a118aa4712c97820155c1b87251da84068ebfa',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
