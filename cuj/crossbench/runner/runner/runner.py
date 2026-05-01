@@ -182,6 +182,26 @@ def get_local_browser_config(run_config: RunConfig, browser_flags_file: Path,
   }
 
 
+def get_mac_browser_config(run_config: RunConfig, browser_flags_file: Path,
+                           extensions: Any) -> dict[str, Any]:
+  # Default to normal chrome for Mac
+  browser_string = "chrome"
+
+  if run_config.browser:
+    browser_string = run_config.browser
+
+  return {
+      "flags": str(browser_flags_file),
+      "browsers": {
+          browser_string: {
+              "browser": browser_string,
+              "flags": ["flags"],
+              "extensions": extensions,
+          }
+      }
+  }
+
+
 def get_browser_config(run_config: RunConfig, browser_flags_file: Path,
                        extensions: Any) -> str:
   # TODO support different chrome versions (i.e. dev/beta)
@@ -195,6 +215,9 @@ def get_browser_config(run_config: RunConfig, browser_flags_file: Path,
   elif run_config.platform == TargetPlatform.LOCAL:
     config_dict = get_local_browser_config(run_config, browser_flags_file,
                                            extensions)
+  elif run_config.platform == TargetPlatform.MAC:
+    config_dict = get_mac_browser_config(run_config, browser_flags_file,
+                                         extensions)
   else:
     raise ValueError(f"Unsupported platform type: {run_config.platform}")
 

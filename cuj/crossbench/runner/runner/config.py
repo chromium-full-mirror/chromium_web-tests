@@ -20,6 +20,7 @@ class TargetPlatform(ConfigEnum):
   ANDROID = ("adb", "Android via adb")
   CHROME_OS = ("cros", "ChromeOS via ssh")
   LOCAL = ("local", "local browser")
+  MAC = ("mac", "macOS")
 
 
 @dataclasses.dataclass(frozen=True)
