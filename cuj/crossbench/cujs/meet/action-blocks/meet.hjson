@@ -10,6 +10,7 @@
           args: {
             CLICK_INPUT_SOURCE: touch
             TTL_SECS: 240
+            MEET_TARGET: _self
             POST_CREATION_ACTIONS: []
           }
           unbound_args: [

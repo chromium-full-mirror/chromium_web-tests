@@ -1,0 +1,393 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  args: {
+    CLICK_INPUT_SOURCE: touch
+    SLIDE_INSERT_POSITION: "25"
+    MEET_TARGET: _new_window
+  }
+  unbound_args: [
+    NUM_BOTS
+    BACKGROUND_BLUR
+  ]
+  template: {
+    pages: {
+      // 1. Copy Slides (Setup Only - runs once, performs Google Login)
+      Copy-Slides: {
+        login: google
+        setup: {
+          template: ../../../common-action-blocks/workspace/copy-doc.hjson
+          args: {
+            DOC_URL: https://docs.google.com/presentation/d/1ZG8bS0IlQyePSWlflh22_GJVrQsjMJntbL-oTz3crkM/edit#slide=id.g3182d87bbe9_0_0
+            TEST_NAME: heavy-slides
+            ARIA_DISABLED: ""
+            AFTER_MAKE_COPY_CLICK_ACTIONS: [
+              {
+                action: wait_for_element
+                selector: span[aria-label^='Entire presentation']
+                timeout: 15s
+              }
+              {
+                action: click
+                selector: span[aria-label^='Entire presentation']
+                source: $[CLICK_INPUT_SOURCE]
+                verify: "[aria-modal='true'] input[type='text']:focus"
+              }
+            ]
+          }
+          unbound_args: [
+            CLICK_INPUT_SOURCE
+          ]
+        }
+      }
+
+      // 2. Copy Sheets (Setup Only - runs once)
+      Copy-Sheets: {
+        setup: {
+          template: ../../../common-action-blocks/workspace/copy-doc-from-drive.hjson
+          args: {
+            DRIVE_FOLDER_URL: https://drive.google.com/corp/drive/folders/1LPPeFRCOtfnBltyg931mSOjVt9-DzL_B
+            DOC_NAME: tbs-pssd-compendium-salary-disclosed-2023-en-utf-8-2024-05-31
+            DOC_APP: spreadsheets
+            DESTINATION: _new_window
+          }
+          unbound_args: [
+            CLICK_INPUT_SOURCE
+          ]
+        }
+      }
+
+      // 3. Join Meet (Setup Only via central template - runs once)
+      Start-New-Meeting: {
+        setup: {
+          template: ../../../common-action-blocks/meet/create-and-join-meeting.hjson
+          args: {
+            TTL_SECS: 300
+            POST_CREATION_ACTIONS: [
+              {
+                action: meet_script
+                script: @b1 start_presenting
+              }
+            ]
+          }
+          unbound_args: [
+            CLICK_INPUT_SOURCE
+            NUM_BOTS
+            BACKGROUND_BLUR
+            MEET_TARGET
+          ]
+        }
+      }
+
+      // 4. Multi-Window Interaction Loop
+      // The setup blocks in the pages above run exactly once per test run.
+      // Non setup blocks will be repeated by the '--playback' arg.
+      Workspace-Interaction: {
+        blocks: [
+          {
+            actions: [
+              // 1. Switch to Slides tab and interact
+              {
+                action: switch_tab
+                title: ^heavy-slides
+                timeout: 15s
+              }
+              {
+                action: wait
+                duration: 2s
+              }
+              // Scroll Slides filmstrip container down using standard touch scroll
+              {
+                action: scroll
+                source: touch
+                selector: .punch-filmstrip-scroll
+                distance: 2000
+                duration: 2s
+              }
+              // Wait for lazy-loading SVG thumbnails to populate
+              {
+                action: wait_for_element
+                selector: xpath///*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and text()='25']
+                timeout: 15s
+              }
+              // Click a slide (slide 25)
+              {
+                action: click
+                pos: {
+                  selector: xpath///*[local-name()='g' and @class='punch-filmstrip-thumbnail']//*[local-name()='text' and text()='25']
+                  wait: true
+                  scroll_into_view: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+              }
+            ]
+          }
+          {
+            template: ../../../common-action-blocks/workspace/make-comment.hjson
+            args: {
+              COMMENT_TEXT: Ontario sure has a lot of slides!
+            }
+            unbound_args: [
+              CLICK_INPUT_SOURCE
+            ]
+          }
+          {
+            actions: [
+              {
+                action: wait
+                duration: 2s
+              }
+
+              // 2. Switch to Sheets tab and interact
+              {
+                action: switch_tab
+                url: docs.google.com/spreadsheets
+                timeout: 15s
+              }
+              {
+                action: wait
+                duration: 2s
+              }
+              // Scroll Grid
+              {
+                action: scroll
+                source: touch
+                selector: "[class='goog-inline-block grid4-inner-container']"
+                distance: 512
+                duration: 2s
+              }
+              // Click cell area to trigger paint/interaction
+              {
+                action: click
+                pos: {
+                  selector: "[class='goog-inline-block grid4-inner-container']"
+                  required: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+              }
+            ]
+          }
+          {
+            template: ../../../common-action-blocks/workspace/make-comment.hjson
+            args: {
+              COMMENT_TEXT: Ontario sure has a lot of public employees!
+            }
+            unbound_args: [
+              CLICK_INPUT_SOURCE
+            ]
+          }
+          {
+            actions: [
+              {
+                action: wait
+                duration: 2s
+              }
+
+              // 3. Switch back to Meet tab and trigger emoji reactions + chat message
+              {
+                action: switch_tab
+                title: ^Meet -
+                timeout: 15s
+              }
+              {
+                action: wait
+                duration: 2s
+              }
+              // Click "Send a reaction" bottom bar button to open menu tray only if not already open
+              {
+                action: click
+                pos: {
+                  selector: xpath///*[@aria-label='Send a reaction' and @aria-pressed!='true']
+                  required: false
+                  wait: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                timeout: 3s
+              }
+              {
+                action: wait
+                duration: 1s
+              }
+              // Click Thumbs Up emoji button inside the reaction menu
+              {
+                action: click
+                pos: {
+                  selector: button[data-emoji='👍']
+                  required: true
+                  wait: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                timeout: 10s
+              }
+              {
+                action: wait
+                duration: 1s
+              }
+              // Attempt to close the reaction menu after sending the emoji
+              {
+                action: click
+                pos: {
+                  selector: xpath///*[@aria-label='Send a reaction' and @aria-pressed='true']
+                  required: false
+                  wait: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                timeout: 3s
+              }
+              {
+                action: wait
+                duration: 1s
+              }
+              // Attempt to open the Chat panel only if not already open
+              {
+                action: click
+                pos: {
+                  selector: xpath///*[@aria-label='Chat with everyone' and @aria-expanded='false']
+                  required: false
+                  wait: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                timeout: 3s
+              }
+              {
+                action: wait
+                duration: 1s
+              }
+              // Wait for chat input field and type a message
+              {
+                action: wait_for_element
+                selector: textarea[aria-label='Send a message']
+                timeout: 15s
+              }
+              {
+                action: click
+                pos: {
+                  selector: textarea[aria-label='Send a message']
+                  required: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+              }
+              {
+                action: text_input
+                text: Hey everyone! Let's collaborate on this presentation.
+                duration: 5s
+                source: keyboard
+              }
+              // Click send chat button
+              {
+                action: click
+                pos: {
+                  selector: button[aria-label='Send a message']
+                  required: true
+                  wait: true
+                }
+                source: $[CLICK_INPUT_SOURCE]
+                timeout: 10s
+              }
+              {
+                action: wait
+                duration: 3s
+              }
+            ]
+          }
+        ]
+
+        // Teardown runs EXACTLY once at the very end of the entire run!
+        teardown: [
+          // Cleanup Slides
+          {
+            action: switch_tab
+            title: ^heavy-slides
+            timeout: 15s
+          }
+          {
+            action: wait
+            duration: 5s
+          }
+          {
+            action: click
+            pos: {
+              selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: "[role='menuitem'] [aria-label^='Move to trash']"
+          }
+          {
+            action: click
+            pos: {
+              selector: "[role='menuitem'] [aria-label^='Move to trash']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: "[data-mdc-dialog-action='ok']"
+          }
+          {
+            action: click
+            pos: {
+              selector: "[data-mdc-dialog-action='ok']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: body:not(:has([aria-modal='true'][role='alertdialog']))
+          }
+          {
+            action: wait
+            duration: 1s
+          }
+          {
+            action: wait_for_ready_state
+            ready_state: complete
+          }
+
+          // Cleanup Sheets
+          {
+            action: switch_tab
+            url: docs.google.com/spreadsheets
+            timeout: 15s
+          }
+          {
+            action: wait
+            duration: 5s
+          }
+          {
+            action: click
+            pos: {
+              selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: "[role='menuitem'] [aria-label^='Move to trash']"
+          }
+          {
+            action: click
+            pos: {
+              selector: "[role='menuitem'] [aria-label^='Move to trash']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: "[data-mdc-dialog-action='ok']"
+          }
+          {
+            action: click
+            pos: {
+              selector: "[data-mdc-dialog-action='ok']"
+              required: true
+            }
+            source: $[CLICK_INPUT_SOURCE]
+            verify: body:not(:has([aria-modal='true'][role='alertdialog']))
+          }
+          {
+            action: wait
+            duration: 1s
+          }
+          {
+            action: wait_for_ready_state
+            ready_state: complete
+          }
+        ]
+      }
+    }
+  }
+}

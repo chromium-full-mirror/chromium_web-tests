@@ -9,7 +9,9 @@
         setup: $[SETUP_ACTIONS]
         copy-doc: {
           template: ./copy-doc-from-drive.hjson
-          args: {}
+          args: {
+            DESTINATION: _self
+          }
           unbound_args: [
             CLICK_INPUT_SOURCE
             DOC_APP

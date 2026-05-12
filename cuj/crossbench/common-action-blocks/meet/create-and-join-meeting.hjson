@@ -9,6 +9,7 @@
         num_of_bots: $[NUM_BOTS]
         ttl_secs: $[TTL_SECS]
       }
+      target: $[MEET_TARGET]
       timeout: 30s
     }
     {
@@ -230,6 +231,7 @@
       expected_count: 2
       or_more: true
       selector: video:not([data-meet-pip-feed]):not([style*='display: none'])
+      timeout: 60s
     }
     {
       action: js

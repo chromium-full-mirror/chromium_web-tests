@@ -12,6 +12,7 @@
 //  DRIVE_FOLDER_URL: A URL to a drive folder containing the file.
 //  DOC_NAME: The name of the document
 //  DOC_APP: The root path of the URL after docs.google.com/ e.g. spreadsheets
+//  DESTINATION: The target destination for the drive tab (new window, tab, etc.)
 //
 {
   actions: [
@@ -19,6 +20,7 @@
       action: get
       url: $[DRIVE_FOLDER_URL]
       ready_state: complete
+      target: $[DESTINATION]
     }
     // Close the details pane if it exists.
     {
