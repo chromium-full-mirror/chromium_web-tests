@@ -1,0 +1,128 @@
+{
+  groups: [
+    {
+      filter_regex: browsing-multitab
+      min_successes: 10
+    }
+    {
+      filter_regex: browsing-multiwindow
+      min_successes: 10
+    }
+    {
+      filter_regex: browsing
+      min_successes: 10
+    }
+    {
+      filter_regex: classroom
+      min_successes: 10
+    }
+    {
+      filter_regex: cpu-stress
+      min_successes: 5
+    }
+    {
+      filter_regex: docs
+      min_successes: 10
+    }
+    {
+      filter_regex: gmail
+      min_successes: 10
+    }
+    {
+      filter_regex: local-conference
+      min_successes: 10
+    }
+    {
+      filter_regex: meet-note
+      min_successes: 10
+    }
+    {
+      filter_regex: meet
+      min_successes: 10
+    }
+    {
+      filter_regex: open-close
+      min_successes: 10
+    }
+    {
+      filter_regex: page-click
+      min_successes: 10
+    }
+    {
+      filter_regex: page-scroll
+      min_successes: 10
+    }
+    {
+      filter_regex: sheets
+      min_successes: 10
+    }
+    {
+      filter_regex: simultaneous-load
+      min_successes: 10
+    }
+    {
+      filter_regex: slides
+      min_successes: 10
+    }
+    {
+      filter_regex: tab-stress
+      min_successes: 5
+    }
+    {
+      filter_regex: tiktok
+      min_successes: 10
+    }
+    {
+      filter_regex: video-playback-online-browser
+      min_successes: 10
+    }
+    {
+      filter_regex: videocall
+      min_successes: 10
+    }
+    {
+      filter_regex: youtube-watch-browse
+      min_successes: 10
+    }
+    {
+      filter_regex: youtube
+      min_successes: 10
+    }
+    {
+      filter_regex: click-input-latency
+      min_successes: 10
+    }
+    {
+      filter_regex: docs-tab-switches
+      min_successes: 10
+    }
+    {
+      filter_regex: memory-pressure
+      min_successes: 10
+    }
+    {
+      filter_regex: typing-input-latency
+      min_successes: 10
+    }
+    {
+      filter_regex: heavy-meet-note
+      min_successes: 10
+    }
+    {
+      filter_regex: jetstream_2.2
+      min_successes: 10
+    }
+    {
+      filter_regex: motionmark_1.3
+      min_successes: 10
+    }
+    {
+      filter_regex: speedometer_3.1
+      min_successes: 10
+    }
+    {
+      filter_regex: loadline2-tablet
+      min_successes: 10
+    }
+  ]
+}
