@@ -93,7 +93,8 @@ class TestGroup(ConfigObject):
     parser.add_argument(
         "max_consecutive_failures",
         type=NumberParser.positive_int,
-        required=False)
+        required=False,
+        default=5)
     parser.add_argument(
         "playback", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(

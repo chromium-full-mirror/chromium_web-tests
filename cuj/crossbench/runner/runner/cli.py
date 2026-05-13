@@ -154,19 +154,30 @@ def generate_test_invocations(groups: list[TestGroup],
   return test_invocations
 
 
-def _print_tests_tree() -> None:
-  logging.info("Available tests and variants:")
-  logging.info("")
+def _print_tests_tree(filter_test_name: str | None = None) -> bool:
   tests_by_name = defaultdict(list)
   for test in enumerate_all_tests():
+    if filter_test_name and test.name != filter_test_name:
+      continue
     tests_by_name[test.name].append(
         test.variant if test.variant else "<default>")
 
+  if not tests_by_name:
+    if filter_test_name:
+      logging.error("No test found matching: %s", filter_test_name)
+    else:
+      logging.error("No tests found.")
+    return False
+
+  logging.info("Available tests and variants:")
+  logging.info("")
   for name, variants in tests_by_name.items():
     logging.info(name)
     for i, variant in enumerate(variants):
       prefix = "├── " if i < len(variants) - 1 else "└── "
       logging.info("  %s%s", prefix, variant)
+
+  return True
 
 
 def _print_usage_and_available_tests() -> None:
@@ -265,12 +276,15 @@ def check_submodules_status():
   except FileNotFoundError:
     logging.error("Git executable not found in PATH.")
 
+
 def runner_cli(argv: list[str]) -> None:
   setup_logging()
   check_submodules_status()
 
   if argv and argv[0] == "list":
-    _print_tests_tree()
+    filter_test_name = argv[1] if len(argv) > 1 else None
+    if not _print_tests_tree(filter_test_name):
+      sys.exit(1)
     sys.exit(0)
 
   run_config = generate_run_config(argv)
