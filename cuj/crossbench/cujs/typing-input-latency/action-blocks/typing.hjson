@@ -12,7 +12,17 @@
         }
         {
           action: wait
-          duration: 1s
+          duration: 5s
+        }
+        {
+          action: click
+          source: mouse
+          pos: {
+            selector: "#inputArea"
+            required: true
+            wait: true
+          }
+          verify: "#inputArea:focus"
         }
         $[...TYPE_ONE_SENTENCE]
         $[...TYPE_ONE_SENTENCE]
