@@ -73,7 +73,7 @@
               scroll_into_view: true
             }
             source: touch
-            verify: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
+            verify: xpath///div[@class='ytp-panel ytp-quality-menu']//span[contains(text(), '$[RESOLUTION_TEXT]')]
           }
           // Wait for the element to finish animating.
           {
@@ -83,7 +83,7 @@
           {
             action: click
             pos: {
-              selector: xpath///div[@class='ytp-panel ytp-quality-menu']//span[text() = '$[RESOLUTION_TEXT]']
+              selector: xpath///div[@class='ytp-panel ytp-quality-menu']//span[contains(text(), '$[RESOLUTION_TEXT]')]
               required: true
               wait: true
               scroll_into_view: true
@@ -100,7 +100,15 @@
         watch-video: [
           {
             action: js
-            script: document.querySelector("video").play()
+            script:
+              '''
+              const video = document.querySelector('video');
+              if (video.paused) {
+                const playBtn = document.querySelector('.ytp-play-button');
+                if (playBtn) playBtn.click();
+                else video.play();
+              }
+              '''
           }
           {
             action: js
