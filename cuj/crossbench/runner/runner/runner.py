@@ -57,6 +57,8 @@ def execute_crossbench(
     crossbench_args.append("--browser-config")
     crossbench_args.append(str(browser_config_file.name))
 
+    crossbench_args.append("--viewport=maximized")
+
     if secrets_file:
       crossbench_args.append("--secrets")
       crossbench_args.append(str(secrets_file))
