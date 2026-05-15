@@ -1,0 +1,92 @@
+# Copyright 2025 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query {
+  id: "meet_jank_query"
+  table {
+    table_name: "meet_jank_output"
+    module_name: "sql_packages.queries.meet_jank"
+    column_names: "hist_name"
+    column_names: "avg"
+    column_names: "count"
+    column_names: "total"
+    column_names: "max"
+    column_names: "p95"
+    column_names: "p90"
+    column_names: "p75"
+    column_names: "p50"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.avg"
+  dimensions: "hist_name"
+  value: "avg"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.count"
+  dimensions: "hist_name"
+  value: "count"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.total"
+  dimensions: "hist_name"
+  value: "total"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.max"
+  dimensions: "hist_name"
+  value: "max"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.p95"
+  dimensions: "hist_name"
+  value: "p95"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.p90"
+  dimensions: "hist_name"
+  value: "p90"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.p75"
+  dimensions: "hist_name"
+  value: "p75"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.meet_jank.p50"
+  dimensions: "hist_name"
+  value: "p50"
+  query: {
+    inner_query_id: "meet_jank_query"
+  }
+}

@@ -163,7 +163,7 @@
     {
       action: click
       position: {
-        selector: "xpath///*[@role='menuitem' and contains(., 'Backgrounds and effects')]"
+        selector: xpath///*[@role='menuitem' and contains(., 'Backgrounds and effects')]
         required: true
         wait: true
       }
@@ -237,6 +237,7 @@
         '''
         performance.mark("camera-start");
         performance.measure("camera-ready", "meet-created", "camera-start");
+        performance.mark("meet-joined");
         '''
     }
   ]
