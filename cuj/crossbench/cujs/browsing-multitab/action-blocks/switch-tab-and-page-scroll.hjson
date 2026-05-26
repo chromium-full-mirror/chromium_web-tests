@@ -5,7 +5,7 @@
   setup: {
     template: ../../../common-action-blocks/basic/page-load.hjson
     args: {
-      READY_STATE: any
+      READY_STATE: loading
       PAGE_LOAD_TIMEOUT: 2m
     }
     unbound_args: [

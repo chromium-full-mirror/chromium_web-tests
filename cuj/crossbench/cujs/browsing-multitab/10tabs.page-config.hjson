@@ -4,20 +4,20 @@
 {
   args: {
     // PAGE args
-    REDIRECT_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest/v2_config/redirect.html
+    BASE_URL: https://storage.googleapis.com/chromiumos-test-assets-public/power_LoadTest
     VERSION: 2023-08-09
-    URL_PREFIX: $[REDIRECT_URL]?ver=$[VERSION]&dest=
+    URL_PREFIX: $[BASE_URL]/$[VERSION]/
     PER_PAGE_DURATION: 180
-    PAGE_1: $[URL_PREFIX]amazon_product
-    PAGE_2: $[URL_PREFIX]amazon_search
-    PAGE_3: $[URL_PREFIX]apple
-    PAGE_4: $[URL_PREFIX]ebay
-    PAGE_5: $[URL_PREFIX]google
-    PAGE_6: $[URL_PREFIX]imdb
-    PAGE_7: $[URL_PREFIX]weather
-    PAGE_8: $[URL_PREFIX]office
-    PAGE_9: $[URL_PREFIX]stackoverflow
-    PAGE_10: $[URL_PREFIX]wikipedia
+    PAGE_1: $[URL_PREFIX]amazon_product.html
+    PAGE_2: $[URL_PREFIX]amazon_search.html
+    PAGE_3: $[URL_PREFIX]apple_small.html
+    PAGE_4: $[URL_PREFIX]ebay.html
+    PAGE_5: $[URL_PREFIX]google.html
+    PAGE_6: $[URL_PREFIX]imdb.html
+    PAGE_7: $[URL_PREFIX]weather.html
+    PAGE_8: $[URL_PREFIX]office.html
+    PAGE_9: $[URL_PREFIX]stackoverflow.html
+    PAGE_10: $[URL_PREFIX]wikipedia.html
   }
   template: {
     pages: {

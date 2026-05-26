@@ -12,7 +12,7 @@
     replacements: {
       PER_PAGE_DURATION: $[PER_PAGE_DURATION]
       SCROLL_DISTANCE: 600
-      WAIT_DURATION: 20
+      WAIT_DURATION: 40
     }
     timeout: $[PER_PAGE_DURATION]
   }

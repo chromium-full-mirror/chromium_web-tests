@@ -5,7 +5,7 @@
   page-load: {
     template: ../../../common-action-blocks/basic/page-load.hjson
     args: {
-      READY_STATE: any
+      READY_STATE: loading
       TARGET: _self
       PAGE_LOAD_TIMEOUT: 2m
     }
