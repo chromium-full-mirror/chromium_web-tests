@@ -93,7 +93,7 @@ deps = {
     ],
   },
   'third_party/perfetto':
-    Var('perfetto_git') + '@' + '6fca04fc6689d55094dc11135d322f3ea018db61',
+    Var('perfetto_git') + '@' + 'cffb8c00f772874f22363328b71228ecb2c42d7e',
   'third_party/tast-tests': Var('tast_tests_git') + '@' + Var('tast_tests_revision'),
 }
 
