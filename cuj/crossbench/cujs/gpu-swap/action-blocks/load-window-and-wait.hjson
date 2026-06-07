@@ -1,0 +1,33 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  switch-tab: {
+    actions: [
+      {
+        action: get
+        url: $[PAGE_URL]
+        target: _new_window
+      }
+    ]
+  }
+  verify-page-loaded: {
+    actions: [
+      // A condition is being added to identify if the actual page not loaded
+      // due to other reasons (e.g. cert error, offline, connection timeout, etc.)
+      {
+        action: wait_for_condition
+        condition: return document.getElementsByClassName("interstitial-wrapper").length < 1
+        timeout: 5s
+      }
+    ]
+  }
+  post-load-pause: {
+    actions: [
+      {
+        action: wait
+        duration: 5s
+      }
+    ]
+  }
+}

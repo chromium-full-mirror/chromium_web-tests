@@ -1,0 +1,214 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Shell scripts defined here implement a job that runs in the background,
+// taking periodic snapshots of shrinker status, and logging them as
+// perfetto events, so that they can be collected at the end of the test
+//  with a perfetto query.
+// * The start shell starts the script in the background, leaving its pid
+//   in a cookie file.
+// * The stop shell kills the backgroud script and logs its
+//   stdout/err as part of its own stdout/err.
+//   NOTE that I tried to just use crossbench's stdout/stderr, which is
+//   already logged, but that caused crossbench to block until the start
+//   script returned - preventing background processing.
+{
+  name: shell
+  start: [
+    su
+    "0"
+    sh
+    -c
+
+      '''
+      SCRIPT_NAME=monitor_shrinker
+      PID_FILE=/data/local/tmp/${SCRIPT_NAME}.pid
+      STDOUT_AT="${PID_FILE}.out"
+      STDERR_AT="${PID_FILE}.err"
+
+      SCRIPT_SRC=$(cat <<'EOF'
+
+
+      ##------ MONITORING SCRIPT STARTS -----------------------------
+      SCRIPT_NAME=$0
+      PID_FILE=$1
+      SECONDS=0
+      echo "${SCRIPT_NAME}: tracking ${PID_FILE} , pid $$"
+
+      # parse_backed_up_bos extracts # of buffers and # of bytes
+      # which the shrinker has claimed to send to swap.
+      # These are in the debugfs file named /sys/kernel/debug/dri/0/backed_up_bos
+      #    This file is introduced by http://arsp/4286615
+      #    and follow the format below:
+      #    MAGNITUDE,COUNT,BYTES,~
+      #    15,43,655360,640.0K
+      #    ...
+      #    24,18,119480320,113.9M
+      # The code is parses all lines of that file and sums up the
+      # 2nd column(COUNT of buffers) and 3rd column (COUNT of bytes).
+      # Output is stored in environment variables whose names are passed in
+      # as parameterts:
+      #  - #1 buffers variable (OUT param) - gets the sum of buffers
+      #  - #2 bytes variable (OUT param) - gets the sum of bytes
+      #  - #3 for logging, gets the full file contents .
+      #
+      #  The code also an easy-glance variable-unit display of the totals,
+      #    for logging:  KMGTP -> Kbyte, Mbyte, Gigabyte...
+      parse_backed_up_bos() {
+        local _buffers="NA"
+        local _bytes="NA"
+        local _bos_content=""
+        local _total_line=""
+
+        if [ -r "/sys/kernel/debug/dri/0/backed_up_bos" ]; then
+          _bos_content=$(cat /sys/kernel/debug/dri/0/backed_up_bos 2>/dev/null)
+          _total_line=$(printf "%s\n" "$_bos_content" | awk -F, '
+            NR > 1 {s2+=$2; s3+=$3}
+            END {
+              raw=s3
+              u="KMGTP"
+              i=0
+              while(s3 >= 1024 && i < 5) {
+                s3 /= 1024
+                i++
+              }
+              printf "TOTAL,%.f,%.f,%.1f%s\n", s2, raw, s3, substr(u,i,1)
+            }
+          ')
+
+          # Parse TOTAL line to extract buffers and bytes using standard cut
+          if [ -n "$_total_line" ]; then
+            _buffers=$(echo "$_total_line" | cut -d',' -f2)
+            _bytes=$(echo "$_total_line" | cut -d',' -f3)
+          fi
+        fi
+
+        # send the output values to their named variables.
+        eval "$1=\"\$_buffers\""
+        eval "$2=\"\$_bytes\""
+        eval "$3=\"\$_bos_content\""
+      }
+
+      write_to_log() {
+        # $1 = total_offloaded_buffers
+        # $2 = total_offloaded_bytes
+        # $3 = bos_content
+
+        # Output the timestamp with millisecond resolution at the start of the log entry
+        local timestamp=""
+        timestamp=$(date +'%Y-%m-%d %H:%M:%S.%3N')
+        echo "=== Log Entry: ${timestamp} ==="
+
+        # Output the raw content for debugging/verifying parsing logic
+        if [ -n "$3" ]; then
+          echo "--- RAW backed_up_bos ---"
+          printf "%s\n" "$3"
+          echo "-------------------------"
+        fi
+
+        # Output the extracted values to stdout/log
+        echo "total_offloaded_buffers: $1"
+        echo "total_offloaded_bytes: $2"
+      }
+
+      one_iteration() {
+        # Declare local variables for current loop cycle
+        local total_offloaded_buffers=""
+        local total_offloaded_bytes=""
+        local bos_content=""
+
+        parse_backed_up_bos total_offloaded_buffers total_offloaded_bytes bos_content
+        write_to_log \
+          "$total_offloaded_buffers" \
+          "$total_offloaded_bytes" \
+          "$bos_content"
+
+        # 3. Log the data to the tracing system on the device
+        if [ -w "/sys/kernel/tracing/trace_marker" ]; then
+          echo "{\"cxbx.mem\": 1, \"off_buffers\": ${total_offloaded_buffers}, \"off_bytes\": ${total_offloaded_bytes}}" > /sys/kernel/tracing/trace_marker 2>/dev/null
+        fi
+      }
+
+      run_loop() {
+        while [ -f "$PID_FILE" ]; do
+          one_iteration
+          # Always sleep 5 seconds and continue
+          sleep 5
+        done
+      }
+
+      run_loop
+
+      ##------ MONITORING SCRIPT ENDS -------------------------------
+
+
+      EOF)
+
+      # Check if already running
+      if [ -f "$PID_FILE" ]; then
+        echo "ERROR: ${SCRIPT_NAME} already running: pid file found at ${PID_FILE}" >&2
+        # aborts the test - which is good.
+        exit 1
+      fi
+
+      echo "" > "$PID_FILE"
+
+      nohup sh -c "$SCRIPT_SRC" "$SCRIPT_NAME" "$PID_FILE" >"${STDOUT_AT}" 2>"${STDERR_AT}" </dev/null &
+      PID=$!
+
+      echo "$PID" >> "$PID_FILE"
+      echo "Started ${SCRIPT_NAME} in the background (PID: $PID) - see $PID_FILE ."
+      echo "stdout temporarily in ${STDOUT_AT}"
+      echo "stderr temporarily in ${STDERR_AT}"
+      echo "Both stdout and stderr moved to shell probe stop at the end."
+      '''
+  ]
+  stop: [
+    su
+    "0"
+    sh
+    -c
+
+      '''
+      SCRIPT_NAME=monitor_shrinker
+      PID_FILE=/data/local/tmp/${SCRIPT_NAME}.pid
+      STDOUT_AT="${PID_FILE}.out"
+      STDERR_AT="${PID_FILE}.err"
+
+      # Check if already running
+      if [ -f "$PID_FILE" ]; then
+        echo "${SCRIPT_NAME} found at ${PID_FILE}, will stop it"
+
+        # gets pid and removes any non-numeric data (mainly LF)
+        PID_N=$(cat "${PID_FILE}")
+        PID_N=$((PID_N + 0))
+
+        # if pid exists and is killable by us
+        if [ -n "$PID_N" ] && kill -0 "$PID_N" 2>/dev/null; then
+          echo "Stopping $SCRIPT_NAME (PID: $PID_N)..."
+          kill "$PID_N" 2>/dev/null
+          KILL_RV=$?
+          if [ "${KILL_RV}" -eq 0 ]; then
+            echo "$SCRIPT_NAME killed, rv=${KILL_RV}"
+          else
+            echo "$SCRIPT_NAME kill returned ${KILL_RV} - attempt to kill forcefully"
+            kill -9 "$PID_N" 2>/dev/null
+          fi
+        else
+          echo "$SCRIPT_NAME is not running (stale PID file)."
+        fi
+        rm "${PID_FILE}"
+      else
+        echo "$SCRIPT_NAME not started - $PID_FILE not found"
+      fi
+
+      if [ -f "$STDOUT_AT" ]; then
+        printf "%s\n" "$(cat "$STDOUT_AT")"
+      fi
+      if [ -f "$STDERR_AT" ]; then
+        printf "%s\n" "$(cat "$STDERR_AT")" >&2
+      fi
+      '''
+  ]
+}

@@ -1,0 +1,25 @@
+// Copyright 2025 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  template: ../../probe-config.hjson
+  args: {
+    TRACE_PROCESSOR_QUERIES: [
+      {
+        name: Shrinker activity and PSI metrics
+        sql:
+          '''
+            INCLUDE PERFETTO MODULE sql_packages.cujs.gpu_swap.shrinker_and_psi;
+            SELECT * FROM shrinker_and_psi_output;
+          '''
+      }
+    ]
+    METRIC_DEFINITIONS: [
+      ./shrinker_and_psi_metrics.textproto
+    ]
+    TRACE_CONFIG: ../../trace-config/long-running-trace-config.pbtxt
+    ADDITIONAL_PROBES: [
+      ./capture_shrinker_shell.hjson
+    ]
+  }
+}

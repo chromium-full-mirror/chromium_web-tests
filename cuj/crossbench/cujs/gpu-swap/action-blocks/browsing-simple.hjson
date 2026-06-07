@@ -1,0 +1,50 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  pages: {
+    open-2-tabs: {
+      setup: [
+        {
+          action: close_all_tabs
+        }
+      ]
+      actions: [
+        {
+          action: wait
+          duration: 5s
+        }
+      ]
+    }
+    switch-tab-and-warmup-1: {
+      blocks: {
+        template: ./load-window-and-wait.hjson
+        args: {
+          PAGE_URL: $[PAGE_1]
+        }
+        unbound_args: [
+          PAGE_1
+        ]
+      }
+    }
+    switch-tab-and-warmup-2: {
+      blocks: {
+        template: ./load-window-and-wait.hjson
+        args: {
+          PAGE_URL: $[PAGE_2]
+        }
+        unbound_args: [
+          PAGE_2
+        ]
+      }
+    }
+    let-it-cook: {
+      actions: [
+        {
+          action: wait
+          duration: 300s
+        }
+      ]
+    }
+  }
+}
