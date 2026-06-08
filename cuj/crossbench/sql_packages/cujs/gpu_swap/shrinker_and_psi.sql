@@ -40,7 +40,7 @@ all_psi as (
     WITH psi_tracks AS (
         SELECT id, name
         FROM counter_track
-        WHERE LOWER(name) = 'psi.mem.some' OR LOWER(name) = 'psi.mem.full'
+        WHERE LOWER(name) IN ('psi.mem.some', 'psi.mem.full')
     ),
     psi_samples AS (
         SELECT
@@ -54,10 +54,10 @@ all_psi as (
     )
     SELECT
         ts AS timestamp,
-        SUBSTR(track_name,9,4) as track,
+        STR_SPLIT(track_name,'.',2) as track,
         CASE
             WHEN prev_ts IS NOT NULL AND ts > prev_ts THEN
-                MAX(0.0, MIN(100.0, ((value - prev_value) / (ts - prev_ts)) * 100.0))
+                MAX(0.0, MIN(100.0, (CAST((value - prev_value) AS DOUBLE) / (ts - prev_ts)) * 100.0))
             ELSE 0.0
         END AS stall_percentage
     FROM psi_samples
