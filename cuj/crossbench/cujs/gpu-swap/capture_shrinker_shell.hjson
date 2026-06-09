@@ -119,6 +119,10 @@
         local bos_content=""
 
         parse_backed_up_bos total_offloaded_buffers total_offloaded_bytes bos_content
+        if [ "$total_offloaded_buffers" = "NA" ]; then
+          return
+        fi
+
         write_to_log \
           "$total_offloaded_buffers" \
           "$total_offloaded_bytes" \
