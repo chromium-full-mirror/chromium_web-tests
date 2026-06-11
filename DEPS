@@ -40,8 +40,6 @@ use_relative_paths = True
 
 vars = {
   'crossbench_git': 'https://chromium.googlesource.com/crossbench',
-  'chromium_webpagereplay_git': 'https://chromium.googlesource.com/webpagereplay',
-  'hjson_js_git': 'https://chromium.googlesource.com/external/github.com/hjson/hjson-js',
   'perfetto_git': 'https://chromium.googlesource.com/external/github.com/google/perfetto.git',
   'tast_tests_git': 'https://chromium.googlesource.com/chromiumos/platform/tast-tests',
   # This variable is overridden in Chromium's DEPS file.
@@ -50,18 +48,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
-  'crossbench_revision': 'd6a53c839b1efdfe3c33d1725b2e075b56ad8e68',
-  # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling webpagereplay
-  # and whatever else without interference from each other.
-  'webpagereplay_revision': '088a0a17fe12aef0ccc4bae79169cfa8ad92e742',
-  # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling webpagereplay
-  # and whatever else without interference from each other.
-  'hjson_js_revision': '5734a70a17b94f12b59081aa6fdf966aac066b23',
-  # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling webpagereplay
-  # and whatever else without interference from each other.
+  'crossbench_revision': 'a056d9de12b9f6dc474eec44406339f8ce602f04',
   'tast_tests_revision': '17a118aa4712c97820155c1b87251da84068ebfa',
 }
 
@@ -73,25 +60,6 @@ allowed_hosts = [
 
 deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
-  'third_party/hjson_js': Var('hjson_js_git') + '@' + Var('hjson_js_revision'),
-  'third_party/webpagereplay': {
-    'url': Var('chromium_webpagereplay_git') + '@' + Var('webpagereplay_revision'),
-    'condition': 'not build_with_chromium',
-  },
-  'third_party/node/linux': {
-    'dep_type': 'gcs',
-    'condition': 'non_git_source',
-    'bucket': 'chromium-nodejs',
-    'objects': [
-        {
-            'object_name': 'fa98c6432de572206bc5519f85e9c96bd518b039',
-            'sha256sum': 'fb563633b5bfe2d4307075c54c6bb54664a3b5ec6bc811f5b15742720549007a',
-            'size_bytes': 50288755,
-            'generation': 1730835522207929,
-            'output_file': 'node-linux-x64.tar.gz',
-        },
-    ],
-  },
   'third_party/perfetto':
     Var('perfetto_git') + '@' + 'cffb8c00f772874f22363328b71228ecb2c42d7e',
   'third_party/tast-tests': Var('tast_tests_git') + '@' + Var('tast_tests_revision'),
@@ -121,4 +89,8 @@ hooks = [
     'pattern': '.',
     'action': ['third_party/perfetto/tools/install-build-deps', '--ui']
   }
+]
+
+recursedeps = [
+  'third_party/crossbench',
 ]

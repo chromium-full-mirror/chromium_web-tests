@@ -14,9 +14,13 @@ from eslint import PERFETTO, PERFETTO_UI, WEB_TESTS_ROOT, eslint
 from immutabledict import immutabledict
 
 NODE_BIN = (
-    WEB_TESTS_ROOT / "third_party" / "node" / "linux" / "node-linux-x64" /
-    "bin" / "node")
-HJSON_JS_BIN = WEB_TESTS_ROOT / "third_party" / "hjson_js" / "bin" / "hjson"
+    WEB_TESTS_ROOT / "third_party" / "crossbench" / "third_party" /
+    "node" / "linux" / "node-linux-x64" / "bin" / "node"
+)
+HJSON_JS_BIN = (
+    WEB_TESTS_ROOT / "third_party" / "crossbench" / "third_party" /
+    "hjson_js" / "bin" / "hjson"
+)
 
 
 def get_txtpbfmt() -> Path:
