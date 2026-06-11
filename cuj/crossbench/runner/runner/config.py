@@ -15,6 +15,14 @@ from crossbench.parse import NumberParser, ObjectParser
 from typing_extensions import override
 
 
+class TestVariantAction(argparse.Action):
+
+  def __call__(self, parser, namespace, values, option_string=None):
+    if getattr(namespace, "ordered_tests_variants", None) is None:
+      setattr(namespace, "ordered_tests_variants", [])
+    namespace.ordered_tests_variants.append((option_string, values))
+
+
 @enum.unique
 class TargetPlatform(ConfigEnum):
   ANDROID = ("adb", "Android via adb")
@@ -146,8 +154,7 @@ class CliConfig:
   device: str | None
   adb_bin: Path | None
   browser: str | None
-  tests: str
-  variants: str
+  tests: list[tuple[str, str]]
   secrets: Path | None
   out_dir: Path | None
   results_prefix: str | None
@@ -177,9 +184,9 @@ class CliConfig:
     parser.add_argument(
         "--setup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
-        "--tests", type=ObjectParser.non_empty_str, default=None)
+        "--tests", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument(
-        "--variants", type=ObjectParser.non_empty_str, default=".*")
+        "--variants", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument("--secrets", type=Path, required=False)
     parser.add_argument("--out-dir", type=Path, required=False)
     parser.add_argument(
@@ -195,6 +202,25 @@ class CliConfig:
 
     parsed = parser.parse_args(argv)
 
+    ordered = getattr(parsed, "ordered_tests_variants", [])
+    tests_variants: list[tuple[str, str]] = []
+    current_test = None
+    for opt, val in ordered:
+      if opt == "--tests":
+        if current_test is not None:
+          tests_variants.append((current_test, ".*"))
+        current_test = val
+      elif opt == "--variants":
+        if current_test is None:
+          parser.error("--variants must follow a --tests flag")
+        if Path(current_test).is_file():
+          parser.error(
+              f"--variants cannot be used with config file {current_test}")
+        tests_variants.append((current_test, val))
+        current_test = None
+    if current_test is not None:
+      tests_variants.append((current_test, ".*"))
+
     secrets_file: Path | None = parsed.secrets.resolve(
     ) if parsed.secrets else None
 
@@ -209,8 +235,7 @@ class CliConfig:
         device=parsed.device,
         adb_bin=adb_bin_path,
         browser=parsed.browser,
-        tests=parsed.tests,
-        variants=parsed.variants,
+        tests=tests_variants,
         playback=parsed.playback,
         setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,

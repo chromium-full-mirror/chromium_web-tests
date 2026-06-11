@@ -1,0 +1,18 @@
+{
+  groups: [
+    {
+      filter_regex: tab-stress
+      variants_filter_regex: real-tab
+      min_successes: 5
+    }
+    {
+      filter_regex: tab-stress
+      variants_filter_regex: heavy
+      min_successes: 5
+    }
+    {
+      filter_regex: memory-pressure
+      min_successes: 10
+    }
+  ]
+}

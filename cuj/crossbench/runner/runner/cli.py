@@ -189,11 +189,29 @@ def _print_usage_and_available_tests() -> None:
   sys.exit(1)
 
 
+def _print_scheduled_tests(tests: list[TestInvocation]) -> None:
+  if not tests:
+    return
+
+  logging.info("=" * 80)
+  logging.info("Scheduled Test Invocations:")
+  logging.info("=" * 80)
+  for test_invocation in tests:
+    name = test_invocation.test.name
+    variant = test_invocation.test.variant or "<default>"
+    if test_invocation.min_successes:
+      logging.info(" - %s (variant: %s) -> %s successful runs", name, variant,
+                   test_invocation.min_successes)
+    else:
+      logging.info(" - %s (variant: %s)", name, variant)
+  logging.info("=" * 80)
+
+
 def generate_run_config(argv: list[str]) -> RunConfig:
 
   cli_config = CliConfig.from_cmdline(argv)
 
-  if cli_config.tests is None:
+  if not cli_config.tests:
     _print_usage_and_available_tests()
 
   if cli_config.wait_for_debugger:
@@ -215,15 +233,19 @@ def generate_run_config(argv: list[str]) -> RunConfig:
     latest_results.unlink(missing_ok=True)
     latest_results.symlink_to(results_root, target_is_directory=True)
 
-  if Path(cli_config.tests).is_file():
-    test_group_config = TestGroupConfig.parse(cli_config.tests)
-  else:
-    test_group_config = TestGroupConfig.from_cmdline_flags(
-        tests=cli_config.tests,
-        variants=cli_config.variants,
-        playback=cli_config.playback,
-        setup_delay=cli_config.setup_delay,
-        startup_delay=cli_config.startup_delay)
+  groups = []
+  for test_str, variant_str in cli_config.tests:
+    if Path(test_str).is_file():
+      groups.extend(TestGroupConfig.parse(test_str).groups)
+    else:
+      groups.extend(
+          TestGroupConfig.from_cmdline_flags(
+              tests=test_str,
+              variants=variant_str,
+              playback=cli_config.playback,
+              setup_delay=cli_config.setup_delay,
+              startup_delay=cli_config.startup_delay).groups)
+  test_group_config = TestGroupConfig(groups=groups)
 
   tests: list[TestInvocation] = generate_test_invocations(
       test_group_config.groups, enumerate_all_tests())
@@ -288,6 +310,8 @@ def runner_cli(argv: list[str]) -> None:
     sys.exit(0)
 
   run_config = generate_run_config(argv)
+
+  _print_scheduled_tests(run_config.tests)
 
   failed_tests: list[TestInvocation] = []
   for test_invocation in run_config.tests:
