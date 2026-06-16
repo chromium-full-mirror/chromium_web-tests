@@ -13,6 +13,16 @@ Install `golang` (required for WPR and presubmit upload checks)
 sudo apt-get install golang
 ```
 
+### Google Cloud SDK (gsutil)
+You need to have `gsutil` installed and authenticated to download WPR archives used in benchmarks.
+
+1. Install [Google Cloud SDK](https://cloud.google.com/sdk/docs/install).
+2. Authenticate your account:
+```bash
+gcloud auth login
+```
+
+
 **Do not `git clone` web-tests**. Use the `fetch` command included with `depot_tools`.
 
 - Install [Chromium depot_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up).

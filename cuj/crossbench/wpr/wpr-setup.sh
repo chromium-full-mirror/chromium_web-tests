@@ -10,8 +10,19 @@ cd "$dir"
 GS_PATH="gs://chrome-partner-telemetry/cros/cuj/crossbench/page-click-scroll-20250623.wprgo"
 LOCAL_PATH="page-click-scroll.wprgo"
 
+if ! command -v gsutil &> /dev/null; then
+  echo "Error: gsutil command not found."
+  exit 1
+fi
+
 # Get remote MD5 hash
 REMOTE_MD5=$(gsutil hash "$GS_PATH" | grep "Hash (md5):" | awk '{print $3}')
+
+if [ -z "$REMOTE_MD5" ]; then
+  echo "Error: Failed to get remote MD5 hash for $GS_PATH."
+  echo "Please check your permissions (e.g., run 'gcloud auth login')."
+  exit 1
+fi
 
 # Check if local file exists and get its MD5 hash
 LOCAL_MD5=""
