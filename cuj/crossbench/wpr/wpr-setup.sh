@@ -10,13 +10,13 @@ cd "$dir"
 GS_PATH="gs://chrome-partner-telemetry/cros/cuj/crossbench/page-click-scroll-20250623.wprgo"
 LOCAL_PATH="page-click-scroll.wprgo"
 
-if ! command -v gsutil &> /dev/null; then
-  echo "Error: gsutil command not found."
+if ! command -v gcloud &> /dev/null; then
+  echo "Error: gcloud command not found."
   exit 1
 fi
 
 # Get remote MD5 hash
-REMOTE_MD5=$(gsutil hash "$GS_PATH" | grep "Hash (md5):" | awk '{print $3}')
+REMOTE_MD5=$(gcloud storage hash "$GS_PATH" --hex --skip-crc32c | grep "^md5_hash:" | awk '{print $2}')
 
 if [ -z "$REMOTE_MD5" ]; then
   echo "Error: Failed to get remote MD5 hash for $GS_PATH."
@@ -28,7 +28,7 @@ fi
 LOCAL_MD5=""
 if [ -f "$LOCAL_PATH" ]; then
   echo "Getting local MD5 hash for $LOCAL_PATH..."
-  LOCAL_MD5=$(gsutil hash "$LOCAL_PATH" | grep "Hash (md5):" | awk '{print $3}')
+  LOCAL_MD5=$(gcloud storage hash "$LOCAL_PATH" --hex --skip-crc32c | grep "^md5_hash:" | awk '{print $2}')
 fi
 
 echo "Local MD5: $LOCAL_MD5, Remote MD5: $REMOTE_MD5"
@@ -37,6 +37,6 @@ echo "Local MD5: $LOCAL_MD5, Remote MD5: $REMOTE_MD5"
 if [ "$REMOTE_MD5" == "$LOCAL_MD5" ]; then
   echo "Local file $LOCAL_PATH is up-to-date (MD5 matches)."
 else
-  gsutil cp "$GS_PATH" "$LOCAL_PATH"
+  gcloud storage cp "$GS_PATH" "$LOCAL_PATH"
   echo "Download complete."
 fi
