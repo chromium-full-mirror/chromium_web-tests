@@ -13,6 +13,7 @@
     }
     {
       filter_regex: browsing
+      variants_filter_regex: ^(casual|heavy)$
       min_successes: 10
     }
     {
@@ -87,6 +88,7 @@
     }
     {
       filter_regex: videocall
+      variants_filter_regex: ^1m.*
       min_successes: 10
     }
     {
