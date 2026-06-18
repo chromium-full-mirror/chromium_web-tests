@@ -13,6 +13,7 @@ from datetime import datetime as dt
 from pathlib import Path
 from typing import Callable, Type, TypeVar
 
+import colorama
 import debugpy
 from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
                            TestGroup, TestGroupConfig, TestInvocation)
@@ -154,38 +155,12 @@ def generate_test_invocations(groups: list[TestGroup],
   return test_invocations
 
 
-def _print_tests_tree(filter_test_name: str | None = None) -> bool:
-  tests_by_name = defaultdict(list)
-  for test in enumerate_all_tests():
-    if filter_test_name and test.name != filter_test_name:
-      continue
-    tests_by_name[test.name].append(
-        test.variant if test.variant else "<default>")
-
-  if not tests_by_name:
-    if filter_test_name:
-      logging.error("No test found matching: %s", filter_test_name)
-    else:
-      logging.error("No tests found.")
-    return False
-
-  logging.info("Available tests and variants:")
-  logging.info("")
-  for name, variants in tests_by_name.items():
-    logging.info(name)
-    for i, variant in enumerate(variants):
-      prefix = "├── " if i < len(variants) - 1 else "└── "
-      logging.info("  %s%s", prefix, variant)
-
-  return True
-
-
 def _print_usage_and_available_tests() -> None:
   logging.error("Usage:")
   logging.error("  --tests <test_regex> : Specify which tests to run.")
   logging.error("  --variants <variant_regex> : Specify which variants to run.")
   logging.error("")
-  _print_tests_tree()
+  logging.error("Run 'run.py list' to see all available tests and variants.")
   sys.exit(1)
 
 
@@ -194,16 +169,36 @@ def _print_scheduled_tests(tests: list[TestInvocation]) -> None:
     return
 
   logging.info("=" * 80)
-  logging.info("Scheduled Test Invocations:")
+  logging.info("Selected tests and variants:")
   logging.info("=" * 80)
+
+  max_variant_len = max((len(t.test.variant or "<default>") for t in tests),
+                        default=0)
+  tests_by_name = defaultdict(list)
   for test_invocation in tests:
-    name = test_invocation.test.name
-    variant = test_invocation.test.variant or "<default>"
-    if test_invocation.min_successes:
-      logging.info(" - %s (variant: %s) -> %s successful runs", name, variant,
-                   test_invocation.min_successes)
-    else:
-      logging.info(" - %s (variant: %s)", name, variant)
+    tests_by_name[test_invocation.test.name].append(test_invocation)
+
+  for name, invocations in tests_by_name.items():
+    logging.info(name)
+    for i, test_invocation in enumerate(invocations):
+      prefix = "├── " if i < len(invocations) - 1 else "└── "
+      variant = test_invocation.test.variant or "<default>"
+      padded_variant = variant.ljust(max_variant_len)
+      suffix_parts = []
+      if test_invocation.min_successes:
+        success_str = f"{test_invocation.min_successes:>2} passes"
+        suffix_parts.append(
+            f"{colorama.Fore.GREEN}{success_str}{colorama.Fore.RESET}")
+      if test_invocation.max_consecutive_failures:
+        fail_str = f"max {test_invocation.max_consecutive_failures:>2} fails"
+        suffix_parts.append(
+            f"{colorama.Fore.RED}{fail_str}{colorama.Fore.RESET}")
+
+      if suffix_parts:
+        logging.info("  %s%s  [%s]", prefix, padded_variant,
+                     " | ".join(suffix_parts))
+      else:
+        logging.info("  %s%s", prefix, variant)
   logging.info("=" * 80)
 
 
@@ -303,15 +298,19 @@ def runner_cli(argv: list[str]) -> None:
   setup_logging()
   check_submodules_status()
 
+  is_list_command = False
   if argv and argv[0] == "list":
-    filter_test_name = argv[1] if len(argv) > 1 else None
-    if not _print_tests_tree(filter_test_name):
-      sys.exit(1)
-    sys.exit(0)
+    is_list_command = True
+    argv = argv[1:]
+    if "--tests" not in argv:
+      argv.extend(["--tests", ".*"])
 
   run_config = generate_run_config(argv)
 
   _print_scheduled_tests(run_config.tests)
+
+  if is_list_command:
+    sys.exit(0)
 
   failed_tests: list[TestInvocation] = []
   for test_invocation in run_config.tests:

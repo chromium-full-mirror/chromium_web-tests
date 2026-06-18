@@ -170,7 +170,8 @@ class CliConfig:
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--platform", type=TargetPlatform.parse, required=True)
+    parser.add_argument(
+        "--platform", type=TargetPlatform.parse, default=TargetPlatform.LOCAL)
     parser.add_argument(
         "--device", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
