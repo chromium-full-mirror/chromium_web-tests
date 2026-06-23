@@ -30,8 +30,19 @@ def is_page_config(file: Path) -> bool:
   return file.name.endswith("page-config.hjson")
 
 
+def is_cb_args(file: Path) -> bool:
+  return file.name.endswith("cb-args")
+
+
+def is_probe_config_or_cb_args(file: Path) -> bool:
+  return is_probe_config(file) or is_cb_args(file)
+
+
 def get_test_variant(config_file: Path) -> str:
   name_sections: list[str] = config_file.name.split(".")
+
+  if len(name_sections) == 2 and name_sections[1] == "cb-args":
+    return name_sections[0]
 
   if len(name_sections) <= 2:
     return ""
@@ -121,7 +132,8 @@ def enumerate_tests(test_base_path: Path, defines_variant: Callable[[Path],
 def enumerate_all_tests() -> list[Test]:
   tests: list[Test] = []
   tests.extend(enumerate_tests(CUJS, is_page_config, Cuj))
-  tests.extend(enumerate_tests(BENCHMARKS, is_probe_config, Benchmark))
+  tests.extend(
+      enumerate_tests(BENCHMARKS, is_probe_config_or_cb_args, Benchmark))
   return tests
 
 
