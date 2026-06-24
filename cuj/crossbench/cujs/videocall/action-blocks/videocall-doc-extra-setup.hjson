@@ -24,9 +24,12 @@
           target: _new_window
         }
         {
-          action: wait_for_element
-          selector: textarea#text
-          timeout: 5s
+          action: click
+          position: {
+            selector: textarea#text
+            required: true
+            wait: true
+          }
         }
       ]
       actions: {
