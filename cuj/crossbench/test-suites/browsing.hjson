@@ -5,16 +5,16 @@
   groups: [
     {
       filter_regex: browsing-multitab
-      min_successes: 10
+      min_successes: 1
     }
     {
       filter_regex: browsing-multiwindow
-      min_successes: 10
+      min_successes: 1
     }
     {
       filter_regex: browsing
       variants_filter_regex: ^(casual|heavy)$
-      min_successes: 10
+      min_successes: 1
     }
     {
       filter_regex: classroom
@@ -71,12 +71,12 @@
     {
       filter_regex: tab-stress
       variants_filter_regex: blank
-      min_successes: 5
+      min_successes: 10
     }
     {
       filter_regex: tab-stress
       variants_filter_regex: multi-process
-      min_successes: 5
+      min_successes: 10
     }
     {
       filter_regex: tiktok
