@@ -45,9 +45,19 @@
       source: $[CLICK_INPUT_SOURCE]
     }
     {
+      action: click
+      position: {
+        required: false
+        selector: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items'] button[aria-label='Close dialog']"
+        scroll_into_view: true
+        wait: true
+      }
+      source: $[CLICK_INPUT_SOURCE]
+    }
+    {
       action: wait_for_element
       selector: body:not(:has([aria-modal='true']))
-      timeout: 15s
+      timeout: 10s
     }
     {
       // Click the go back arrow at the top to return to the Google One Storage Manager page.

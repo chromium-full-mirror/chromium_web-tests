@@ -19,14 +19,8 @@
                 ready_state: complete
               }
               {
-                // Click on the "Clean up space" button.
-                action: click
-                position: {
-                  selector: a[aria-label='Clean up space']
-                  wait: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: xpath///span[@role='heading'][@aria-level='1'][text()='Google One Storage Manager']
+                action: wait_for_element
+                selector: a[aria-label='Clean up space']
               }
             ]
           }
@@ -34,17 +28,15 @@
           large-drive-files: {
             actions: [
               {
-                // Click the review link in the "Large Drive files" card.
-                action: click
-                position: {
-                  required: false
-                  selector: a[aria-label='review and clean up Large Drive files']
-                  wait: true
-                  scroll_into_view: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: xpath///span[@role='heading'][@aria-level='1'][text()='Items from Google Drive']
-                timeout: 5s
+                action: get
+                url: https://one.google.com/storage/management/drive/large
+                ready_state: complete
+              }
+              // Wait for the loading UI overlay to disappear.
+              {
+                action: wait_for_condition
+                condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
+                timeout: 10s
               }
               {
                 // Click the checkbox next to "Showing (32)" to select all 32.
@@ -72,36 +64,16 @@
             ]
           }
           confirm-delete-large-files: ./action-blocks/confirm-delete.hjson
-          // Delete all files in the trah bin.
+          // Delete all files in the trash bin.
           files-in-trash: {
             actions: [
               {
-                // Click the review link in the "Large Drive files" card.
-                action: click
-                position: {
-                  required: false
-                  selector: a[aria-label='review and clean up Large Drive files']
-                  wait: true
-                  scroll_into_view: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: xpath///span[@role='heading'][@aria-level='1'][text()='Items from Google Drive']
-                timeout: 5s
+                action: get
+                url: https://one.google.com/storage/management/drive/trash
+                ready_state: complete
               }
+              // Wait for the loading UI overlay to disappear.
               {
-                // Select the tab "Files in Trash"
-                action: click
-                position: {
-                  required: false
-                  selector: a[aria-label='Files in Trash']
-                  wait: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: button[aria-label='Delete all']
-                timeout: 5s
-              }
-              {
-                // Wait until the UI settles.
                 action: wait_for_condition
                 condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
                 timeout: 10s
