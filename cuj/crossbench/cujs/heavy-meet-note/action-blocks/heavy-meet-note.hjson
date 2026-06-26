@@ -157,11 +157,11 @@
                 distance: 512
                 duration: 2s
               }
-              // Click cell area to trigger paint/interaction
+              // Click the middle of the sheet to select a visible cell to anchor the comment to.
               {
                 action: click
                 pos: {
-                  selector: "[class='goog-inline-block grid4-inner-container']"
+                  selector: body
                   required: true
                 }
                 source: $[CLICK_INPUT_SOURCE]
