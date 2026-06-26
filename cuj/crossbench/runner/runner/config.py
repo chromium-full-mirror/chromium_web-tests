@@ -7,11 +7,14 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import enum
+import logging
+from concurrent.futures import Future
 from pathlib import Path
 from typing import Self
 
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
+from rich.spinner import Spinner
 from typing_extensions import override
 
 
@@ -70,13 +73,25 @@ class Cuj(Test):
 
 
 @dataclasses.dataclass(frozen=True)
-class TestInvocation:
+class TestInvocationConfig:
   test: Test
   min_successes: int | None = None
   max_consecutive_failures: int | None = None
   playback: str | None = None
   setup_delay: str | None = None
   startup_delay: str | None = None
+
+
+@dataclasses.dataclass
+class TestInvocationState:
+  config: TestInvocationConfig
+
+  # Runtime state for UI tracking
+  successes: int = 0
+  failures: int = 0
+  total_failures: int = 0
+  spinner: Spinner = dataclasses.field(default_factory=lambda: Spinner("dots"))
+  invocation_result: Future[bool] = dataclasses.field(default_factory=Future)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -203,6 +218,12 @@ class CliConfig:
 
     parsed = parser.parse_args(argv)
 
+    if parsed.platform == TargetPlatform.LOCAL:
+      logging.warning(
+          "The 'local' platform is not officially supported by this script. "
+          "You may need to tweak the probe config manually for some tests "
+          "to pass.")
+
     ordered = getattr(parsed, "ordered_tests_variants", [])
     tests_variants: list[tuple[str, str]] = []
     current_test = None
@@ -263,4 +284,4 @@ class RunConfig:
   dry_run: bool
   no_symlinks: bool
   run_tast_analyzer: bool
-  tests: list[TestInvocation]
+  tests: list[TestInvocationConfig]

@@ -4,20 +4,26 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import re
 import subprocess
 import sys
-from collections import defaultdict
+import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime as dt
 from pathlib import Path
-from typing import Callable, Type, TypeVar
+from typing import Any, Callable, Type, TypeVar
 
-import colorama
 import debugpy
+from rich.console import Console, Group
+from rich.live import Live
+from rich.panel import Panel
+from rich.table import Table
 from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
-                           TestGroup, TestGroupConfig, TestInvocation)
-from runner.logging import setup_logging
+                           TestGroup, TestGroupConfig, TestInvocationConfig,
+                           TestInvocationState)
+from runner.logging import DirectLogCapture, LogCapture, setup_logging
 from runner.paths import BENCHMARKS, CUJS, RESULTS, WEB_TESTS_ROOT
 from runner.runner import run_test
 
@@ -137,9 +143,10 @@ def enumerate_all_tests() -> list[Test]:
   return tests
 
 
-def generate_test_invocations(groups: list[TestGroup],
-                              all_tests: list[Test]) -> list[TestInvocation]:
-  test_invocations: list[TestInvocation] = []
+def generate_test_invocations(
+    groups: list[TestGroup],
+    all_tests: list[Test]) -> list[TestInvocationConfig]:
+  test_invocations: list[TestInvocationConfig] = []
 
   for group in groups:
     test_match = any(
@@ -160,9 +167,9 @@ def generate_test_invocations(groups: list[TestGroup],
       if re.fullmatch(group.filter_regex, test.name) and re.fullmatch(
           group.variants_filter_regex, test.variant):
         test_invocations.append(
-            TestInvocation(test, group.min_successes,
-                           group.max_consecutive_failures, group.playback,
-                           group.setup_delay, group.startup_delay))
+            TestInvocationConfig(test, group.min_successes,
+                                 group.max_consecutive_failures, group.playback,
+                                 group.setup_delay, group.startup_delay))
 
   return test_invocations
 
@@ -174,44 +181,6 @@ def _print_usage_and_available_tests() -> None:
   logging.error("")
   logging.error("Run 'run.py list' to see all available tests and variants.")
   sys.exit(1)
-
-
-def _print_scheduled_tests(tests: list[TestInvocation]) -> None:
-  if not tests:
-    return
-
-  logging.info("=" * 80)
-  logging.info("Selected tests and variants:")
-  logging.info("=" * 80)
-
-  max_variant_len = max((len(t.test.variant or "<default>") for t in tests),
-                        default=0)
-  tests_by_name = defaultdict(list)
-  for test_invocation in tests:
-    tests_by_name[test_invocation.test.name].append(test_invocation)
-
-  for name, invocations in tests_by_name.items():
-    logging.info(name)
-    for i, test_invocation in enumerate(invocations):
-      prefix = "├── " if i < len(invocations) - 1 else "└── "
-      variant = test_invocation.test.variant or "<default>"
-      padded_variant = variant.ljust(max_variant_len)
-      suffix_parts = []
-      if test_invocation.min_successes:
-        success_str = f"{test_invocation.min_successes:>2} passes"
-        suffix_parts.append(
-            f"{colorama.Fore.GREEN}{success_str}{colorama.Fore.RESET}")
-      if test_invocation.max_consecutive_failures:
-        fail_str = f"max {test_invocation.max_consecutive_failures:>2} fails"
-        suffix_parts.append(
-            f"{colorama.Fore.RED}{fail_str}{colorama.Fore.RESET}")
-
-      if suffix_parts:
-        logging.info("  %s%s  [%s]", prefix, padded_variant,
-                     " | ".join(suffix_parts))
-      else:
-        logging.info("  %s%s", prefix, variant)
-  logging.info("=" * 80)
 
 
 def generate_run_config(argv: list[str]) -> RunConfig:
@@ -254,7 +223,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
               startup_delay=cli_config.startup_delay).groups)
   test_group_config = TestGroupConfig(groups=groups)
 
-  tests: list[TestInvocation] = generate_test_invocations(
+  tests: list[TestInvocationConfig] = generate_test_invocations(
       test_group_config.groups, enumerate_all_tests())
 
   return RunConfig(
@@ -319,20 +288,30 @@ def runner_cli(argv: list[str]) -> None:
 
   run_config = generate_run_config(argv)
 
-  _print_scheduled_tests(run_config.tests)
-
   if is_list_command:
+    _print_selected_tests(run_config)
     sys.exit(0)
 
-  failed_tests: list[TestInvocation] = []
-  for test_invocation in run_config.tests:
-    successes, _ = run_test(test_invocation, run_config)
-    if not successes or (test_invocation.min_successes and
-                         successes != test_invocation.min_successes):
-      failed_tests.append(test_invocation)
+  all_passed = _run_scheduled_tests(run_config)
+  sys.exit(0 if all_passed else 1)
 
-  for failed_test in failed_tests:
-    logging.error("Test failed: %s", failed_test.test.full_name)
+
+def _print_selected_tests(run_config: RunConfig) -> None:
+  console = Console()
+  table = Table(title="Selected Tests and Variants", box=None, show_edge=False)
+  table.add_column("Test")
+  table.add_column("Variant")
+
+  for inv in run_config.tests:
+    benchmark = inv.test.name
+    variant = inv.test.variant or "<default>"
+    table.add_row(benchmark, variant)
+
+  console.print(table)
+
+
+def _run_scheduled_tests(run_config: RunConfig) -> bool:
+  all_passed = run_tests(run_config.tests, run_config)
 
   if run_config.run_tast_analyzer:
     # Call tast-analyzer via wrapper script to merge results
@@ -355,7 +334,82 @@ def runner_cli(argv: list[str]) -> None:
       logging.error("Stdout:\n%s", e.stdout)
       logging.error("Stderr:\n%s", e.stderr)
 
-  if failed_tests:
-    sys.exit(1)
+  logging.info("Web tests results: %s", run_config.results_root)
 
-  sys.exit(0)
+  return all_passed
+
+
+def _generate_table_layout(tests: list[TestInvocationState],
+                           log_capture: LogCapture) -> Group:
+  table = Table(title="Crossbench Test Queue", box=None, show_edge=False)
+  table.add_column("State", width=6)
+  table.add_column("Test")
+  table.add_column("Variant")
+  table.add_column("Passes", justify="right")
+  table.add_column("Fails", justify="right")
+
+  for inv in tests:
+    status: Any
+    is_success = inv.successes >= (inv.config.min_successes or 1)
+    if inv.invocation_result.done():
+      status = "[green]DONE[/green]" if is_success else "[red]FAIL[/red]"
+    elif inv.invocation_result.running():
+      status = inv.spinner
+    else:
+      status = "[dim]WAIT[/dim]"
+
+    benchmark = inv.config.test.name
+    variant = inv.config.test.variant or "<default>"
+
+    min_succ = inv.config.min_successes or 1
+    passes = f"{inv.successes}/{min_succ}"
+
+    if inv.config.max_consecutive_failures:
+      fails = f"{inv.failures}/{inv.config.max_consecutive_failures}"
+    else:
+      fails = f"{inv.failures}"
+
+    if inv.total_failures > 0:
+      fails += f" ({inv.total_failures} total)"
+
+    table.add_row(status, benchmark, variant, passes, fails)
+
+  log_panel = Panel(log_capture.get_text(), title="Crossbench Logs", height=17)
+  return Group(table, log_panel)
+
+
+def run_tests(tests_config: list[TestInvocationConfig],
+              run_config: RunConfig) -> bool:
+  tests = [TestInvocationState(config=inv) for inv in tests_config]
+  all_passed = True
+  use_live_ui = sys.stdout.isatty() and not run_config.debug
+
+  log_capture: LogCapture | DirectLogCapture
+  live_ctx: Any
+
+  if use_live_ui:
+    log_capture = LogCapture(max_lines=15)
+    live_ctx = Live(
+        _generate_table_layout(tests, log_capture), refresh_per_second=10)
+  else:
+    log_capture = DirectLogCapture()
+    live_ctx = contextlib.nullcontext()
+
+  with live_ctx as live:
+    max_workers = None if run_config.dry_run else 1
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+      for inv in tests:
+        inv.invocation_result = executor.submit(
+            run_test, inv, run_config, log_buffer=log_capture)
+
+      while any(not inv.invocation_result.done() for inv in tests):
+        time.sleep(0.1)
+        if use_live_ui:
+          assert isinstance(log_capture, LogCapture)
+          live.update(_generate_table_layout(tests, log_capture))
+
+      for inv in tests:
+        if not inv.invocation_result.result():
+          all_passed = False
+
+  return all_passed

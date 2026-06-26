@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 import json
-import logging
+import os
 import shlex
+import subprocess
+import sys
 import tempfile
 import urllib
 from datetime import datetime as dt
@@ -14,10 +16,10 @@ from pathlib import Path
 from typing import Any
 
 from crossbench import hjson as cb_hjson
-from crossbench.cli.cli import CrossBenchCLI
 from crossbench.helper.cwd import change_cwd
-from runner.config import RunConfig, TargetPlatform, TestInvocation
-from runner.logging import setup_logging
+from runner.config import RunConfig, TargetPlatform, TestInvocationState
+from runner.logging import DirectLogCapture, LogCapture
+from runner.paths import WEB_TESTS_ROOT
 
 
 def execute_crossbench(
@@ -29,6 +31,7 @@ def execute_crossbench(
     dry_run: bool,
     no_symlinks: bool,
     results_path: Path,
+    log_buffer: LogCapture | DirectLogCapture,
     playback: str | None = None,
     page_config_file: Path | None = None,
     secrets_file: Path | None = None,
@@ -91,14 +94,30 @@ def execute_crossbench(
     for arg in shlex.split(additional_crossbench_args):
       crossbench_args.append(arg)
 
-    logging.info("Running crossbench with args: %s", crossbench_args)
+    log_buffer.write(f"Running crossbench with args: {crossbench_args}\n")
 
-    try:
-      CrossBenchCLI().run(crossbench_args)
-    finally:
-      # Crossbench sometimes tears down logging when tests fail,
-      # so reinitialize it here.
-      setup_logging()
+    cb_script = WEB_TESTS_ROOT / "third_party" / "crossbench" / "cb.py"
+    cmd = [sys.executable, str(cb_script)] + crossbench_args
+
+    env = dict(os.environ)
+    env["PYTHONUNBUFFERED"] = "1"
+
+    with subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        errors="replace",
+        env=env,
+    ) as process:
+      if process.stdout:
+        for line in process.stdout:
+          log_buffer.write(line)
+
+      process.wait()
+      if process.returncode != 0:
+        raise RuntimeError(
+            f"Crossbench failed with exit code {process.returncode}")
 
 
 def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
@@ -161,10 +180,6 @@ def get_chromeos_browser_config(run_config: RunConfig, browser_flags_file: Path,
 
 def get_local_browser_config(run_config: RunConfig, browser_flags_file: Path,
                              extensions: Any) -> dict[str, Any]:
-  logging.warning(
-      "The 'local' platform is not officially supported by this script. "
-      "You may need to tweak the probe config manually for some tests to pass."
-  )
 
   # Default to normal chrome for local
   browser_string = "chrome"
@@ -239,60 +254,65 @@ def load_extensions(extension_config_file: Path | None) -> Any:
   return extensions
 
 
-def run_test(test_invocation: TestInvocation,
-             run_config: RunConfig) -> tuple[int, int]:
-  successes = 0
-  failures = 0
+def run_test(inv_state: TestInvocationState, run_config: RunConfig,
+             log_buffer: LogCapture | DirectLogCapture) -> bool:
+  inv_state.successes = 0
+  inv_state.failures = 0
+  inv_state.total_failures = 0
+
   consecutive_failures = 0
 
-  test_results_root = run_config.results_root / test_invocation.test.full_name
+  test_results_root = run_config.results_root / inv_state.config.test.full_name
 
   success_path = test_results_root / "pass"
   success_path.mkdir(parents=True, exist_ok=True)
   fail_path = test_results_root / "fail"
   fail_path.mkdir(parents=True, exist_ok=True)
 
-  with change_cwd(test_invocation.test.path):
-    extensions = load_extensions(test_invocation.test.extensions)
+  with change_cwd(inv_state.config.test.path):
+    extensions = load_extensions(inv_state.config.test.extensions)
     browser_config = get_browser_config(run_config,
-                                        test_invocation.test.browser_flags,
+                                        inv_state.config.test.browser_flags,
                                         extensions)
 
     while True:
       timestamp = dt.now().strftime("%Y-%m-%d_%H%M%S")
       current_results_path: Path = test_results_root / timestamp
 
-      logging.info("Executing crossbench for Test: %s",
-                   test_invocation.test.full_name)
+      log_buffer.write(
+          f"Executing crossbench for Test: {inv_state.config.test.full_name}\n")
 
       try:
         execute_crossbench(
-            cb_benchmark_name=test_invocation.test.crossbench_command,
-            probe_config_file=test_invocation.test.probe_config,
+            cb_benchmark_name=inv_state.config.test.crossbench_command,
+            probe_config_file=inv_state.config.test.probe_config,
             browser_config=browser_config,
-            additional_crossbench_args=test_invocation.test.crossbench_args,
+            additional_crossbench_args=inv_state.config.test.crossbench_args,
             debug=run_config.debug,
             dry_run=run_config.dry_run,
             no_symlinks=run_config.no_symlinks,
             results_path=current_results_path,
-            playback=test_invocation.playback,
-            page_config_file=test_invocation.test.page_config,
-            setup_delay=test_invocation.setup_delay,
-            startup_delay=test_invocation.startup_delay,
+            playback=inv_state.config.playback,
+            page_config_file=inv_state.config.test.page_config,
+            setup_delay=inv_state.config.setup_delay,
+            startup_delay=inv_state.config.startup_delay,
             secrets_file=run_config.secrets,
+            log_buffer=log_buffer,
         )
         if current_results_path.is_dir():
           success_results_dest = success_path / timestamp
           current_results_path.rename(success_results_dest)
           current_results_path = success_results_dest
-        successes += 1
+        inv_state.successes += 1
         consecutive_failures = 0
       # pylint: disable=broad-exception-caught
       except Exception as e:
-        logging.error("Crossbench invocation for Test: %s failed",
-                      test_invocation.test.full_name)
-        logging.error("Failure exception: %s", e)
-        failures += 1
+        full_name = inv_state.config.test.full_name
+        log_buffer.write(
+            f"Crossbench invocation for Test: {full_name} "
+            f"failed\nFailure exception: {e}\n")
+        inv_state.failures = consecutive_failures + 1
+        inv_state.total_failures += 1
         consecutive_failures += 1
         try:
           fail_results_dest = fail_path / timestamp
@@ -301,14 +321,14 @@ def run_test(test_invocation: TestInvocation,
         except Exception:
           pass
 
-      logging.info("Web tests results: %s", str(current_results_path))
+      log_buffer.write(f"Web tests results: {current_results_path}\n")
 
-      if (test_invocation.max_consecutive_failures and
-          consecutive_failures >= test_invocation.max_consecutive_failures):
+      if (inv_state.config.max_consecutive_failures and
+          consecutive_failures >= inv_state.config.max_consecutive_failures):
         break
 
-      if (not test_invocation.min_successes or
-          successes >= test_invocation.min_successes):
+      if (not inv_state.config.min_successes or
+          inv_state.successes >= inv_state.config.min_successes):
         break
 
-  return successes, failures
+  return inv_state.successes >= (inv_state.config.min_successes or 1)

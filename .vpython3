@@ -2,6 +2,22 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# web-tests specific packages
+wheel: <
+  name: "infra/python/wheels/rich-py3"
+  version: "version:13.2.0"
+>
+
+wheel: <
+  name: "infra/python/wheels/markdown-it-py-py3"
+  version: "version:2.2.0"
+>
+
+wheel: <
+  name: "infra/python/wheels/mdurl-py3"
+  version: "version:0.1.2"
+>
+
 # Mirrors .vpython3 in third_party/crossbench
 python_version: "3.11"
 

@@ -122,6 +122,8 @@ def CheckChange(input_api, output_api):
               runner_path,
               "--platform=local",
               "--dry-run",
+              "--out-dir",
+              "/tmp",
               # Loadline does not cooporate with --dry-run, so ignore it.
               "--tests",
               "^(?!.*loadline).*$"
