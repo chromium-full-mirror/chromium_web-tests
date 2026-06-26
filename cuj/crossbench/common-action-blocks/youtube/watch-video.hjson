@@ -104,9 +104,13 @@
               '''
               const video = document.querySelector('video');
               if (video.paused) {
-                const playBtn = document.querySelector('.ytp-play-button');
-                if (playBtn) playBtn.click();
-                else video.play();
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                  playPromise.catch(e => {
+                    const playBtn = document.querySelector('.ytp-play-button') || document.querySelector('.ytp-large-play-button');
+                    if (playBtn) playBtn.click();
+                  });
+                }
               }
               '''
           }
