@@ -4,95 +4,45 @@
 {
   args: {
     CLICK_INPUT_SOURCE: touch
+    BASE_URL: https://one.google.com/storage
   }
   template: {
     pages: {
       Drive-Cleanup: {
         login: google
         blocks: {
-          page-load: {
-            actions: [
-              {
-                // Google One storage management page.
-                action: get
-                url: https://one.google.com/storage
-                ready_state: complete
-              }
-              {
-                action: wait_for_element
-                selector: a[aria-label='Clean up space']
-              }
+          // Preload the Google One page.
+          drive-page-load: {
+            template: ./action-blocks/load-drive-page.hjson
+            args: {
+              URL: $[BASE_URL]
+            }
+            unbound_args: [
+              BASE_URL
             ]
           }
           // Delete the first 32 Large Drive files.
-          large-drive-files: {
-            actions: [
-              {
-                action: get
-                url: https://one.google.com/storage/management/drive/large
-                ready_state: complete
-              }
-              // Wait for the loading UI overlay to disappear.
-              {
-                action: wait_for_condition
-                condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
-                timeout: 10s
-              }
-              {
-                // Click the checkbox next to "Showing (32)" to select all 32.
-                action: click
-                position: {
-                  required: false
-                  selector: input[aria-label='Select all items']
-                  wait: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: "[data-is-touch-wrapper='true'] button[aria-label='Delete']:not([disabled])"
-                timeout: 5s
-              }
-              {
-                // Click the Delete button.
-                action: click
-                position: {
-                  required: false
-                  selector: "[data-is-touch-wrapper='true'] button[aria-label='Delete']"
-                  wait: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items']"
-              }
+          large-drive-files-page: {
+            template: ./action-blocks/load-drive-page.hjson
+            args: {
+              URL: $[BASE_URL]/management/drive/large
+            }
+            unbound_args: [
+              BASE_URL
             ]
           }
-          confirm-delete-large-files: ./action-blocks/confirm-delete.hjson
-          // Delete all files in the trash bin.
-          files-in-trash: {
-            actions: [
-              {
-                action: get
-                url: https://one.google.com/storage/management/drive/trash
-                ready_state: complete
-              }
-              // Wait for the loading UI overlay to disappear.
-              {
-                action: wait_for_condition
-                condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
-                timeout: 10s
-              }
-              {
-                // Click the "Delete all" button.
-                action: click
-                position: {
-                  required: false
-                  selector: button[aria-label='Delete all']:not([disabled])
-                  wait: true
-                }
-                source: $[CLICK_INPUT_SOURCE]
-                verify: "[aria-modal='true'][aria-label='Confirmation dialog to delete selected items']"
-                timeout: 10s
-              }
+          confirm-delete-large-files: ./action-blocks/select-confirm-delete.hjson
+          // Delete all first 32 items in the trash bin.
+          files-in-trash-page: {
+            template: ./action-blocks/load-drive-page.hjson
+            args: {
+              URL: $[BASE_URL]/management/drive/trash
+            }
+            unbound_args: [
+              BASE_URL
             ]
           }
-          confirm-delete-file-in-trash: ./action-blocks/confirm-delete.hjson
+          confirm-delete-file-in-trash: ./action-blocks/select-confirm-delete.hjson
         }
       }
     }

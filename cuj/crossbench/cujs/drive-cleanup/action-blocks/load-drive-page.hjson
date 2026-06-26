@@ -1,0 +1,17 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  actions: [
+    {
+      action: get
+      url: $[URL]
+      ready_state: complete
+    }
+    {
+      action: wait_for_condition
+      condition: return Array.from(document.querySelectorAll("trans-layer")).length === 0
+      timeout: 10s
+    }
+  ]
+}
