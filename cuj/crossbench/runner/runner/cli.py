@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import logging
 import re
 import subprocess
@@ -311,7 +312,7 @@ def _print_selected_tests(run_config: RunConfig) -> None:
 
 
 def _run_scheduled_tests(run_config: RunConfig) -> bool:
-  all_passed = run_tests(run_config.tests, run_config)
+  all_passed, tests_state = run_tests(run_config.tests, run_config)
 
   if run_config.run_tast_analyzer:
     # Call tast-analyzer via wrapper script to merge results
@@ -333,6 +334,16 @@ def _run_scheduled_tests(run_config: RunConfig) -> bool:
       logging.error("Failed to run tast-analyzer wrapper: %s", e)
       logging.error("Stdout:\n%s", e.stdout)
       logging.error("Stderr:\n%s", e.stderr)
+
+  results_summary = {
+      "tests": [inv.to_json() for inv in tests_state],
+      "passes": sum(inv.successes for inv in tests_state),
+      "failures": sum(inv.total_failures for inv in tests_state),
+  }
+
+  results_json_path = run_config.results_root / "web-tests-results.json"
+  with results_json_path.open("w", encoding="utf-8") as f:
+    json.dump(results_summary, f, indent=2)
 
   logging.info("Web tests results: %s", run_config.results_root)
 
@@ -379,7 +390,7 @@ def _generate_table_layout(tests: list[TestInvocationState],
 
 
 def run_tests(tests_config: list[TestInvocationConfig],
-              run_config: RunConfig) -> bool:
+              run_config: RunConfig) -> tuple[bool, list[TestInvocationState]]:
   tests = [TestInvocationState(config=inv) for inv in tests_config]
   all_passed = True
   use_live_ui = sys.stdout.isatty() and not run_config.debug
@@ -412,4 +423,4 @@ def run_tests(tests_config: list[TestInvocationConfig],
         if not inv.invocation_result.result():
           all_passed = False
 
-  return all_passed
+  return all_passed, tests

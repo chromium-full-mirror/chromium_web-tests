@@ -10,7 +10,7 @@ import enum
 import logging
 from concurrent.futures import Future
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
@@ -92,6 +92,13 @@ class TestInvocationState:
   total_failures: int = 0
   spinner: Spinner = dataclasses.field(default_factory=lambda: Spinner("dots"))
   invocation_result: Future[bool] = dataclasses.field(default_factory=Future)
+
+  def to_json(self) -> dict[str, Any]:
+    return {
+        "test": self.config.test.full_name,
+        "passes": self.successes,
+        "failures": self.total_failures
+    }
 
 
 @dataclasses.dataclass(frozen=True)
