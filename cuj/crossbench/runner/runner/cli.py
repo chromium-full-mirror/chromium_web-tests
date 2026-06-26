@@ -24,7 +24,8 @@ from rich.table import Table
 from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
                            TestGroup, TestGroupConfig, TestInvocationConfig,
                            TestInvocationState)
-from runner.logging import DirectLogCapture, LogCapture, setup_logging
+from runner.logging import (DirectLogCapture, LogCapture, NullLogCapture,
+                            setup_logging)
 from runner.paths import BENCHMARKS, CUJS, RESULTS, WEB_TESTS_ROOT
 from runner.runner import run_test
 
@@ -395,7 +396,7 @@ def run_tests(tests_config: list[TestInvocationConfig],
   all_passed = True
   use_live_ui = sys.stdout.isatty() and not run_config.debug
 
-  log_capture: LogCapture | DirectLogCapture
+  log_capture: LogCapture | DirectLogCapture | NullLogCapture
   live_ctx: Any
 
   if use_live_ui:
@@ -403,7 +404,7 @@ def run_tests(tests_config: list[TestInvocationConfig],
     live_ctx = Live(
         _generate_table_layout(tests, log_capture), refresh_per_second=10)
   else:
-    log_capture = DirectLogCapture()
+    log_capture = NullLogCapture() if run_config.dry_run else DirectLogCapture()
     live_ctx = contextlib.nullcontext()
 
   with live_ctx as live:
@@ -422,5 +423,24 @@ def run_tests(tests_config: list[TestInvocationConfig],
       for inv in tests:
         if not inv.invocation_result.result():
           all_passed = False
+
+  if not all_passed and run_config.dry_run:
+    logging.error("")
+    logging.error(
+        "======================================================================"
+    )
+    logging.error("The following tests failed:")
+    for inv in tests:
+      if not inv.successes:
+        test_name = inv.config.test.name
+        variant = inv.config.test.variant
+        variant_arg = f" {variant}" if variant else ""
+        logging.error("  - %s%s", test_name, variant_arg)
+    logging.error("")
+    logging.error(
+        "Run 'vpython3 run.py --tests <test_name> <variant_args>' to debug.")
+    logging.error(
+        "======================================================================"
+    )
 
   return all_passed, tests

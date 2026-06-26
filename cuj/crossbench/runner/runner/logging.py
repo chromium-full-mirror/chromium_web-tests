@@ -67,3 +67,20 @@ class DirectLogCapture:
 
   def get_text(self) -> str:
     return ""
+
+
+class NullLogCapture:
+  """Silences all log output.
+  
+  Used during parallel dry-runs (like presubmit) where concurrent logs
+  would otherwise become hopelessly jumbled.
+  """
+
+  def write(self, text: str) -> None:
+    pass
+
+  def flush(self) -> None:
+    pass
+
+  def get_text(self) -> str:
+    return ""

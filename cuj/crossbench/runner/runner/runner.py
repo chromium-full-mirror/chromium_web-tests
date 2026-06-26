@@ -18,7 +18,7 @@ from typing import Any
 from crossbench import hjson as cb_hjson
 from crossbench.helper.cwd import change_cwd
 from runner.config import RunConfig, TargetPlatform, TestInvocationState
-from runner.logging import DirectLogCapture, LogCapture
+from runner.logging import DirectLogCapture, LogCapture, NullLogCapture
 from runner.paths import WEB_TESTS_ROOT
 
 
@@ -31,7 +31,7 @@ def execute_crossbench(
     dry_run: bool,
     no_symlinks: bool,
     results_path: Path,
-    log_buffer: LogCapture | DirectLogCapture,
+    log_buffer: LogCapture | DirectLogCapture | NullLogCapture,
     playback: str | None = None,
     page_config_file: Path | None = None,
     secrets_file: Path | None = None,
@@ -254,8 +254,11 @@ def load_extensions(extension_config_file: Path | None) -> Any:
   return extensions
 
 
-def run_test(inv_state: TestInvocationState, run_config: RunConfig,
-             log_buffer: LogCapture | DirectLogCapture) -> bool:
+def run_test(
+    inv_state: TestInvocationState,
+    run_config: RunConfig,
+    log_buffer: LogCapture | DirectLogCapture | NullLogCapture,
+) -> bool:
   inv_state.successes = 0
   inv_state.failures = 0
   inv_state.total_failures = 0
