@@ -4,5 +4,5 @@
 {
   // WebContentsDiscard works around an issue with legacy discarding
   // on ChromeOS that causes webdriver to lock up.
-  flags: --request-desktop-sites --allow-background-interventions $[CHROME_FLAGS]
+  flags: --request-desktop-sites --allow-background-interventions --propagate-iph-for-testing $[CHROME_FLAGS]
 }
