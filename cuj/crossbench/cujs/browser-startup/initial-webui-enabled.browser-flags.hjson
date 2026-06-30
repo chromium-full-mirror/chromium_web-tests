@@ -5,6 +5,6 @@
 {
   template: ../../browser-flags/common-flags.hjson
   args: {
-    CHROME_FLAGS: "--enable-features=InitialWebUI,WebUIReloadButton"
+    CHROME_FLAGS: "--enable-features=InitialWebUI:high_stream_priority/true/without_spellcheck/true/without_translate/true,WebUIReloadButton:WebUIReloadButtonDeferBrowserViewShow/false/WebUIReloadButtonKeepVisibleUntilPaint/true/WebUIReloadButtonPrewarmWebUI/true/WebUIReloadButtonPrewarmWebUIPreNavigate/true,WebUIInProcessResourceLoadingV2,InitialWebUISyncNavStartToCommit,InitialWebUIWithoutExtensions,WebUIBundledCodeCache,SendGPUChannelEarly,InitialWebUISurfaceSync:deadline_in_frames/12000/renderer_commit_delay_ms/100000,BypassOutdatedSurfaceActivation,OnlyUseWindowResizeHelperOnResize"
   }
 }
