@@ -108,13 +108,12 @@
     {
       action: click
       position: {
-        selector: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox']"
-        required: true
+        selector: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='false']"
+        required: false
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: "[aria-label='Receive resolution (maximum)'][aria-haspopup='listbox'][aria-expanded='true']"
-      attempts: 1
       timeout: 5s
     }
     // Wait for the dropdown combobox to finish the animation.
