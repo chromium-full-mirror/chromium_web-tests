@@ -404,7 +404,8 @@ def run_tests(tests_config: list[TestInvocationConfig],
     live_ctx = Live(
         _generate_table_layout(tests, log_capture), refresh_per_second=10)
   else:
-    log_capture = NullLogCapture() if run_config.dry_run else DirectLogCapture()
+    log_capture = NullLogCapture() if (
+        run_config.dry_run and not run_config.debug) else DirectLogCapture()
     live_ctx = contextlib.nullcontext()
 
   with live_ctx as live:
@@ -438,7 +439,9 @@ def run_tests(tests_config: list[TestInvocationConfig],
         logging.error("  - %s%s", test_name, variant_arg)
     logging.error("")
     logging.error(
-        "Run 'vpython3 run.py --tests <test_name> <variant_args>' to debug.")
+        "Run 'vpython3 run.py --platform local --dry-run "
+        "--tests <test_name> <variant_args>' to debug."
+    )
     logging.error(
         "======================================================================"
     )
