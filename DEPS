@@ -61,7 +61,7 @@ allowed_hosts = [
 deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
   'third_party/perfetto':
-    Var('perfetto_git') + '@' + 'cffb8c00f772874f22363328b71228ecb2c42d7e',
+    Var('perfetto_git') + '@' + '72997b8161af6c848de5336d506ccaa631ac60cc',
   'third_party/tast-tests': Var('tast_tests_git') + '@' + Var('tast_tests_revision'),
 }
 
