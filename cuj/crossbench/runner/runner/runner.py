@@ -102,22 +102,26 @@ def execute_crossbench(
     env = dict(os.environ)
     env["PYTHONUNBUFFERED"] = "1"
 
-    with subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        errors="replace",
-        env=env,
-    ) as process:
-      if process.stdout:
-        for line in process.stdout:
-          log_buffer.write(line)
+    results_path.mkdir(parents=True, exist_ok=True)
+    with (results_path / "raw_crossbench_logs.txt").open(
+        "w", encoding="utf-8") as raw_log_file:
+      with subprocess.Popen(
+          cmd,
+          stdout=subprocess.PIPE,
+          stderr=subprocess.STDOUT,
+          text=True,
+          errors="replace",
+          env=env,
+      ) as process:
+        if process.stdout:
+          for line in process.stdout:
+            log_buffer.write(line)
+            raw_log_file.write(line)
 
-      process.wait()
-      if process.returncode != 0:
-        raise RuntimeError(
-            f"Crossbench failed with exit code {process.returncode}")
+        process.wait()
+        if process.returncode != 0:
+          raise RuntimeError(
+              f"Crossbench failed with exit code {process.returncode}")
 
 
 def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
