@@ -102,9 +102,9 @@ def execute_crossbench(
     env = dict(os.environ)
     env["PYTHONUNBUFFERED"] = "1"
 
-    results_path.mkdir(parents=True, exist_ok=True)
-    with (results_path / "raw_crossbench_logs.txt").open(
-        "w", encoding="utf-8") as raw_log_file:
+    log_file_tmp = results_path.with_name(results_path.name +
+                                          "_raw_crossbench_logs.txt")
+    with log_file_tmp.open("w", encoding="utf-8") as raw_log_file:
       with subprocess.Popen(
           cmd,
           stdout=subprocess.PIPE,
@@ -119,6 +119,10 @@ def execute_crossbench(
             raw_log_file.write(line)
 
         process.wait()
+
+        results_path.mkdir(parents=True, exist_ok=True)
+        log_file_tmp.rename(results_path / "raw_crossbench_logs.txt")
+
         if process.returncode != 0:
           raise RuntimeError(
               f"Crossbench failed with exit code {process.returncode}")
