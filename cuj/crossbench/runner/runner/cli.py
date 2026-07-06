@@ -336,19 +336,24 @@ def _run_scheduled_tests(run_config: RunConfig) -> bool:
       logging.error("Stdout:\n%s", e.stdout)
       logging.error("Stderr:\n%s", e.stderr)
 
+  _write_results_json(tests_state, run_config)
+
+  logging.info("Web tests results: %s", run_config.results_root)
+
+  return all_passed
+
+
+def _write_results_json(tests_state: list[TestInvocationState],
+                        run_config: RunConfig) -> None:
   results_summary = {
       "tests": [inv.to_json() for inv in tests_state],
       "passes": sum(inv.successes for inv in tests_state),
       "failures": sum(inv.total_failures for inv in tests_state),
   }
 
-  results_json_path = run_config.results_root / "web-tests-results.json"
+  results_json_path = run_config.results_root / "web_tests_results.json"
   with results_json_path.open("w", encoding="utf-8") as f:
     json.dump(results_summary, f, indent=2)
-
-  logging.info("Web tests results: %s", run_config.results_root)
-
-  return all_passed
 
 
 def _generate_table_layout(tests: list[TestInvocationState],
@@ -420,6 +425,8 @@ def run_tests(tests_config: list[TestInvocationConfig],
         if use_live_ui:
           assert isinstance(log_capture, LogCapture)
           live.update(_generate_table_layout(tests, log_capture))
+
+        _write_results_json(tests, run_config)
 
       for inv in tests:
         if not inv.invocation_result.result():
