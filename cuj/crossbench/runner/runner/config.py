@@ -178,6 +178,7 @@ class CliConfig:
   browser: str | None
   tests: list[tuple[str, str]]
   secrets: Path | None
+  uploader: Path | None
   out_dir: Path | None
   results_prefix: str | None
   debug: bool
@@ -188,6 +189,7 @@ class CliConfig:
   wait_for_debugger: bool
   no_symlinks: bool
   run_tast_analyzer: bool
+  list_tests: bool
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -211,6 +213,7 @@ class CliConfig:
     parser.add_argument(
         "--variants", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument("--secrets", type=Path, required=False)
+    parser.add_argument("--uploader", type=Path, required=False)
     parser.add_argument("--out-dir", type=Path, required=False)
     parser.add_argument(
         "--results-prefix", type=ObjectParser.any_str, default="")
@@ -222,6 +225,7 @@ class CliConfig:
         "--no-symlinks", action="store_true", default=False)
     parser.add_argument(
         "--run-tast-analyzer", action="store_true", default=False)
+    parser.add_argument("--list", action="store_true", default=False)
 
     parsed = parser.parse_args(argv)
 
@@ -250,8 +254,14 @@ class CliConfig:
     if current_test is not None:
       tests_variants.append((current_test, ".*"))
 
+    if parsed.list and not tests_variants:
+      tests_variants.append((".*", ".*"))
+
     secrets_file: Path | None = parsed.secrets.resolve(
     ) if parsed.secrets else None
+
+    uploader_path: Path | None = parsed.uploader.resolve(
+    ) if parsed.uploader else None
 
     out_dir_path: Path | None = parsed.out_dir.resolve(
     ) if parsed.out_dir else None
@@ -269,13 +279,15 @@ class CliConfig:
         setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,
         secrets=secrets_file,
+        uploader=uploader_path,
         out_dir=out_dir_path,
         results_prefix=parsed.results_prefix,
         debug=parsed.debug,
         dry_run=parsed.dry_run,
         wait_for_debugger=parsed.wait_for_debugger,
         no_symlinks=parsed.no_symlinks,
-        run_tast_analyzer=parsed.run_tast_analyzer,
+        run_tast_analyzer=parsed.run_tast_analyzer or bool(parsed.uploader),
+        list_tests=parsed.list,
     )
 
 
@@ -286,9 +298,11 @@ class RunConfig:
   adb_bin: Path | None
   browser: str | None
   secrets: Path | None
+  uploader: Path | None
   results_root: Path
   debug: bool
   dry_run: bool
   no_symlinks: bool
   run_tast_analyzer: bool
+  list_tests: bool
   tests: list[TestInvocationConfig]

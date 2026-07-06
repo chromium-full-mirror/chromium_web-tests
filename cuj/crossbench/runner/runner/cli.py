@@ -14,7 +14,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime as dt
 from pathlib import Path
-from typing import Any, Callable, Type, TypeVar
+from typing import Any, Callable, NoReturn, Type, TypeVar
 
 import debugpy
 from rich.console import Console, Group
@@ -27,6 +27,7 @@ from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
 from runner.logging import (DirectLogCapture, LogCapture, NullLogCapture,
                             setup_logging)
 from runner.paths import BENCHMARKS, CUJS, RESULTS, WEB_TESTS_ROOT
+from runner.post_process import do_upload, run_tast_analyzer_wrapper
 from runner.runner import run_test
 
 
@@ -176,7 +177,7 @@ def generate_test_invocations(
   return test_invocations
 
 
-def _print_usage_and_available_tests() -> None:
+def _print_usage_and_available_tests() -> NoReturn:
   logging.error("Usage:")
   logging.error("  --tests <test_regex> : Specify which tests to run.")
   logging.error("  --variants <variant_regex> : Specify which variants to run.")
@@ -189,44 +190,53 @@ def generate_run_config(argv: list[str]) -> RunConfig:
 
   cli_config = CliConfig.from_cmdline(argv)
 
-  if not cli_config.tests:
-    _print_usage_and_available_tests()
-
   if cli_config.wait_for_debugger:
     debug_port = 5678
     debugpy.listen(("localhost", debug_port))
     logging.info("Waiting for python debugger on port %d...", debug_port)
     debugpy.wait_for_client()
 
-  results_prefix = (f"{cli_config.results_prefix}_"
-                    if cli_config.results_prefix else "")
+  tests: list[TestInvocationConfig] = []
 
-  out_dir = cli_config.out_dir if cli_config.out_dir else RESULTS
-  results_root: Path = out_dir / dt.now().strftime(
-      f"{results_prefix}%Y-%m-%d_%H%M%S")
-  results_root.mkdir(parents=True, exist_ok=True)
+  if (not cli_config.tests and not cli_config.list_tests and
+      not cli_config.out_dir):
+    _print_usage_and_available_tests()
 
-  latest_results = out_dir / "latest"
-  if not cli_config.no_symlinks:
-    latest_results.unlink(missing_ok=True)
-    latest_results.symlink_to(results_root, target_is_directory=True)
+  if not cli_config.tests and not cli_config.list_tests:
+    assert cli_config.out_dir is not None
+    results_root = cli_config.out_dir
+  else:
+    results_prefix = (f"{cli_config.results_prefix}_"
+                      if cli_config.results_prefix else "")
 
-  groups = []
-  for test_str, variant_str in cli_config.tests:
-    if Path(test_str).is_file():
-      groups.extend(TestGroupConfig.parse(test_str).groups)
-    else:
-      groups.extend(
-          TestGroupConfig.from_cmdline_flags(
-              tests=test_str,
-              variants=variant_str,
-              playback=cli_config.playback,
-              setup_delay=cli_config.setup_delay,
-              startup_delay=cli_config.startup_delay).groups)
-  test_group_config = TestGroupConfig(groups=groups)
+    out_dir = cli_config.out_dir if cli_config.out_dir else RESULTS
+    results_root = out_dir / dt.now().strftime(
+        f"{results_prefix}%Y-%m-%d_%H%M%S")
 
-  tests: list[TestInvocationConfig] = generate_test_invocations(
-      test_group_config.groups, enumerate_all_tests())
+    if not cli_config.list_tests:
+      results_root.mkdir(parents=True, exist_ok=True)
+
+      latest_results = out_dir / "latest"
+      if not cli_config.no_symlinks:
+        latest_results.unlink(missing_ok=True)
+        latest_results.symlink_to(results_root, target_is_directory=True)
+
+    groups = []
+    for test_str, variant_str in cli_config.tests:
+      if Path(test_str).is_file():
+        groups.extend(TestGroupConfig.parse(test_str).groups)
+      else:
+        groups.extend(
+            TestGroupConfig.from_cmdline_flags(
+                tests=test_str,
+                variants=variant_str,
+                playback=cli_config.playback,
+                setup_delay=cli_config.setup_delay,
+                startup_delay=cli_config.startup_delay).groups)
+    test_group_config = TestGroupConfig(groups=groups)
+
+    tests = generate_test_invocations(test_group_config.groups,
+                                      enumerate_all_tests())
 
   return RunConfig(
       platform=cli_config.platform,
@@ -234,11 +244,13 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       adb_bin=cli_config.adb_bin,
       browser=cli_config.browser,
       secrets=cli_config.secrets,
+      uploader=cli_config.uploader,
       results_root=results_root,
       debug=cli_config.debug,
       dry_run=cli_config.dry_run,
       no_symlinks=cli_config.no_symlinks,
       run_tast_analyzer=cli_config.run_tast_analyzer,
+      list_tests=cli_config.list_tests,
       tests=tests)
 
 
@@ -281,16 +293,9 @@ def runner_cli(argv: list[str]) -> None:
   setup_logging()
   check_submodules_status()
 
-  is_list_command = False
-  if argv and argv[0] == "list":
-    is_list_command = True
-    argv = argv[1:]
-    if "--tests" not in argv:
-      argv.extend(["--tests", ".*"])
-
   run_config = generate_run_config(argv)
 
-  if is_list_command:
+  if run_config.list_tests:
     _print_selected_tests(run_config)
     sys.exit(0)
 
@@ -313,32 +318,18 @@ def _print_selected_tests(run_config: RunConfig) -> None:
 
 
 def _run_scheduled_tests(run_config: RunConfig) -> bool:
-  all_passed, tests_state = run_tests(run_config.tests, run_config)
+  all_passed = True
+  if run_config.tests:
+    all_passed, tests_state = run_tests(run_config.tests, run_config)
+    _write_results_json(tests_state, run_config)
 
   if run_config.run_tast_analyzer:
-    # Call tast-analyzer via wrapper script to merge results
-    results_root = run_config.results_root
-    helper_script = WEB_TESTS_ROOT / "run_tast_analyzer.py"
-
-    try:
-      subprocess.run([
-          sys.executable,
-          str(helper_script), "--output-path",
-          str(results_root / "tast_analyzer_results.json"),
-          "--unspecified-direction", "DOWN",
-          str(results_root)
-      ],
-                     check=True,
-                     capture_output=True,
-                     text=True)
-    except subprocess.CalledProcessError as e:
-      logging.error("Failed to run tast-analyzer wrapper: %s", e)
-      logging.error("Stdout:\n%s", e.stdout)
-      logging.error("Stderr:\n%s", e.stderr)
-
-  _write_results_json(tests_state, run_config)
+    run_tast_analyzer_wrapper(run_config.results_root)
 
   logging.info("Web tests results: %s", run_config.results_root)
+
+  if run_config.uploader:
+    do_upload(run_config.results_root, run_config.uploader)
 
   return all_passed
 
@@ -354,7 +345,6 @@ def _write_results_json(tests_state: list[TestInvocationState],
   results_json_path = run_config.results_root / "web_tests_results.json"
   with results_json_path.open("w", encoding="utf-8") as f:
     json.dump(results_summary, f, indent=2)
-
 
 def _generate_table_layout(tests: list[TestInvocationState],
                            log_capture: LogCapture) -> Group:
