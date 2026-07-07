@@ -124,9 +124,10 @@ def CheckChange(input_api, output_api):
               "--dry-run",
               "--out-dir",
               "/tmp",
-              # Loadline does not cooporate with --dry-run, so ignore it.
+              # TODO(b/531933642): Loadline and Web power are incompatible with
+              # --dry-run, as they run with multiple browser sessions.
               "--tests",
-              "^(?!.*loadline).*$"
+              "^(?!.*loadline|web-power).*$"
           ],
           message=output_api.PresubmitError,
           kwargs={},
