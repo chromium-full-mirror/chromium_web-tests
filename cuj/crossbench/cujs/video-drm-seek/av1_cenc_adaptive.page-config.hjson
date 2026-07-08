@@ -1,0 +1,7 @@
+{
+  template: ./action-blocks/seek_drm.hjson
+  args: {
+    FILE_NAME: https://storage.googleapis.com/wvmedia/2019/cenc/av1/24/llama.mpd
+    NUM_SEEK: 10
+  }
+}

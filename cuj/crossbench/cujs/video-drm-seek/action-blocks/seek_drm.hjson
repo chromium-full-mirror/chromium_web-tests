@@ -1,0 +1,47 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  pages: {
+    VideoCUJ: {
+      actions: [
+        {
+          action: get
+          url: chrome://media-internals
+          ready_state: complete
+        }
+        {
+          action: js
+          path: ../../video-drm/action-blocks/scripts/check_l1_status.js
+        }
+        {
+          action: get
+          url: https://storage.googleapis.com/chromiumos-test-assets-public/tast/cros/video/shaka_drm_20260630.html
+          ready_state: complete
+        }
+        {
+          action: js
+          path: ./scripts/seek_drm.js
+          timeout: 300s
+          replacements: {
+            FILE_NAME: $[FILE_NAME]
+            NUM_SEEK: $[NUM_SEEK]
+          }
+        }
+        {
+          action: js
+          script: if(globalThis.seekCount+1 !== $[NUM_SEEK]) { throw new Error(`Not all seeks are performed. Expect: ${$[NUM_SEEK]}, Got: ${globalThis.seekCount+1}.`) }
+        }
+        {
+          action: get
+          url: chrome://media-internals
+          ready_state: complete
+        }
+        {
+          action: js
+          path: ../../video-drm/action-blocks/scripts/check_l1_status.js
+        }
+      ]
+    }
+  }
+}

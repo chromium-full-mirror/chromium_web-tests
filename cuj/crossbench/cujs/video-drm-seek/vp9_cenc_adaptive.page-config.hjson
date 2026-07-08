@@ -1,0 +1,7 @@
+{
+  template: ./action-blocks/seek_drm.hjson
+  args: {
+    FILE_NAME: https://storage.googleapis.com/wvmedia/cenc/vp9/subsample/30fps/tears/tears_opus.mpd
+    NUM_SEEK: 10
+  }
+}
