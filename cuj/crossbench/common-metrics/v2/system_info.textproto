@@ -14,6 +14,7 @@ query {
     column_names: "android_build_fingerprint"
     column_names: "hardware_class"
     column_names: "full_hardware_class"
+    column_names: "system_ram_bytes"
   }
 }
 
@@ -76,6 +77,14 @@ metric_spec: {
   id: "cuj.common-metrics.system_info.full_hardware_class"
   value: "dummy_value"
   dimensions: "full_hardware_class"
+  query {
+    inner_query_id: "system_info"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.system_info.system_ram_bytes"
+  value: "system_ram_bytes"
   query {
     inner_query_id: "system_info"
   }
