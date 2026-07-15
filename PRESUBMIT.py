@@ -39,6 +39,8 @@ def CheckChange(input_api, output_api):
   files_to_check = list(input_api.DEFAULT_FILES_TO_CHECK) + [
       r".+\.hjson$",
       r".+\.sql$",
+      r".+\.css$",
+      r".+\.html$",
   ]
 
   results += input_api.canned_checks.CheckLicense(
@@ -95,6 +97,25 @@ def CheckChange(input_api, output_api):
           message=output_api.PresubmitError,
           kwargs={},
           python3=True,
+      ))
+
+  # ---------------------------------------------------------------------------
+  # Web Tests Analyzer Unit Tests:
+  # ---------------------------------------------------------------------------
+  tests.append(
+      input_api.Command(
+          name="analysis-tool tests",
+          cmd=[
+              str(
+                  Path(input_api.change.RepositoryRoot()) / "third_party" /
+                  "crossbench" / "third_party" / "node" / "linux" /
+                  "node-linux-x64" / "bin" / "node"),
+              "--test",
+              "analysis/**/*.test.js",
+          ],
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=False,
       ))
 
   # ---------------------------------------------------------------------------

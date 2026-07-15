@@ -1,0 +1,112 @@
+<!--
+Copyright 2026 The Chromium Authors
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Selection - Web Tests Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+
+
+    <div class="app-container">
+        <header style="display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 class="title-text">Web Tests Analyzer</h1>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button id="back-btn" class="btn secondary-btn hidden">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Start Over
+                    </button>
+                    <button id="auth-btn" class="btn secondary-btn">Sign in with Google</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="dataset-selection-view">
+            <div id="groups-container">
+                <!-- Group cards injected via JS -->
+                <div class="add-group-wrapper" id="add-group-wrapper">
+                    <button id="add-group-btn" class="add-group-tall">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                        <span>Add Group</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions-container">
+
+
+                <button id="continue-btn" class="btn primary-btn">
+                    Continue to Analysis
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+            </div>
+
+            <div id="processing-splash-view" class="hidden">
+                <div class="modal-content" style="max-width: 600px; margin: 5% auto; display: flex; flex-direction: column; gap: 1rem; border: 1px solid var(--card-border); border-radius: 12px; padding: 2rem; background: var(--card-bg);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h2>Processing Datasets</h2>
+                        <div class="loader-spinner"></div>
+                    </div>
+                    <p style="color: var(--text-secondary);">Downloading and parsing metrics files...</p>
+                    <div id="processing-file-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 400px; overflow-y: auto; margin-top: 1rem; padding-right: 0.5rem;">
+                        <!-- File progress injected here via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-dashboard-view" class="hidden">
+
+                <!-- Group metadata panels will go here -->
+                <div id="metadata-panels" style="display: flex; gap: 2rem; margin-bottom: 2rem;"></div>
+
+                <!-- Warnings panel will go here -->
+                <div id="warnings-panel" style="margin-bottom: 2rem;"></div>
+
+                <!-- Filters panel will go here -->
+                <div id="filters-panel" style="margin-bottom: 2rem;"></div>
+
+                <!-- Metrics panel will go here -->
+                <div id="metrics-panel" style="margin-bottom: 2rem;"></div>
+
+                <pre id="analysis-debug-output" style="display: none;"></pre>
+            </div>
+            </div>
+            <!-- Modals -->
+            <div id="auth-modal" class="modal hidden">
+                <div class="modal-content card" style="max-width: 400px; margin: 10% auto;">
+                    <h2>Authentication Required</h2>
+                    <p style="color: var(--text-secondary); margin: 1rem 0;">You need to sign in with your Google account to browse Google Cloud Storage.</p>
+                    <button id="modal-auth-btn" class="btn primary-btn">Sign in with Google</button>
+                </div>
+            </div>
+
+            <div id="gcs-browser-modal" class="modal hidden">
+                <div class="modal-content card gcs-browser-content" style="max-width: 600px; margin: 10% auto; display: flex; flex-direction: column; max-height: 80vh;">
+                    <h2>Select from Google Cloud Storage</h2>
+                    <div class="gcs-browser-header" style="display: flex; gap: 1rem; align-items: center; margin: 1rem 0; padding-bottom: 1rem; border-bottom: 1px solid var(--card-border);">
+                        <button id="gcs-up-btn" class="btn secondary-btn" disabled>⬆️ Up</button>
+                        <span id="gcs-current-path" style="font-family: monospace; flex: 1; word-break: break-all;">/</span>
+                        <button id="gcs-close-btn" class="btn secondary-btn">Cancel</button>
+                    </div>
+                    <div class="gcs-browser-list" id="gcs-browser-list" style="overflow-y: auto; flex: 1;">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js" type="module"></script>
+</body>
+</html>
