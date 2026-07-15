@@ -10,5 +10,7 @@ SELECT
   max(CASE WHEN name = 'system_release' THEN str_value END) AS system_release,
   max(CASE WHEN name = 'system_version' THEN str_value END) AS system_version,
   max(CASE WHEN name = 'system_machine' THEN str_value END) AS system_machine,
-  max(CASE WHEN name = 'android_build_fingerprint' THEN str_value END) AS android_build_fingerprint
+  max(CASE WHEN name = 'android_build_fingerprint' THEN str_value END) AS android_build_fingerprint,
+  max(CASE WHEN name = 'cr-hardware-class' THEN str_value END) AS hardware_class,
+  max(CASE WHEN name = 'cr-full-hardware-class' THEN str_value END) AS full_hardware_class
 FROM metadata;
