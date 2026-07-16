@@ -4,16 +4,6 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: [
-      {
-        name: LCP for page load and link clicks
-        sql:
-          '''
-            INCLUDE PERFETTO MODULE sql_packages.cujs.page_click.output;
-            SELECT * FROM page_click_output;
-          '''
-      }
-    ]
     METRIC_DEFINITIONS: [
       ./metrics.textproto
     ]

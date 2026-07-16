@@ -11,18 +11,17 @@
     }
     {
       name: trace_processor
-      queries: $[TRACE_PROCESSOR_QUERIES]
       module_paths: [
         ./sql_packages
       ]
       metric_definitions: [
-        ./common-metrics/v2/cpu_usage_stat.textproto
-        ./common-metrics/v2/lmk_kill_list.textproto
-        ./common-metrics/v2/lmk_kill_count.textproto
-        ./common-metrics/v2/uma_histogram_summaries.textproto
-        ./common-metrics/v2/battery_start_percent.textproto
-        ./common-metrics/v2/system_info.textproto
-        ./common-metrics/v2/browser_info.textproto
+        ./common-metrics/cpu_usage_stat.textproto
+        ./common-metrics/lmk_kill_list.textproto
+        ./common-metrics/lmk_kill_count.textproto
+        ./common-metrics/uma_histogram_summaries.textproto
+        ./common-metrics/battery_start_percent.textproto
+        ./common-metrics/system_info.textproto
+        ./common-metrics/browser_info.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }

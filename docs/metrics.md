@@ -127,7 +127,7 @@ defines multiple `metric_spec` blocks that use that query's results. Each
 and a set of `dimensions`.
 
 ```protobuf
-# cuj/crossbench/common-metrics/v2/lmk_kill_list.textproto
+# cuj/crossbench/common-metrics/lmk_kill_list.textproto
 
 # 1. Define the query
 query: {
@@ -161,7 +161,7 @@ metric_spec: {
 # ... other metric_spec blocks for other values
 ```
 
-Place your new metric definition files in `cuj/crossbench/common-metrics/v2/`.
+Place your new metric definition files in `cuj/crossbench/common-metrics/`.
 
 ### Step 3: Enable the Metric in `probe-config.hjson`
 
@@ -177,9 +177,9 @@ Finally, enable your new metric for a test by adding the path to your
   args: {
     // ...
     METRIC_DEFINITIONS: [
-      ../../common-metrics/v2/comment_opened.textproto
-      ../../common-metrics/v2/scroll_distance.textproto
-      ../../common-metrics/v2/scroll_duration.textproto
+      ../../common-metrics/comment_opened.textproto
+      ../../common-metrics/scroll_distance.textproto
+      ../../common-metrics/scroll_duration.textproto
     ]
     // ...
   }

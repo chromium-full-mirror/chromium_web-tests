@@ -4,7 +4,6 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: []
     METRIC_DEFINITIONS: [
       ./metrics.textproto
     ]

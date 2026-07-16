@@ -4,14 +4,13 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: []
     METRIC_DEFINITIONS: [
-      ../../common-metrics/v2/meminfo_total.textproto
-      ../../common-metrics/v2/meminfo_per_iteration.textproto
-      ../../common-metrics/v2/heap_activity.textproto
-      ../../common-metrics/v2/heap_drawable.textproto
-      ../../common-metrics/v2/heap_total.textproto
-      ../../common-metrics/v2/heap_view.textproto
+      ../../common-metrics/meminfo_total.textproto
+      ../../common-metrics/meminfo_per_iteration.textproto
+      ../../common-metrics/heap_activity.textproto
+      ../../common-metrics/heap_drawable.textproto
+      ../../common-metrics/heap_total.textproto
+      ../../common-metrics/heap_view.textproto
       ./javaless_renderer_startup_metrics.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt

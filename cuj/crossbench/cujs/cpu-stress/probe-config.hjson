@@ -4,9 +4,6 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: [
-      metrics/cpu-stress.hjson
-    ]
     METRIC_DEFINITIONS: [
       ./metrics.textproto
     ]

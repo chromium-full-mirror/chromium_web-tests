@@ -4,16 +4,6 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: [
-      {
-        name: Shrinker activity and PSI metrics
-        sql:
-          '''
-            INCLUDE PERFETTO MODULE sql_packages.cujs.gpu_swap.shrinker_and_psi;
-            SELECT * FROM shrinker_and_psi_output;
-          '''
-      }
-    ]
     METRIC_DEFINITIONS: [
       ./shrinker_and_psi_metrics.textproto
     ]

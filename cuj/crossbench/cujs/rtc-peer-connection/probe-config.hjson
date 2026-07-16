@@ -4,16 +4,6 @@
 {
   template: ../../probe-config.hjson
   args: {
-    TRACE_PROCESSOR_QUERIES: [
-      {
-        name: RTC Peer Connection Metrics
-        sql:
-          '''
-            INCLUDE PERFETTO MODULE sql_packages.cujs.video.rtc;
-            SELECT * FROM rtc_peer_connection_output;
-          '''
-      }
-    ]
     METRIC_DEFINITIONS: [
       ./metrics.textproto
     ]
