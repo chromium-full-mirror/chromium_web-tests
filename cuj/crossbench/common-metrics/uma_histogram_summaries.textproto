@@ -2,10 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# TODO(chinglinyu) in the included module, there are several perfetto macros
-# that transforms the results in table "uma_histogram_summaries" table lookup
-# to convert enum values to string representations. The macros are called from
-# templated probe configs. We need to figure out how to emit those metrics.
 query {
   id: "uma_histogram_summaries_query"
   table {
@@ -15,6 +11,39 @@ query {
     column_names: "enum_name"
     column_names: "agg_type"
     column_names: "value"
+    column_names: "polarity"
+  }
+}
+
+metric_spec: {
+  id: "cuj.uma.lower_is_better"
+  dimensions: "hist_name"
+  dimensions: "agg_type"
+  value: "value"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "uma_histogram_summaries_query"
+    filters {
+      column_name: "polarity"
+      op: EQUAL
+      string_rhs: "LOWER_IS_BETTER"
+    }
+  }
+}
+
+metric_spec: {
+  id: "cuj.uma.higher_is_better"
+  dimensions: "hist_name"
+  dimensions: "agg_type"
+  value: "value"
+  polarity: HIGHER_IS_BETTER
+  query: {
+    inner_query_id: "uma_histogram_summaries_query"
+    filters {
+      column_name: "polarity"
+      op: EQUAL
+      string_rhs: "HIGHER_IS_BETTER"
+    }
   }
 }
 
@@ -25,5 +54,10 @@ metric_spec: {
   value: "value"
   query: {
     inner_query_id: "uma_histogram_summaries_query"
+    filters {
+      column_name: "polarity"
+      op: EQUAL
+      string_rhs: "POLARITY_UNSPECIFIED"
+    }
   }
 }
