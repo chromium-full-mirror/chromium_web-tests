@@ -33,6 +33,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.video_streaming.playback_dropped_frames"
   value: "playback_dropped_frames"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "video_streaming_stats"
   }

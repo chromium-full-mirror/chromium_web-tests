@@ -21,6 +21,7 @@ metric_spec: {
   }
   dimensions: "title"
   value: "process_mb"
+  polarity: LOWER_IS_BETTER
 }
 
 metric_spec: {
@@ -30,6 +31,7 @@ metric_spec: {
   }
   dimensions: "title"
   value: "dma_buf_mb"
+  polarity: LOWER_IS_BETTER
 }
 
 metric_spec: {
@@ -39,4 +41,5 @@ metric_spec: {
   }
   dimensions: "title"
   value: "free_mb"
+  polarity: HIGHER_IS_BETTER
 }

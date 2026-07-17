@@ -6,6 +6,7 @@ metric_spec: {
   id: "cuj.tab-stress.total_renderers"
   dimensions: "it_id"
   value: "total_renderers"
+  polarity: HIGHER_IS_BETTER
   query {
     table {
       table_name: "total_renderers_output"

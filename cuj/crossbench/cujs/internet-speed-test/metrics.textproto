@@ -16,6 +16,7 @@ query {
 metric_spec: {
   id: "cuj.internet-speed-test.download"
   value: "download"
+  polarity: HIGHER_IS_BETTER
   query {
     inner_query_id: "internet_speed_test_output_query"
   }
@@ -24,6 +25,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.internet-speed-test.upload"
   value: "upload"
+  polarity: HIGHER_IS_BETTER
   query {
     inner_query_id: "internet_speed_test_output_query"
   }
@@ -32,6 +34,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.internet-speed-test.latency"
   value: "latency"
+  polarity: LOWER_IS_BETTER
   query {
     inner_query_id: "internet_speed_test_output_query"
   }

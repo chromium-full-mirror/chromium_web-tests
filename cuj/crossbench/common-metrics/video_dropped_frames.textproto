@@ -5,6 +5,7 @@
 metric_spec: {
   id: "cuj.video.dropped_frames_percent"
   value: "dropped_frames_percent"
+  polarity: LOWER_IS_BETTER
   query {
     table {
       table_name: "dropped_frames"
@@ -17,6 +18,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.video.dropped_frames_count"
   value: "dropped_frames_count"
+  polarity: LOWER_IS_BETTER
   query {
     table {
       table_name: "dropped_frames"

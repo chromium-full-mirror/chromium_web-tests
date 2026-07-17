@@ -23,6 +23,7 @@ metric_spec: {
   id: "cuj.meet_jank.avg"
   dimensions: "hist_name"
   value: "avg"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -32,6 +33,7 @@ metric_spec: {
   id: "cuj.meet_jank.count"
   dimensions: "hist_name"
   value: "count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -41,6 +43,7 @@ metric_spec: {
   id: "cuj.meet_jank.total"
   dimensions: "hist_name"
   value: "total"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -50,6 +53,7 @@ metric_spec: {
   id: "cuj.meet_jank.max"
   dimensions: "hist_name"
   value: "max"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -59,6 +63,7 @@ metric_spec: {
   id: "cuj.meet_jank.p95"
   dimensions: "hist_name"
   value: "p95"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -68,6 +73,7 @@ metric_spec: {
   id: "cuj.meet_jank.p90"
   dimensions: "hist_name"
   value: "p90"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -77,6 +83,7 @@ metric_spec: {
   id: "cuj.meet_jank.p75"
   dimensions: "hist_name"
   value: "p75"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }
@@ -86,6 +93,7 @@ metric_spec: {
   id: "cuj.meet_jank.p50"
   dimensions: "hist_name"
   value: "p50"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "meet_jank_query"
   }

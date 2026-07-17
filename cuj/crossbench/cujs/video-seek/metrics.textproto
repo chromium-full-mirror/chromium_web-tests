@@ -15,6 +15,7 @@ query {
 metric_spec: {
   id: "cuj.video-seek.avg_seek_time_s"
   value: "avg_seek_time_s"
+  polarity: LOWER_IS_BETTER
   query {
     inner_query_id: "video_seek_output_query"
   }
@@ -23,6 +24,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.video-seek.seek_completion_percentage"
   value: "seek_completion_percentage"
+  polarity: HIGHER_IS_BETTER
   query {
     inner_query_id: "video_seek_output_query"
   }

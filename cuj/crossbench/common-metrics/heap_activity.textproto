@@ -19,6 +19,7 @@ query {
 metric_spec: {
   id: "cuj.common-metrics.heap_activity_count"
   value: "count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_activity"
   }
@@ -30,6 +31,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.common-metrics.heap_activity_thread_activity_count"
   value: "activity_thread_activity_count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_activity"
   }
@@ -39,6 +41,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.common-metrics.heap_activity_retained_count"
   value: "retained_count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_activity"
   }
@@ -48,6 +51,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.common-metrics.heap_activity_retained_bytes"
   value: "retained_bytes"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_activity"
   }

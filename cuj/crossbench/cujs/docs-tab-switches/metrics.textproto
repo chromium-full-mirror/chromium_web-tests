@@ -16,6 +16,7 @@ query {
 metric_spec: {
   id: "cuj.docs_tab_switches.gpu_context_cleanup_durations.max"
   value: "max_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "gpu_context_cleanup_durations_output"
   }
@@ -24,6 +25,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.gpu_context_cleanup_durations.p90"
   value: "p90_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "gpu_context_cleanup_durations_output"
   }
@@ -32,6 +34,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.gpu_context_cleanup_durations.p50"
   value: "p50_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "gpu_context_cleanup_durations_output"
   }
@@ -40,6 +43,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.gpu_context_cleanup_durations.count"
   value: "count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "gpu_context_cleanup_durations_output"
   }
@@ -61,6 +65,7 @@ query {
 metric_spec: {
   id: "cuj.docs_tab_switches.tab_switch_latency.avg"
   value: "avg_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "tab_switch_latency_output"
   }
@@ -68,6 +73,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.tab_switch_latency.max"
   value: "max_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "tab_switch_latency_output"
   }
@@ -75,6 +81,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.tab_switch_latency.p90"
   value: "p90_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "tab_switch_latency_output"
   }
@@ -82,6 +89,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.tab_switch_latency.p50"
   value: "p50_dur"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "tab_switch_latency_output"
   }
@@ -89,6 +97,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.docs_tab_switches.tab_switch_latency.count"
   value: "count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "tab_switch_latency_output"
   }

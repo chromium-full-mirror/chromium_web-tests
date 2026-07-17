@@ -5,6 +5,7 @@
 metric_spec: {
   id: "cuj.common-metrics.comment-opened"
   value: "duration_ms"
+  polarity: LOWER_IS_BETTER
   query {
     table {
       table_name: "comment_opened_output"

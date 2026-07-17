@@ -20,6 +20,7 @@ metric_spec: {
   id: "cuj.common-metrics.cpu_usage_stat.max_cputime"
   dimensions: "name"
   value: "max_cputime"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "cpu_usage_stat_output_query"
   }
@@ -29,6 +30,7 @@ metric_spec: {
   id: "cuj.common-metrics.cpu_usage_stat.mean_cputime"
   dimensions: "name"
   value: "mean_cputime"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "cpu_usage_stat_output_query"
   }
@@ -38,6 +40,7 @@ metric_spec: {
   id: "cuj.common-metrics.cpu_usage_stat.total_cputime"
   dimensions: "name"
   value: "total_cputime"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "cpu_usage_stat_output_query"
   }
@@ -47,6 +50,7 @@ metric_spec: {
   id: "cuj.common-metrics.cpu_usage_stat.p90_cputime"
   dimensions: "name"
   value: "p90_cputime"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "cpu_usage_stat_output_query"
   }
@@ -56,6 +60,7 @@ metric_spec: {
   id: "cuj.common-metrics.cpu_usage_stat.p50_cputime"
   dimensions: "name"
   value: "p50_cputime"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "cpu_usage_stat_output_query"
   }

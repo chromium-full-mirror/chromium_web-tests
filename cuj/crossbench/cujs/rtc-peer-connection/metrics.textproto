@@ -17,6 +17,7 @@ query {
 metric_spec: {
   id: "cuj.rtc-peer-connection.fps"
   value: "fps"
+  polarity: HIGHER_IS_BETTER
   query {
     inner_query_id: "rtc_peer_connection_output_query"
   }
@@ -25,6 +26,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.rtc-peer-connection.encode_time_ms"
   value: "encode_time_ms"
+  polarity: LOWER_IS_BETTER
   query {
     inner_query_id: "rtc_peer_connection_output_query"
   }
@@ -33,6 +35,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.rtc-peer-connection.decode_time_ms"
   value: "decode_time_ms"
+  polarity: LOWER_IS_BETTER
   query {
     inner_query_id: "rtc_peer_connection_output_query"
   }
@@ -41,6 +44,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.rtc-peer-connection.dropped_frames_ratio"
   value: "dropped_frames_ratio"
+  polarity: LOWER_IS_BETTER
   query {
     inner_query_id: "rtc_peer_connection_output_query"
   }

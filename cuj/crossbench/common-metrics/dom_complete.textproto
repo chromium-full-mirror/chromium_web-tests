@@ -18,6 +18,7 @@ metric_spec: {
   dimensions: "id"
   dimensions: "it_id"
   value: "dom_complete"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "dom_complete_output_query"
   }
@@ -28,6 +29,7 @@ metric_spec: {
   dimensions: "id"
   dimensions: "it_id"
   value: "dom_interactive"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "dom_complete_output_query"
   }
@@ -37,6 +39,7 @@ metric_spec: {
   id: "cuj.common-metrics.dom_complete"
   dimensions: "it_id"
   value: "dom_complete"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "dom_complete_output_query"
   }
@@ -46,6 +49,7 @@ metric_spec: {
   id: "cuj.common-metrics.dom_interactive"
   dimensions: "it_id"
   value: "dom_interactive"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "dom_complete_output_query"
   }

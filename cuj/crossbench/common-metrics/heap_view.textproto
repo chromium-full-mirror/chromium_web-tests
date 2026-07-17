@@ -15,6 +15,7 @@ query {
 metric_spec: {
   id: "cuj.common-metrics.heap_view_count"
   value: "count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_view"
   }
@@ -24,6 +25,7 @@ metric_spec: {
 metric_spec: {
   id: "cuj.common-metrics.heap_attached_view_count"
   value: "attached_count"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "heap_view"
   }

@@ -6,6 +6,7 @@ metric_spec: {
   id: "cuj.common-metrics.lmk_kill_count"
   dimensions: "it_id"
   value: "kill_count"
+  polarity: LOWER_IS_BETTER
   query {
     table {
       table_name: "lmk_kill_count_output"

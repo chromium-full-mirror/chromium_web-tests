@@ -19,6 +19,7 @@ metric_spec: {
   id: "cuj.page_click.page_load_time"
   dimensions: "id"
   value: "page_load_time"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "page_click_output"
   }
@@ -28,6 +29,7 @@ metric_spec: {
   id: "cuj.page_click.link_load_time"
   dimensions: "id"
   value: "link_load_time"
+  polarity: LOWER_IS_BETTER
   query: {
     inner_query_id: "page_click_output"
   }

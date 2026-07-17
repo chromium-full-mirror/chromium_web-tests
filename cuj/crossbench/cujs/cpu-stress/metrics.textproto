@@ -28,6 +28,7 @@ metric_spec: {
   id: "cuj.cpu-stress.foreground_throughput"
   dimensions: "workers"
   value: "foreground_throughput"
+  polarity: HIGHER_IS_BETTER
   query {
     inner_query_id: "cpu_stress_output_query"
   }
