@@ -5,7 +5,7 @@
 
 import sys
 
-from runner.paths import THIRD_PARTY_CROSSBENCH
+from runner.paths import THIRD_PARTY_CROSSBENCH, WEB_TESTS_ROOT
 
 # This is the earliest entrypoint into the runner.
 # Try to import some simple crossbench package here to
@@ -19,7 +19,9 @@ except ImportError:
   # (such as when running presubmit).
   sys.path.append(str(THIRD_PARTY_CROSSBENCH))
 
-# pylint: disable=ungrouped-imports
+sys.path.append(str(WEB_TESTS_ROOT / "protoc" / "gen"))
+
+# pylint: disable=wrong-import-position,ungrouped-imports
 from runner.cli import runner_cli
 
 if __name__ == "__main__":

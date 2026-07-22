@@ -12,3 +12,4 @@ venv
 
 macos-results
 .DS_store
+/protoc/gen

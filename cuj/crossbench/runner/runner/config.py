@@ -21,8 +21,8 @@ from typing_extensions import override
 class TestVariantAction(argparse.Action):
 
   def __call__(self, parser, namespace, values, option_string=None):
-    if getattr(namespace, "ordered_tests_variants", None) is None:
-      setattr(namespace, "ordered_tests_variants", [])
+    if "ordered_tests_variants" not in vars(namespace):
+      namespace.ordered_tests_variants = []
     namespace.ordered_tests_variants.append((option_string, values))
 
 
@@ -178,9 +178,10 @@ class CliConfig:
   browser: str | None
   tests: list[tuple[str, str]]
   secrets: Path | None
-  uploader: Path | None
+  upload: bool
   out_dir: Path | None
   results_prefix: str | None
+  tag: str | None
   debug: bool
   dry_run: bool
   playback: str | None
@@ -212,10 +213,11 @@ class CliConfig:
     parser.add_argument(
         "--variants", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument("--secrets", type=Path, required=False)
-    parser.add_argument("--uploader", type=Path, required=False)
+    parser.add_argument("--upload", action="store_true", default=False)
     parser.add_argument("--out-dir", type=Path, required=False)
     parser.add_argument(
         "--results-prefix", type=ObjectParser.any_str, default="")
+    parser.add_argument("--tag", type=ObjectParser.safe_filename, default=None)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
@@ -232,7 +234,7 @@ class CliConfig:
           "You may need to tweak the probe config manually for some tests "
           "to pass.")
 
-    ordered = getattr(parsed, "ordered_tests_variants", [])
+    ordered = vars(parsed).get("ordered_tests_variants", [])
     tests_variants: list[tuple[str, str]] = []
     current_test = None
     for opt, val in ordered:
@@ -257,8 +259,6 @@ class CliConfig:
     secrets_file: Path | None = parsed.secrets.resolve(
     ) if parsed.secrets else None
 
-    uploader_path: Path | None = parsed.uploader.resolve(
-    ) if parsed.uploader else None
 
     out_dir_path: Path | None = parsed.out_dir.resolve(
     ) if parsed.out_dir else None
@@ -276,9 +276,10 @@ class CliConfig:
         setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,
         secrets=secrets_file,
-        uploader=uploader_path,
+        upload=parsed.upload,
         out_dir=out_dir_path,
         results_prefix=parsed.results_prefix,
+        tag=parsed.tag,
         debug=parsed.debug,
         dry_run=parsed.dry_run,
         wait_for_debugger=parsed.wait_for_debugger,
@@ -294,8 +295,9 @@ class RunConfig:
   adb_bin: Path | None
   browser: str | None
   secrets: Path | None
-  uploader: Path | None
+  upload: bool
   results_root: Path
+  tag: str | None
   debug: bool
   dry_run: bool
   no_symlinks: bool

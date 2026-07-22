@@ -10,6 +10,7 @@ crossbench = { path = "../../../third_party/crossbench", develop = true }
 pytype = "^2024.10.11"
 debugpy = "^1.8.16"
 rich = ">=13.2.0"
+protobuf = ">=3.20.0"
 
 
 [build-system]

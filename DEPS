@@ -77,6 +77,11 @@ pre_deps_hooks = [
                 '-vpython-tool', 'install',
     ],
   },
+  {
+    'name': 'generate_perfetto_protos',
+    'pattern': '.',
+    'action': ['vpython3', 'tools/generate_perfetto_protos.py'],
+  },
 ]
 
 # Contains hooks necessary to develop web-tests
