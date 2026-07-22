@@ -13,5 +13,6 @@ SELECT
   max(CASE WHEN name = 'android_build_fingerprint' THEN str_value END) AS android_build_fingerprint,
   max(CASE WHEN name = 'cr-hardware-class' THEN str_value END) AS hardware_class,
   max(CASE WHEN name = 'cr-full-hardware-class' THEN str_value END) AS full_hardware_class,
+  max(CASE WHEN name = 'cr-physical-memory' THEN int_value END) AS cr_physical_memory,
   max(CASE WHEN name = 'system_ram_bytes' THEN int_value END) AS system_ram_bytes
 FROM metadata;
