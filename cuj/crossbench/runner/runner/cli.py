@@ -21,6 +21,7 @@ from rich.console import Console, Group
 from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 from runner.config import (CliConfig, RunConfig, Test, TestGroup,
                            TestGroupConfig, TestInvocationConfig,
                            TestInvocationState)
@@ -31,6 +32,9 @@ from runner.paths import RESULTS
 from runner.runner import run_test
 from runner.test_discovery import enumerate_all_tests
 from runner.upload import do_upload
+
+LOG_MAX_VISIBLE_LINES = 15
+LOG_PANEL_HEIGHT = LOG_MAX_VISIBLE_LINES + 2
 
 
 def generate_test_invocations(
@@ -234,7 +238,7 @@ def _write_results_json(tests_state: list[TestInvocationState],
     json.dump(results_summary, f, indent=2)
 
 def _generate_table_layout(tests: list[TestInvocationState],
-                           log_capture: LogCapture) -> Group:
+                           log_capture: LogCapture, console: Console) -> Group:
   table = Table(title="Crossbench Test Queue", box=None, show_edge=False)
   table.add_column("State", width=6)
   table.add_column("Test")
@@ -242,7 +246,34 @@ def _generate_table_layout(tests: list[TestInvocationState],
   table.add_column("Passes", justify="right")
   table.add_column("Fails", justify="right")
 
-  for inv in tests:
+  table_header_height = len(console.render_lines(table, console.options)) + 1
+
+  finished_tests = [t for t in tests if t.invocation_result.done()]
+  running_tests = [t for t in tests if t.invocation_result.running()]
+  waiting_tests = [
+      t for t in tests
+      if not t.invocation_result.done() and not t.invocation_result.running()
+  ]
+
+  term_height = console.size.height
+  available_rows = term_height - LOG_PANEL_HEIGHT - table_header_height
+
+  if finished_tests:
+    table.add_row("", f"[dim]{len(finished_tests)} Finished[/dim]", "", "", "")
+    available_rows -= 1
+
+  total_pending = len(running_tests) + len(waiting_tests)
+  if total_pending > available_rows:
+    available_rows -= 1  # leave space for "... and X more" row
+
+  available_rows = max(1, available_rows)
+
+  visible_running = running_tests[:available_rows]
+  visible_waiting = waiting_tests[:max(0, available_rows -
+                                       len(visible_running))]
+  hidden = total_pending - len(visible_running) - len(visible_waiting)
+
+  for inv in visible_running + visible_waiting:
     status: Any
     is_success = inv.successes >= (inv.config.min_successes or 1)
     if inv.invocation_result.done():
@@ -268,7 +299,27 @@ def _generate_table_layout(tests: list[TestInvocationState],
 
     table.add_row(status, benchmark, variant, passes, fails)
 
-  log_panel = Panel(log_capture.get_text(), title="Crossbench Logs", height=17)
+  if hidden > 0:
+    table.add_row("", f"[dim]... and {hidden} more[/dim]", "", "", "")
+
+  log_text = log_capture.get_text()
+  log_lines = log_text.split("\n")
+
+  sanitized_lines = []
+  for line in log_lines[-LOG_MAX_VISIBLE_LINES:]:
+    if "\r" in line:
+      line = line.split("\r")[-1]
+    # Strip emojis and non-ascii characters to avoid
+    # rich/terminal wcwidth mismatches
+    line = line.encode("ascii", "ignore").decode("ascii")
+    sanitized_lines.append(line)
+
+  visible_log = "\n".join(sanitized_lines)
+
+  log_panel = Panel(
+      Text.from_ansi(visible_log, no_wrap=True),
+      title="Crossbench Logs",
+      height=LOG_PANEL_HEIGHT)
   return Group(table, log_panel)
 
 
@@ -282,9 +333,12 @@ def run_tests(tests_config: list[TestInvocationConfig],
   live_ctx: Any
 
   if use_live_ui:
-    log_capture = LogCapture(max_lines=15)
+    console = Console()
+    log_capture = LogCapture(max_lines=LOG_MAX_VISIBLE_LINES)
     live_ctx = Live(
-        _generate_table_layout(tests, log_capture), refresh_per_second=10)
+        _generate_table_layout(tests, log_capture, console),
+        console=console,
+        refresh_per_second=10)
   else:
     log_capture = NullLogCapture() if (
         run_config.dry_run and not run_config.debug) else DirectLogCapture()
@@ -301,7 +355,7 @@ def run_tests(tests_config: list[TestInvocationConfig],
         time.sleep(0.1)
         if use_live_ui:
           assert isinstance(log_capture, LogCapture)
-          live.update(_generate_table_layout(tests, log_capture))
+          live.update(_generate_table_layout(tests, log_capture, console))
 
         _write_results_json(tests, run_config)
 
