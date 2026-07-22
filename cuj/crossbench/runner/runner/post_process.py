@@ -11,8 +11,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from runner.paths import WEB_TESTS_ROOT
-
 
 def _parse_metrics_row(key: str, value: dict) -> dict | None:
   try:
@@ -63,37 +61,10 @@ def generate_metrics_csv(results_dir: Path) -> None:
     writer.writerows(rows)
 
 
-def run_tast_analyzer_wrapper(results_root: Path) -> None:
-  helper_script = WEB_TESTS_ROOT / "run_tast_analyzer.py"
-
-  try:
-    subprocess.run([
-        sys.executable,
-        str(helper_script), "--output-path",
-        str(results_root / "metrics.json"), "--unspecified-direction", "DOWN",
-        str(results_root)
-    ],
-                   check=True,
-                   capture_output=True,
-                   text=True)
-    generate_metrics_csv(results_root)
-  except subprocess.CalledProcessError as e:
-    logging.error("Failed to run tast-analyzer wrapper: %s", e)
-    logging.error("Stdout:\n%s", e.stdout)
-    logging.error("Stderr:\n%s", e.stderr)
-
-
 def do_upload(results_dir: Path, uploader: Path | None = None) -> None:
   csv_file = results_dir / "metrics.csv"
   if not csv_file.exists():
-    logging.info(
-        "metrics.csv not found, attempting to generate it via tast-analyzer...")
-    run_tast_analyzer_wrapper(results_dir)
-
-  if not csv_file.exists():
-    logging.error(
-        "Cannot upload: %s does not exist even after running tast-analyzer.",
-        csv_file)
+    logging.error("Cannot upload: %s does not exist.", csv_file)
     return
 
   if not uploader:

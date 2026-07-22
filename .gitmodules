@@ -4,6 +4,3 @@
 [submodule "third_party/perfetto"]
 	path = third_party/perfetto
 	url = https://chromium.googlesource.com/external/github.com/google/perfetto
-[submodule "third_party/tast-tests"]
-	path = third_party/tast-tests
-	url = https://chromium.googlesource.com/chromiumos/platform/tast-tests

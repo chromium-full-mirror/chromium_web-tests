@@ -27,7 +27,7 @@ from runner.config import (Benchmark, CliConfig, Cuj, RunConfig, Test,
 from runner.logging import (DirectLogCapture, LogCapture, NullLogCapture,
                             setup_logging)
 from runner.paths import BENCHMARKS, CUJS, RESULTS, WEB_TESTS_ROOT
-from runner.post_process import do_upload, run_tast_analyzer_wrapper
+from runner.post_process import do_upload
 from runner.runner import run_test
 
 
@@ -249,7 +249,6 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       debug=cli_config.debug,
       dry_run=cli_config.dry_run,
       no_symlinks=cli_config.no_symlinks,
-      run_tast_analyzer=cli_config.run_tast_analyzer,
       list_tests=cli_config.list_tests,
       tests=tests)
 
@@ -322,9 +321,6 @@ def _run_scheduled_tests(run_config: RunConfig) -> bool:
   if run_config.tests:
     all_passed, tests_state = run_tests(run_config.tests, run_config)
     _write_results_json(tests_state, run_config)
-
-  if run_config.run_tast_analyzer:
-    run_tast_analyzer_wrapper(run_config.results_root)
 
   logging.info("Web tests results: %s", run_config.results_root)
 

@@ -41,7 +41,6 @@ use_relative_paths = True
 vars = {
   'crossbench_git': 'https://chromium.googlesource.com/crossbench',
   'perfetto_git': 'https://chromium.googlesource.com/external/github.com/google/perfetto.git',
-  'tast_tests_git': 'https://chromium.googlesource.com/chromiumos/platform/tast-tests',
   # This variable is overridden in Chromium's DEPS file.
   'build_with_chromium': False,
 
@@ -49,7 +48,6 @@ vars = {
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
   'crossbench_revision': '0cfd89d574be7f32b12b45c630c7f27d1e3bf36a',
-  'tast_tests_revision': '17a118aa4712c97820155c1b87251da84068ebfa',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -62,7 +60,6 @@ deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
   'third_party/perfetto':
     Var('perfetto_git') + '@' + '72997b8161af6c848de5336d506ccaa631ac60cc',
-  'third_party/tast-tests': Var('tast_tests_git') + '@' + Var('tast_tests_revision'),
 }
 
 # Contains hooks necessary to run web-tests
