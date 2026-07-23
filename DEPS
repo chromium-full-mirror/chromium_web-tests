@@ -47,7 +47,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
-  'crossbench_revision': '0cfd89d574be7f32b12b45c630c7f27d1e3bf36a',
+  'crossbench_revision': 'd97d3558b81de6c86c3a4f7400d9327c67a98458',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
