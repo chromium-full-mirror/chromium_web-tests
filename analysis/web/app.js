@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const addGroupBtn = document.getElementById('add-group-btn');
   const datasetView = document.getElementById('dataset-selection-view');
   const analysisView = document.getElementById('analysis-dashboard-view');
-  const MAX_GROUPS = 2;
 
   let groups = [];
   let groupIdCounter = 0;
@@ -53,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
     card.innerHTML = `
             <div class="group-header">
                 <div class="group-title-wrapper">
-                    <span class="group-label">Group ${id + 1}</span>
+                    <span class="group-label">
+                        Group ${id + 1}
+                        ${isFirst ? '<span class="baseline-badge" title="Other groups will be compared against this baseline group.">Baseline</span>' : ''}
+                    </span>
                     <input type="text" class="group-nickname-input" placeholder="Enter Group Nickname" value="${initialName || (isFirst ? 'Control' : 'Experiment')}">
                 </div>
                 ${!isFirst ? `<button class="remove-group-btn" title="Remove Group">${icons.trash}</button>` : ''}
@@ -212,25 +214,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateGroupLabels() {
     const cards = groupsContainer.querySelectorAll('.group-card');
     cards.forEach((card, idx) => {
-      card.querySelector('.group-label').textContent = `Group ${idx + 1}`;
+      const isFirst = idx === 0;
+      card.querySelector('.group-label').innerHTML = `
+        Group ${idx + 1}
+        ${isFirst ? '<span class="baseline-badge" title="Other groups will be compared against this baseline group.">Baseline</span>' : ''}
+      `;
     });
   }
 
   function updateUIState() {
     const addGroupWrapper = document.getElementById('add-group-wrapper');
-    if (groups.length >= MAX_GROUPS) {
-      addGroupBtn.disabled = true;
-      addGroupWrapper.title = 'Currently only 2 groups are supported.';
-    } else {
-      addGroupBtn.disabled = false;
-      addGroupWrapper.title = '';
-    }
+    addGroupBtn.disabled = false;
+    addGroupWrapper.title = '';
   }
 
   addGroupBtn.addEventListener('click', () => {
-    if (groups.length < MAX_GROUPS) {
-      createGroupUI();
-    }
+    createGroupUI();
   });
 
   document.getElementById('continue-btn').addEventListener('click', () => {
@@ -281,12 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let hasData = false;
 
     for (const key of new Set(params.keys())) {
-      if (groups.length >= MAX_GROUPS) break;
+      if (!key.startsWith('dataset_')) continue;
 
+      const groupName = key.substring('dataset_'.length);
       const paths = [...new Set(params.getAll(key))];
       if (paths.length > 0) {
         hasData = true;
-        createGroupUI(key, paths);
+        createGroupUI(groupName, paths);
       }
     }
 

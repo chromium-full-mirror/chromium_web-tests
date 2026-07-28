@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "run_id": "test_run_3"
+  },
+  "metrics": [
+    {
+      "test_name": "test_suite_A",
+      "variant": "",
+      "browser": "chrome_1",
+      "metric": "score",
+      "values": [90, 91, 89, 90, 92, 88, 90, 91, 89, 90],
+      "units": "ms",
+      "improvement_direction": "down"
+    }
+  ]
+}

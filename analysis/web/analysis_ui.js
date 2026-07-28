@@ -3,13 +3,28 @@
 // found in the LICENSE file.
 
 import {
-  getCommonTests,
+  getBaselineTests,
   getDatasetMismatches,
   analyzeTestMetrics,
   filterMetrics,
   getImportantMetricsForTest,
 } from '../common/analyzer.js';
 import {AGG_MODES} from '../common/parser.js';
+
+const GROUP_COLORS = [
+  '#6366f1', // Indigo
+  '#10b981', // Emerald
+  '#f59e0b', // Amber
+  '#ef4444', // Red
+  '#8b5cf6', // Violet
+  '#06b6d4', // Cyan
+  '#ec4899', // Pink
+  '#84cc16', // Lime
+  '#f97316', // Orange
+  '#14b8a6', // Teal
+  '#d946ef', // Fuchsia
+  '#3b82f6', // Blue
+];
 
 export function initAnalysisDashboard(dataModel) {
   renderMetadataPanels(dataModel);
@@ -159,19 +174,24 @@ function renderWarningsPanel(dataModel) {
             ">
                 <div class="group-title-wrapper" style="display: flex; align-items: center; gap: 0.75rem; color: var(--warning);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">Dataset Mismatch Warnings (${warnings.reduce((acc, w) => acc + w.missingTests.length, 0)} tests missing)</h3>
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">Dataset Mismatch Warnings</h3>
                 </div>
                 <svg id="warnings-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
 
             <div id="warnings-content" style="display: none; padding: 1.5rem;">
+                <p style="color: var(--text-secondary); margin-top: 0; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.4;">
+                    The following tests are not present in the baseline and experimental datasets. Data may be missing from the results displayed.
+                </p>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
     `;
 
   for (const w of warnings) {
     html += `
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-weight: 500;">Present in ${w.groupName}, missing elsewhere:</h4>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-weight: 500; font-size: 1.05rem;">
+                  ${w.groupName}
+                </h4>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 250px; overflow-y: auto; padding-right: 0.5rem;">
                     ${w.missingTests
       .map(
@@ -201,7 +221,7 @@ function renderFiltersPanel(dataModel) {
   const container = document.getElementById('filters-panel');
   if (!container) return;
 
-  const commonTests = getCommonTests(dataModel);
+  const baselineTests = getBaselineTests(dataModel);
 
   // Read current URL params
   const urlParams = new URLSearchParams(window.location.search);
@@ -209,19 +229,20 @@ function renderFiltersPanel(dataModel) {
   const urlAgg = urlParams.get('agg') || 'all';
   const urlSignificant = urlParams.get('significant') !== 'false'; // Default to true
   const urlAllMetrics = urlParams.get('all') === 'true'; // Default to false
+  const urlSearch = urlParams.get('search') || '';
 
   let initialTest = '';
-  if (urlTest && commonTests.includes(urlTest)) {
+  if (urlTest && baselineTests.includes(urlTest)) {
     initialTest = urlTest;
-  } else if (commonTests.length > 0) {
-    initialTest = commonTests[0];
+  } else if (baselineTests.length > 0) {
+    initialTest = baselineTests[0];
   }
 
   const html = `
         <div class="group-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 300px;">
-                <label for="test-suite-select" style="font-weight: 500; font-size: 1.1rem; color: var(--text-primary); white-space: nowrap;">Test Suite</label>
-                <div style="position: relative; flex: 1; max-width: 400px;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <label for="test-suite-select" style="font-weight: 500; font-size: 1.1rem; color: var(--text-primary); white-space: nowrap;">Test</label>
+                <div style="position: relative; width: 350px;">
                     <select id="test-suite-select" style="
                         width: 100%;
                         padding: 0.75rem 1rem;
@@ -237,13 +258,29 @@ function renderFiltersPanel(dataModel) {
                         appearance: none;
                         -webkit-appearance: none;
                     " onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='var(--card-border)'" onfocus="this.style.borderColor='#6366f1'">
-                        ${commonTests.length === 0 ? '<option value="">No common tests found</option>' : ''}
-                        ${commonTests.map((t) => `<option value="${t}" style="background: #1e1e2d; color: #ffffff;" ${t === initialTest ? 'selected' : ''}>${t}</option>`).join('')}
+                        ${baselineTests.length === 0 ? '<option value="">No common tests found</option>' : ''}
+                        ${baselineTests.map((t) => `<option value="${t}" style="background: #1e1e2d; color: #ffffff;" ${t === initialTest ? 'selected' : ''}>${t}</option>`).join('')}
                     </select>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary);">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+                <label for="metric-search-input" style="font-weight: 500; font-size: 1.1rem; color: var(--text-primary); white-space: nowrap;">Search</label>
+                <input type="text" id="metric-search-input" placeholder="Search metrics..." style="
+                    width: 100%;
+                    max-width: 300px;
+                    padding: 0.75rem 1rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--card-border);
+                    background: rgba(255, 255, 255, 0.03);
+                    color: var(--text-primary);
+                    font-size: 1rem;
+                    font-family: var(--font-main);
+                    outline: none;
+                " onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='var(--card-border)'" onfocus="this.style.borderColor='#6366f1'">
             </div>
 
             <div style="display: flex; align-items: center; gap: 1rem; min-width: 200px;">
@@ -301,6 +338,10 @@ function renderFiltersPanel(dataModel) {
   const aggSelect = document.getElementById('agg-mode-select');
   const sigToggle = document.getElementById('significant-only-toggle');
   const allToggle = document.getElementById('all-metrics-toggle');
+  const searchInput = document.getElementById('metric-search-input');
+
+  // Safely assign search input value to avoid XSS
+  searchInput.value = urlSearch;
 
   function updateUrlParams() {
     const url = new URL(window.location);
@@ -320,6 +361,12 @@ function renderFiltersPanel(dataModel) {
     url.searchParams.set('significant', sigToggle.checked.toString());
     url.searchParams.set('all', allToggle.checked.toString());
 
+    if (searchInput.value.trim()) {
+      url.searchParams.set('search', searchInput.value.trim());
+    } else {
+      url.searchParams.delete('search');
+    }
+
     window.history.replaceState({}, '', url);
     renderMetricsPanel(dataModel);
   }
@@ -328,6 +375,12 @@ function renderFiltersPanel(dataModel) {
   aggSelect.addEventListener('change', updateUrlParams);
   sigToggle.addEventListener('change', updateUrlParams);
   allToggle.addEventListener('change', updateUrlParams);
+
+  let debounceTimeout;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(updateUrlParams, 300);
+  });
 
   // Set initial URL state if defaults were applied
   if (!urlTest && initialTest) {
@@ -344,6 +397,7 @@ function renderMetricsPanel(dataModel) {
   const aggMode = urlParams.get('agg') || 'all';
   const significantOnly = urlParams.get('significant') !== 'false';
   const allMetrics = urlParams.get('all') === 'true';
+  const searchQuery = urlParams.get('search') || '';
 
   if (!testName) {
     container.innerHTML =
@@ -363,6 +417,7 @@ function renderMetricsPanel(dataModel) {
     displayAll: allMetrics,
     importantMetrics: importantMetrics,
     aggMode: aggMode,
+    searchQuery: searchQuery,
   });
 
   if (results.length === 0) {
@@ -381,17 +436,41 @@ function renderMetricsPanel(dataModel) {
   }
 
   const numGroups = dataModel.groups.length;
+  const groupColors = GROUP_COLORS;
 
   let html = `
         <div class="group-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
             <div style="overflow-x: auto; overflow-y: auto; max-height: 400px; border-bottom: 1px solid var(--card-border);">
-                <table style="width: 100%; border-collapse: collapse; text-align: left; position: relative;">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; position: relative;">
                     <thead style="position: sticky; top: 0; background: #1e1e2d; z-index: 10; box-shadow: 0 1px 0 var(--card-border);">
                         <tr>
-                            <th style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary);">Metric</th>
-                            <th style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary);">Agg Mode</th>
-                            ${dataModel.groups.map((g) => `<th style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary);">${g.name}</th>`).join('')}
-                            ${numGroups === 2 ? `<th style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary);">Diff</th>` : ''}
+                            <th rowspan="2" style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary); background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border);">Metric</th>
+                            <th rowspan="2" style="width: 1rem; background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border);"></th>
+                            <th rowspan="2" style="padding: 1rem 1.5rem; font-weight: 600; color: var(--text-secondary); background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border); border-top: 3px solid ${groupColors[0]}; border-left: 3px solid ${groupColors[0]}; border-right: 3px solid ${groupColors[0]};">
+                                <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color:${groupColors[0]}; margin-right:6px;"></span>${dataModel.groups[0].name}
+                            </th>
+                            ${dataModel.groups
+      .slice(1)
+      .map((g, idx) => {
+        const c =
+                                  groupColors[(idx + 1) % groupColors.length];
+        return `<th rowspan="2" style="width: 1rem; background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border);"></th>
+                                <th colspan="2" style="padding: 0.5rem 1.5rem; text-align: center; font-weight: 600; color: var(--text-secondary); background: #1e1e2d; background-clip: padding-box; border-top: 3px solid ${c}; border-bottom: 1px solid var(--card-border); border-left: 3px solid ${c}; border-right: 3px solid ${c};">
+                                    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color:${c}; margin-right:6px;"></span>${g.name}
+                                </th>`;
+      })
+      .join('')}
+                        </tr>
+                        <tr>
+                            ${dataModel.groups
+      .slice(1)
+      .map((g, idx) => {
+        const c =
+                                  groupColors[(idx + 1) % groupColors.length];
+        return `<th style="padding: 0.5rem 1.5rem; font-weight: 600; color: var(--text-secondary); background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border); border-left: 3px solid ${c};">Value</th>
+                                <th style="padding: 0.5rem 1.5rem; font-weight: 600; color: var(--text-secondary); background: #1e1e2d; background-clip: padding-box; border-bottom: 1px solid var(--card-border); border-right: 3px solid ${c};">Δ from ${dataModel.groups[0].name}</th>`;
+      })
+      .join('')}
                         </tr>
                     </thead>
                     <tbody id="metrics-table-body">
@@ -400,57 +479,67 @@ function renderMetricsPanel(dataModel) {
   for (let i = 0; i < results.length; i++) {
     const r = results[i];
 
-    let rowStyle =
-      'border-bottom: 1px solid var(--card-border); cursor: pointer; transition: background 0.1s;';
-    if (i === results.length - 1) {
-      rowStyle = 'cursor: pointer; transition: background 0.1s;';
-    }
+    const rowStyle = 'cursor: pointer; transition: background 0.1s;';
+    const tdBorder =
+      i === results.length - 1 ?
+        '' :
+        'border-bottom: 1px solid var(--card-border);';
 
-    let diffCell = '';
-    if (numGroups === 2) {
+    let cellsHtml = '';
+
+    const formatValue = (mean, units) => {
+      if (mean === null || isNaN(mean)) {
+        return '<span style="color: var(--text-secondary);">-</span>';
+      }
+      const formatted = mean.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      });
+      const unitText = units && units !== 'unknown' ? units : '';
+      return `${formatted} <span style="color: var(--text-secondary); font-size: 0.85rem;">${unitText}</span>`;
+    };
+
+    cellsHtml += `<td style="width: 1rem; ${tdBorder}"></td>
+                  <td style="padding: 1rem 1.5rem; font-variant-numeric: tabular-nums; border-left: 3px solid ${groupColors[0]}; border-right: 3px solid ${groupColors[0]}; ${tdBorder}">${formatValue(r.groupMeans ? r.groupMeans[0] : null, r.units)}</td>`;
+
+    for (let j = 1; j < numGroups; j++) {
+      const comp = r.comparisons && r.comparisons[j - 1];
+      const meanValue = r.groupMeans ? r.groupMeans[j] : null;
+      const c = groupColors[j % groupColors.length];
+
+      cellsHtml += `<td style="width: 1rem; ${tdBorder}"></td>
+                    <td style="padding: 1rem 1.5rem; font-variant-numeric: tabular-nums; background: transparent; border-left: 3px solid ${c}; ${tdBorder}">${formatValue(meanValue, r.units)}</td>`;
+
       let changeText = '-';
       let changeColor = 'var(--text-secondary)';
-      if (!r.missingData && !r.insufficientData && r.change !== 0) {
-        const pct = (r.change * 100).toFixed(2) + '%';
-        changeText = (r.change > 0 ? '+' : '') + pct;
-        if (r.isImprovement) changeColor = 'var(--success)';
-        if (r.isRegression) changeColor = 'var(--danger)';
-      } else if (r.insufficientData) {
-        changeText = 'N/A';
+
+      if (comp && !comp.missingData && !comp.insufficientData) {
+        const showDelta =
+          !significantOnly || comp.significant === true || comp.pValue === null;
+
+        if (showDelta && comp.change !== 0) {
+          const pct = (comp.change * 100).toFixed(2) + '%';
+          changeText = (comp.change > 0 ? '+' : '') + pct;
+          if (comp.isImprovement) changeColor = 'var(--success)';
+          if (comp.isRegression) changeColor = 'var(--danger)';
+        }
       }
 
-      diffCell = `<td style="padding: 1rem 1.5rem; font-weight: 500; color: ${changeColor};">${changeText}</td>`;
+      cellsHtml += `<td style="padding: 1rem 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; color: ${changeColor}; background: transparent; border-right: 3px solid ${c}; ${tdBorder}">${changeText}</td>`;
     }
 
-    const groupCells = r.groupMeans
-        .map((mean) => {
-          if (mean === null || isNaN(mean)) {
-            return `<td style="padding: 1rem 1.5rem; color: var(--text-secondary);">-</td>`;
-          }
-
-          // Format number
-          const formatted = mean.toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-          });
-          const unitText = r.units && r.units !== 'unknown' ? r.units : '';
-          return `<td style="padding: 1rem 1.5rem; font-variant-numeric: tabular-nums;">${formatted} <span style="color: var(--text-secondary); font-size: 0.85rem;">${unitText}</span></td>`;
-        })
-        .join('');
-
     const aggModeDisplay =
-      r.aggMode === 'raw' ?
+      !r.aggMode || r.aggMode === 'raw' ?
         '' :
-        `<span style="padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; border: 1px solid var(--card-border); font-size: 0.85rem; color: var(--text-secondary);">${r.aggMode}</span>`;
+        `<span style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; border: 1px solid var(--card-border); font-size: 0.85rem; color: var(--text-secondary);">${r.aggMode}</span>`;
 
     html += `
             <tr class="metric-row" data-metric="${r.originalMetricName}" style="${rowStyle}" onmouseover="if(!this.classList.contains('selected')) this.style.background='rgba(255,255,255,0.02)'" onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
-                <td style="padding: 1rem 1.5rem; font-weight: 500;">
+                <td style="padding: 1rem 1.5rem; font-weight: 500; ${tdBorder}">
                     ${r.metricName}
+                    ${aggModeDisplay}
                     ${r.missingData ? `<span style="margin-left: 0.5rem; font-size: 0.75rem; padding: 0.1rem 0.4rem; border-radius: 4px; background: rgba(234,179,8,0.1); color: var(--warning);">Missing Data</span>` : ''}
                 </td>
-                <td style="padding: 1rem 1.5rem;">${aggModeDisplay}</td>
-                ${groupCells}
-                ${diffCell}
+                ${cellsHtml}
             </tr>
         `;
   }
@@ -519,6 +608,15 @@ function renderGraphPanel(metricData, dataModel) {
   const graphContainer = document.getElementById('graph-panel');
   if (!graphContainer) return;
 
+  if (!metricData || !metricData.groupValuesList) {
+    graphContainer.style.display = 'flex';
+    graphContainer.style.alignItems = 'center';
+    graphContainer.style.justifyContent = 'center';
+    graphContainer.innerHTML =
+      '<p style="color: var(--text-secondary); font-style: italic;">No graph available for missing data.</p>';
+    return;
+  }
+
   // Reset container style for graph
   graphContainer.style.display = 'block';
   graphContainer.style.alignItems = 'initial';
@@ -536,7 +634,7 @@ function renderGraphPanel(metricData, dataModel) {
 
   const tracesViolin = [];
   const tracesBox = [];
-  const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']; // Tailwind colors for groups
+  const colors = GROUP_COLORS;
 
   for (let i = 0; i < dataModel.groups.length; i++) {
     const vals = metricData.groupValuesList[i];

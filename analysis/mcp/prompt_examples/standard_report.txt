@@ -8,16 +8,22 @@ Group 2 (Experiment):
 - <dataset path or gs:// URI>
 - <optional additional metrics files>
 
+<Additional groups>
+
 I would like you to write a comprehensive, beautifully formatted Markdown report comparing their performance. Please follow this workflow:
 
 CRITICAL RULE: DO NOT write any custom Python or Node scripts (like `summarize.py`) to parse the JSON files manually. ALWAYS use the provided MCP tools, which inherently support statistical permutation tests, Holm-Bonferroni correction, and polarity logic.
 
-Environment Setup: Use get_dataset_metadata to extract the exact OS, browser, and hardware metadata for both datasets.
+Environment Setup: Use get_dataset_metadata to extract the exact OS, browser, and hardware metadata for all datasets.
+
 Coverage Check: Use compare_datasets to confirm which test suites they share in common.
-The Highlight Reel: Use get_significant_changes to pull a summary of the most critical, statistically significant regressions and improvements across all tests. (Rely on the default importantMetrics filter to keep the signal-to-noise ratio high).
+
+The Highlight Reel: Iterate through the common tests from step 2 and use get_significant_changes for each specific test to pull a summary of the most critical, statistically significant regressions and improvements. (Rely on the default importantMetrics filter to keep the signal-to-noise ratio high).
+
 Deep Dives: If you notice any particularly severe regressions or interesting anomalies in a specific test suite from step 3, use analyze_test to do a deeper dive into that specific suite to pull more context.
+
 Report Formatting: Please structure the final report with:
 
-An Executive Summary highlighting the overarching narrative (e.g., is AL consistently faster/slower than ChromeOS across the board?).
+An Executive Summary highlighting the overarching narrative.
 A Test Environment section detailing the metadata.
 A Detailed Breakdown of the significant metric changes, utilizing Markdown tables to cleanly compare the group means along with their percentage change.

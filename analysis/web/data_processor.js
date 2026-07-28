@@ -83,10 +83,17 @@ export async function startAnalysis(config) {
   // Check if all datasets are GCS paths to update URL
   const hasLocalFiles = config.groups.some((g) => g.localFiles.length > 0);
   if (!hasLocalFiles) {
-    const urlParams = new URLSearchParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    // Remove old dataset_ params
+    for (const key of [...urlParams.keys()]) {
+      if (key.startsWith('dataset_')) {
+        urlParams.delete(key);
+      }
+    }
+
     config.groups.forEach((g) => {
       g.gcsPaths.forEach((path) => {
-        urlParams.append(g.name, path);
+        urlParams.append(`dataset_${g.name}`, path);
       });
     });
     const newUrl = `${window.location.pathname}?${urlParams.toString()}`;

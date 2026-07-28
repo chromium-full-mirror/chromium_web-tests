@@ -48,7 +48,7 @@ To enable the `web-tests-analyzer` MCP server, you need to configure your agent'
     "web-tests-analyzer": {
       "command": "/path/to/web-tests/third_party/crossbench/third_party/node/linux/node-linux-x64/bin/node",
       "args": [
-        "--max-old-space-size=4096",
+        "--max-old-space-size=8192",
         "/path/to/web-tests/web-tests/analysis/mcp/mcp.js"
       ]
     }
@@ -56,7 +56,7 @@ To enable the `web-tests-analyzer` MCP server, you need to configure your agent'
 }
 ```
 
-*Note: The `--max-old-space-size=4096` flag ensures the Node.js process has enough memory to parse large JSON datasets.*
+*Note: The `--max-old-space-size=8192` flag ensures the Node.js process has enough memory to parse large JSON datasets.*
 
 ### Available Tools
 

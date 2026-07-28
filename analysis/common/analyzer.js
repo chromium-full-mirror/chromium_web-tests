@@ -11,39 +11,41 @@ import {
 } from './parser.js';
 import {importantMetricsManifest} from './important_metrics.js';
 
-export function getCommonTests(dataModel) {
+export function getBaselineTests(dataModel) {
   if (!dataModel || !dataModel.groups || dataModel.groups.length === 0) {
     return [];
   }
 
-  let commonTests = Array.from(dataModel.groups[0].metrics.keys());
-
-  for (let i = 1; i < dataModel.groups.length; i++) {
-    const otherGroupMetrics = dataModel.groups[i].metrics;
-    commonTests = commonTests.filter((test) => otherGroupMetrics.has(test));
-  }
-
-  return commonTests.sort();
+  return Array.from(dataModel.groups[0].metrics.keys()).sort();
 }
 
 export function getDatasetMismatches(dataModel) {
   const warnings = [];
-  if (!dataModel || !dataModel.groups) return warnings;
+  if (!dataModel || !dataModel.groups || dataModel.groups.length < 2) {
+    return warnings;
+  }
 
-  for (let i = 0; i < dataModel.groups.length; i++) {
+  const baselineGroup = dataModel.groups[0];
+  const baselineTests = Array.from(baselineGroup.metrics.keys());
+
+  for (let i = 1; i < dataModel.groups.length; i++) {
     const group = dataModel.groups[i];
     const groupTests = Array.from(group.metrics.keys());
 
-    const missingTests = groupTests.filter((test) => {
-      return dataModel.groups.some((otherGroup, j) => {
-        return i !== j && !otherGroup.metrics.has(test);
-      });
-    });
+    const baselineMissing = groupTests.filter(
+        (test) => !baselineGroup.metrics.has(test),
+    );
+    const groupMissing = baselineTests.filter(
+        (test) => !group.metrics.has(test),
+    );
 
-    if (missingTests.length > 0) {
+    const allMissing = [...baselineMissing, ...groupMissing].sort();
+
+    if (allMissing.length > 0) {
       warnings.push({
+        baselineName: baselineGroup.name,
         groupName: group.name,
-        missingTests: missingTests.sort(),
+        missingTests: allMissing,
       });
     }
   }
@@ -78,13 +80,9 @@ export function analyzeTestMetrics(testName, dataModel) {
     const groupDataList = groupMetrics.map((metrics) =>
       metrics.get(metricName),
     );
-    const missingData = groupDataList.every((data) => !data);
+    const missingData = groupDataList.some((data) => !data);
 
-    if (
-      !missingData &&
-      dataModel.groups.length > 1 &&
-      groupDataList.some((data) => !data)
-    ) {
+    if (groupDataList.every((data) => !data)) {
       continue;
     }
 
@@ -100,38 +98,58 @@ export function analyzeTestMetrics(testName, dataModel) {
     const improvementDirection =
       groupDataList.find((data) => data != null)?.improvement_direction || null;
 
-    let change = 0;
-    let isRegression = false;
-    let isImprovement = false;
-    let pValue = null;
-    const insufficientData =
-      missingData || groupValuesList.some((values) => values.length < 2);
+    const comparisons = [];
 
-    if (dataModel.groups.length === 2) {
+    if (dataModel.groups.length >= 2) {
       const lMean = groupMeans[0];
-      const rMean = groupMeans[1];
-      change =
-        lMean !== 0 && lMean !== null && rMean !== null ?
-          (rMean - lMean) / lMean :
-          0;
+      const lVals = groupValuesList[0];
 
-      if (
-        improvementDirection === 'up' ||
-        improvementDirection === 'HIGHER_IS_BETTER'
-      ) {
-        if (change < 0) isRegression = true;
-        if (change > 0) isImprovement = true;
-      } else if (
-        improvementDirection === 'down' ||
-        improvementDirection === 'LOWER_IS_BETTER'
-      ) {
-        if (change > 0) isRegression = true;
-        if (change < 0) isImprovement = true;
+      for (let i = 1; i < dataModel.groups.length; i++) {
+        const rMean = groupMeans[i];
+        const rVals = groupValuesList[i];
+        const compMissingData = !groupDataList[0] || !groupDataList[i];
+        const compInsufficientData =
+          compMissingData || lVals.length < 2 || rVals.length < 2;
+
+        let change = 0;
+        let isRegression = false;
+        let isImprovement = false;
+        let pValue = null;
+
+        if (!compMissingData) {
+          change =
+            lMean !== 0 && lMean !== null && rMean !== null ?
+              (rMean - lMean) / lMean :
+              0;
+
+          if (
+            improvementDirection === 'up' ||
+            improvementDirection === 'HIGHER_IS_BETTER'
+          ) {
+            if (change < 0) isRegression = true;
+            if (change > 0) isImprovement = true;
+          } else if (
+            improvementDirection === 'down' ||
+            improvementDirection === 'LOWER_IS_BETTER'
+          ) {
+            if (change > 0) isRegression = true;
+            if (change < 0) isImprovement = true;
+          }
+
+          if (!compInsufficientData) {
+            pValue = permutationTest(lVals, rVals);
+          }
+        }
+
+        comparisons.push({
+          change,
+          isRegression,
+          isImprovement,
+          pValue,
+          missingData: compMissingData,
+          insufficientData: compInsufficientData,
+        });
       }
-
-      pValue = insufficientData ?
-        null :
-        permutationTest(groupValuesList[0], groupValuesList[1]);
     }
 
     results.push({
@@ -140,18 +158,14 @@ export function analyzeTestMetrics(testName, dataModel) {
       aggMode: getAggregationMode(metricName),
       groupMeans,
       groupValuesList,
-      change,
+      comparisons,
       improvementDirection,
-      isRegression,
-      isImprovement,
-      pValue,
-      insufficientData,
       missingData,
       units,
     });
   }
 
-  if (dataModel.groups.length === 2) {
+  if (dataModel.groups.length >= 2) {
     results = holmBonferroni(results);
   }
 
@@ -159,7 +173,12 @@ export function analyzeTestMetrics(testName, dataModel) {
 }
 
 export function filterSignificantChanges(results) {
-  return results.filter((m) => m.significant === true || m.pValue === null);
+  return results.filter((m) => {
+    if (!m.comparisons || m.comparisons.length === 0) return true;
+    return m.comparisons.some(
+        (c) => c.significant === true || c.pValue === null,
+    );
+  });
 }
 
 export function getImportantMetricsForTest(testName) {
@@ -181,6 +200,7 @@ export function filterMetrics(results, options = {}) {
     importantMetrics = [],
     displayAll = false,
     significantOnly = false,
+    searchQuery = '',
   } = options;
 
   let filtered = results;
@@ -213,6 +233,7 @@ export function filterMetrics(results, options = {}) {
       if (!found) {
         finalResults.push({
           metricName: important,
+          originalMetricName: important,
           missingData: true,
         });
       }
@@ -247,6 +268,11 @@ export function filterMetrics(results, options = {}) {
     // Sort alphabetically if we are not forcing the important metrics order
     filtered = [...filtered];
     filtered.sort((a, b) => a.metricName.localeCompare(b.metricName));
+  }
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter((r) => r.metricName.toLowerCase().includes(q));
   }
 
   if (significantOnly) {

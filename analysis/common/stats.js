@@ -51,31 +51,37 @@ export function permutationTest(leftVals, rightVals, resamples = 5000) {
 
 // Holm-Bonferroni correction (FWER)
 export function holmBonferroni(results) {
-  // Preserve original order
-  results.forEach((r, i) => (r.originalIndex = i));
+  if (results.length === 0) return results;
+  const numVariants = results[0].comparisons ?
+    results[0].comparisons.length :
+    0;
 
-  const valid = results.filter((r) => !r.insufficientData);
-  const invalid = results.filter((r) => r.insufficientData);
+  for (let v = 0; v < numVariants; v++) {
+    const valid = [];
+    for (let i = 0; i < results.length; i++) {
+      const comp = results[i].comparisons[v];
+      if (comp && !comp.insufficientData) {
+        valid.push(comp);
+      } else if (comp) {
+        comp.significant = false;
+      }
+    }
 
-  // Sort valid by p-value ascending
-  valid.sort((a, b) => a.pValue - b.pValue);
-  const m = valid.length;
+    // Sort valid by p-value ascending
+    valid.sort((a, b) => a.pValue - b.pValue);
+    const m = valid.length;
 
-  let rejectNull = true;
-  for (let i = 0; i < m; i++) {
-    const adjustedAlpha = 0.05 / (m - i);
-    if (rejectNull && valid[i].pValue <= adjustedAlpha) {
-      valid[i].significant = true;
-    } else {
-      rejectNull = false;
-      valid[i].significant = false;
+    let rejectNull = true;
+    for (let i = 0; i < m; i++) {
+      const adjustedAlpha = 0.05 / (m - i);
+      if (rejectNull && valid[i].pValue <= adjustedAlpha) {
+        valid[i].significant = true;
+      } else {
+        rejectNull = false;
+        valid[i].significant = false;
+      }
     }
   }
 
-  // Reconstruct results array
-  const combined = [...valid, ...invalid];
-
-  // Restore original order
-  combined.sort((a, b) => a.originalIndex - b.originalIndex);
-  return combined;
+  return results;
 }

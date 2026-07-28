@@ -4,7 +4,7 @@
 
 import {AGG_MODES} from './parser.js';
 import {
-  getCommonTests,
+  getBaselineTests,
   getDatasetMismatches,
   buildDataModel,
   analyzeTestMetrics,
@@ -69,12 +69,7 @@ export const mcpToolSchemas = [
           description: 'Name of the test to analyze (e.g. jetstream_2.2).',
         },
         datasetGroups: datasetGroupsSchema,
-        displayAll: {
-          type: 'boolean',
-          description:
-            'If true, display all metrics instead of just the ' +
-            'important ones. Default false.',
-        },
+
         aggMode: {
           type: 'string',
           description:
@@ -84,9 +79,7 @@ export const mcpToolSchemas = [
         importantMetrics: {
           type: 'array',
           items: {type: 'string'},
-          description:
-            'List of important metric names to filter by ' +
-            'if displayAll is false.',
+          description: 'List of important metric names to filter by.',
         },
       },
       required: ['testName', 'datasetGroups'],
@@ -116,12 +109,7 @@ export const mcpToolSchemas = [
       type: 'object',
       properties: {
         datasetGroups: datasetGroupsSchema,
-        displayAll: {
-          type: 'boolean',
-          description:
-            'If true, display all metrics instead of just the ' +
-            'important ones. Default false.',
-        },
+
         aggMode: {
           type: 'string',
           description:
@@ -135,19 +123,18 @@ export const mcpToolSchemas = [
   {
     name: 'get_significant_changes',
     description:
-      'Automatically analyze all common tests and filter the results to only ' +
-      'show metrics with a statistically significant change ' +
-      '(or insufficient data). Ideal for constructing highlight reports.',
+      'Analyze a specific test and filter the results to only ' +
+      'show metrics with a statistically significant change. ' +
+      'Ideal for constructing highlight reports.',
     inputSchema: {
       type: 'object',
       properties: {
-        datasetGroups: datasetGroupsSchema,
-        displayAll: {
-          type: 'boolean',
-          description:
-            'If true, include all metrics with significant changes. ' +
-            'If false, only include important metrics. Default false.',
+        testName: {
+          type: 'string',
+          description: 'Name of the test to query (e.g. jetstream_2.2).',
         },
+        datasetGroups: datasetGroupsSchema,
+
         aggMode: {
           type: 'string',
           description:
@@ -155,7 +142,7 @@ export const mcpToolSchemas = [
             `'${AGG_MODES.join('\', \'')}'. Default 'all'.`,
         },
       },
-      required: ['datasetGroups'],
+      required: ['testName', 'datasetGroups'],
     },
   },
 ];
@@ -227,7 +214,7 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
           type: 'text',
           text: JSON.stringify(
               {
-                commonTests: getCommonTests(dataModel),
+                baselineTests: getBaselineTests(dataModel),
                 mismatches: getDatasetMismatches(dataModel),
               },
               null,
@@ -248,7 +235,12 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
     const filteredResults = filterMetrics(results, {
       aggMode: args.aggMode || 'all',
       importantMetrics,
-      displayAll: args.displayAll || false,
+      displayAll: false,
+    });
+
+    // Strip groupValuesList to reduce JSON size for the LLM
+    filteredResults.forEach((m) => {
+      delete m.groupValuesList;
     });
 
     return {
@@ -295,38 +287,63 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
 
   if (name === 'analyze_all_tests' || name === 'get_significant_changes') {
     const dataModel = await loadDatasets(args, loadDatasetFn);
-    const commonTests = getCommonTests(dataModel);
+    const testsToAnalyze =
+      name === 'get_significant_changes' ?
+        [args.testName] :
+        getBaselineTests(dataModel);
 
     const allResults = {
       summary: {
         totalRegressions: 0,
         totalImprovements: 0,
+        totalUnknownDirection: 0,
       },
       tests: {},
     };
 
-    for (const testName of commonTests) {
-      let importantMetrics = [];
-      if (!args.displayAll) {
-        importantMetrics = getImportantMetricsForTest(testName);
-      }
+    for (const testName of testsToAnalyze) {
+      const importantMetrics = getImportantMetricsForTest(testName);
 
       const results = analyzeTestMetrics(testName, dataModel);
 
       const filteredResults = filterMetrics(results, {
         aggMode: args.aggMode || 'all',
         importantMetrics,
-        displayAll: args.displayAll || false,
+        displayAll: false,
         significantOnly: name === 'get_significant_changes',
       });
 
       if (filteredResults.length > 0) {
+        // Strip groupValuesList to reduce JSON size for the LLM
+        filteredResults.forEach((m) => {
+          delete m.groupValuesList;
+        });
+
         allResults.tests[testName] = filteredResults;
         for (const m of filteredResults) {
           // Count regressions and improvements
-          if (m.significant) {
-            if (m.isRegression) allResults.summary.totalRegressions++;
-            if (m.isImprovement) allResults.summary.totalImprovements++;
+          if (m.comparisons) {
+            for (const comp of m.comparisons) {
+              if (comp.significant) {
+                if (comp.isRegression) allResults.summary.totalRegressions++;
+                else if (comp.isImprovement) {
+                  allResults.summary.totalImprovements++;
+                } else allResults.summary.totalUnknownDirection++;
+              }
+            }
+          }
+        }
+
+        if (name === 'get_significant_changes') {
+          // Remove metrics that don't have any actual statistically significant changes
+          // (some might sneak in if they had missing data comparisons)
+          allResults.tests[testName] = filteredResults.filter((m) => {
+            if (!m.comparisons) return false;
+            return m.comparisons.some((c) => c.significant === true);
+          });
+
+          if (allResults.tests[testName].length === 0) {
+            delete allResults.tests[testName];
           }
         }
       }

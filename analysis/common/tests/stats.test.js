@@ -60,34 +60,34 @@ describe('stats', () => {
   describe('holmBonferroni()', () => {
     it('should correctly adjust p-values and identify significance', () => {
       const results = [
-        {id: 1, pValue: 0.01, insufficientData: false}, // 0.01 < 0.0166 -> sig
-        {id: 2, pValue: 0.04, insufficientData: false}, // 0.04 > 0.025 -> false
-        {id: 3, pValue: 0.1, insufficientData: false}, // sig=false
-        {id: 4, pValue: null, insufficientData: true}, // ignored
+        {comparisons: [{id: 1, pValue: 0.01, insufficientData: false}]}, // 0.01 < 0.0166 -> sig
+        {comparisons: [{id: 2, pValue: 0.04, insufficientData: false}]}, // 0.04 > 0.025 -> false
+        {comparisons: [{id: 3, pValue: 0.1, insufficientData: false}]}, // sig=false
+        {comparisons: [{id: 4, pValue: null, insufficientData: true}]}, // ignored
       ];
 
       const adjusted = holmBonferroni(results);
 
       // Order should be preserved!
-      assert.strictEqual(adjusted[0].id, 1);
-      assert.strictEqual(adjusted[0].significant, true);
+      assert.strictEqual(adjusted[0].comparisons[0].id, 1);
+      assert.strictEqual(adjusted[0].comparisons[0].significant, true);
 
-      assert.strictEqual(adjusted[1].id, 2);
-      assert.strictEqual(adjusted[1].significant, false);
+      assert.strictEqual(adjusted[1].comparisons[0].id, 2);
+      assert.strictEqual(adjusted[1].comparisons[0].significant, false);
 
-      assert.strictEqual(adjusted[2].id, 3);
-      assert.strictEqual(adjusted[2].significant, false);
+      assert.strictEqual(adjusted[2].comparisons[0].id, 3);
+      assert.strictEqual(adjusted[2].comparisons[0].significant, false);
 
-      assert.strictEqual(adjusted[3].id, 4);
-      assert.strictEqual(adjusted[3].significant, undefined);
+      assert.strictEqual(adjusted[3].comparisons[0].id, 4);
+      assert.strictEqual(adjusted[3].comparisons[0].significant, false);
     });
 
     it('should stop rejecting null hypothesis when one fails', () => {
       const results = [
-        {id: 'a', pValue: 0.001, insufficientData: false}, // sig
-        {id: 'b', pValue: 0.05, insufficientData: false}, // NOT sig (breaks)
-        {id: 'c', pValue: 0.02, insufficientData: false}, // NOT sig (broken)
-        {id: 'd', pValue: 0.005, insufficientData: false}, // sorts before b
+        {comparisons: [{id: 'a', pValue: 0.001, insufficientData: false}]}, // sig
+        {comparisons: [{id: 'b', pValue: 0.05, insufficientData: false}]}, // NOT sig (breaks)
+        {comparisons: [{id: 'c', pValue: 0.02, insufficientData: false}]}, // NOT sig (broken)
+        {comparisons: [{id: 'd', pValue: 0.005, insufficientData: false}]}, // sorts before b
       ];
 
       // After sorting by pValue:
@@ -99,26 +99,76 @@ describe('stats', () => {
       const adjusted = holmBonferroni(results);
 
       // All passed their adjusted thresholds in order
-      assert.strictEqual(adjusted[0].significant, true); // a
-      assert.strictEqual(adjusted[1].significant, true); // b
-      assert.strictEqual(adjusted[2].significant, true); // c
-      assert.strictEqual(adjusted[3].significant, true); // d
+      assert.strictEqual(adjusted[0].comparisons[0].significant, true); // a
+      assert.strictEqual(adjusted[1].comparisons[0].significant, true); // b
+      assert.strictEqual(adjusted[2].comparisons[0].significant, true); // c
+      assert.strictEqual(adjusted[3].comparisons[0].significant, true); // d
     });
 
     it('should properly break the rejection chain', () => {
       const results = [
-        {id: 'a', pValue: 0.001, insufficientData: false}, // sig
-        {id: 'b', pValue: 0.04, insufficientData: false}, // breaks chain
-        {id: 'c', pValue: 0.045, insufficientData: false}, // chain broken
+        {comparisons: [{id: 'a', pValue: 0.001, insufficientData: false}]}, // sig
+        {comparisons: [{id: 'b', pValue: 0.04, insufficientData: false}]}, // breaks chain
+        {comparisons: [{id: 'c', pValue: 0.045, insufficientData: false}]}, // chain broken
       ];
       // Sorted: a (0.001) -> sig
       // b (0.04) vs 0.05/2 = 0.025 -> NOT sig
       // c (0.045) -> automatically NOT sig because b failed
 
       const adjusted = holmBonferroni(results);
-      assert.strictEqual(adjusted[0].significant, true); // a
-      assert.strictEqual(adjusted[1].significant, false); // b
-      assert.strictEqual(adjusted[2].significant, false); // c
+      assert.strictEqual(adjusted[0].comparisons[0].significant, true); // a
+      assert.strictEqual(adjusted[1].comparisons[0].significant, false); // b
+      assert.strictEqual(adjusted[2].comparisons[0].significant, false); // c
+    });
+
+    it('should correctly handle multi-group comparisons', () => {
+      // 3 metrics, each with 2 comparisons (Variant 1 vs Baseline, Variant 2 vs Baseline)
+      const results = [
+        {
+          comparisons: [
+            {id: 'm1_v1', pValue: 0.01, insufficientData: false}, // v1: sig (0.01 <= 0.0166)
+            {id: 'm1_v2', pValue: 0.06, insufficientData: false}, // v2: not sig (0.06 > 0.05)
+          ],
+        },
+        {
+          comparisons: [
+            {id: 'm2_v1', pValue: 0.1, insufficientData: false}, // v1: not sig (chain broken)
+            {id: 'm2_v2', pValue: 0.001, insufficientData: false}, // v2: sig (0.001 <= 0.0166)
+          ],
+        },
+        {
+          comparisons: [
+            {id: 'm3_v1', pValue: 0.03, insufficientData: false}, // v1: not sig (0.03 > 0.025)
+            {id: 'm3_v2', pValue: 0.02, insufficientData: false}, // v2: sig (0.02 <= 0.025)
+          ],
+        },
+      ];
+
+      const adjusted = holmBonferroni(results);
+
+      // metric 1
+      assert.strictEqual(adjusted[0].comparisons[0].significant, true, 'm1_v1');
+      assert.strictEqual(
+          adjusted[0].comparisons[1].significant,
+          false,
+          'm1_v2',
+      );
+
+      // metric 2
+      assert.strictEqual(
+          adjusted[1].comparisons[0].significant,
+          false,
+          'm2_v1',
+      );
+      assert.strictEqual(adjusted[1].comparisons[1].significant, true, 'm2_v2');
+
+      // metric 3
+      assert.strictEqual(
+          adjusted[2].comparisons[0].significant,
+          false,
+          'm3_v1',
+      );
+      assert.strictEqual(adjusted[2].comparisons[1].significant, true, 'm3_v2');
     });
   });
 });

@@ -97,7 +97,21 @@ header {
     letter-spacing: 1px;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    display: block;
+    display: flex;
+    align-items: center;
+}
+
+.baseline-badge {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: help;
 }
 
 .group-nickname-input {

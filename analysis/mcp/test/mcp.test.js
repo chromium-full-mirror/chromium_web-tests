@@ -156,9 +156,13 @@ describe('MCP Server', () => {
     assert.strictEqual(result.content[0].type, 'text');
 
     const parsed = JSON.parse(result.content[0].text);
-    assert.deepStrictEqual(parsed.commonTests, ['setup', 'test_A']);
-    // There should be mismatches
-    assert.strictEqual(parsed.mismatches.length, 2);
+    assert.deepStrictEqual(parsed.baselineTests, ['setup', 'test_A', 'test_B']);
+    // There should be mismatches between Group 1 and Group 2
+    assert.strictEqual(parsed.mismatches.length, 1);
+    assert.deepStrictEqual(parsed.mismatches[0].missingTests, [
+      'test_B',
+      'test_C',
+    ]);
   });
 
   it('compare_datasets should throw if no datasetGroups provided', async () => {
@@ -194,7 +198,6 @@ describe('MCP Server', () => {
       arguments: {
         testName: 'test_A',
         datasetGroups: testDatasetGroups,
-        displayAll: true,
       },
     });
 
@@ -213,7 +216,6 @@ describe('MCP Server', () => {
       name: 'analyze_all_tests',
       arguments: {
         datasetGroups: testDatasetGroups,
-        displayAll: true,
       },
     });
 
@@ -230,8 +232,8 @@ describe('MCP Server', () => {
     const result = await sendRequest('tools/call', {
       name: 'get_significant_changes',
       arguments: {
+        testName: 'test_A',
         datasetGroups: testDatasetGroups,
-        displayAll: true,
       },
     });
 
@@ -239,8 +241,54 @@ describe('MCP Server', () => {
     const parsed = JSON.parse(result.content[0].text);
 
     // Mock datasets have 1 point each so they have pValue null
-    assert.ok(parsed.tests['test_A']);
-    assert.strictEqual(parsed.tests['test_A'][0].significant, undefined);
-    assert.strictEqual(parsed.tests['test_A'][0].pValue, null);
+    // Therefore they are not statistically significant and should be filtered out
+    assert.ok(parsed.tests['test_A'] === undefined);
+  });
+
+  it('get_significant_changes works with sample files', async () => {
+    const sample1Path = join(
+        __dirname,
+        '../../common/tests/sample_1.metrics.json',
+    );
+    const sample2Path = join(
+        __dirname,
+        '../../common/tests/sample_2.metrics.json',
+    );
+    const sample3Path = join(
+        __dirname,
+        '../../common/tests/sample_3.metrics.json',
+    );
+
+    const result = await sendRequest('tools/call', {
+      name: 'get_significant_changes',
+      arguments: {
+        testName: 'test_suite_A',
+        datasetGroups: [
+          {name: 'Group 1', paths: [sample1Path]},
+          {name: 'Group 2', paths: [sample2Path]},
+          {name: 'Group 3', paths: [sample3Path]},
+        ],
+      },
+    });
+
+    assert.ok(result.content);
+    const parsed = JSON.parse(result.content[0].text);
+
+    // sample1: 100 avg, sample2: 110 avg, sample3: 90 avg
+    // improvement_direction is "down" (lower is better)
+    assert.ok(parsed.tests['test_suite_A']);
+    const metric = parsed.tests['test_suite_A'][0];
+    assert.strictEqual(metric.metricName, 'score');
+
+    // Group 2 comparison (100 -> 110)
+    assert.strictEqual(metric.comparisons[0].significant, true);
+    assert.strictEqual(metric.comparisons[0].isRegression, true);
+
+    // Group 3 comparison (100 -> 90)
+    assert.strictEqual(metric.comparisons[1].significant, true);
+    assert.strictEqual(metric.comparisons[1].isImprovement, true);
+
+    assert.strictEqual(parsed.summary.totalRegressions, 1);
+    assert.strictEqual(parsed.summary.totalImprovements, 1);
   });
 });
