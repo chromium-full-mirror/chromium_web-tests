@@ -48,6 +48,9 @@ vars = {
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
   'crossbench_revision': 'd97d3558b81de6c86c3a4f7400d9327c67a98458',
+
+  # Set to False to skip development-only hooks
+  'checkout_web_tests_dev': True,
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -77,11 +80,6 @@ pre_deps_hooks = [
                 '-vpython-tool', 'install',
     ],
   },
-  {
-    'name': 'generate_perfetto_protos',
-    'pattern': '.',
-    'action': ['vpython3', 'tools/generate_perfetto_protos.py'],
-  },
 ]
 
 # Contains hooks necessary to develop web-tests
@@ -89,8 +87,14 @@ hooks = [
   {
     'name': 'perfetto_venv',
     'pattern': '.',
+    'condition': 'checkout_web_tests_dev',
     'action': ['third_party/perfetto/tools/install-build-deps', '--ui']
-  }
+  },
+  {
+    'name': 'generate_perfetto_protos',
+    'pattern': '.',
+    'action': ['vpython3', 'tools/generate_perfetto_protos.py'],
+  },
 ]
 
 recursedeps = [
