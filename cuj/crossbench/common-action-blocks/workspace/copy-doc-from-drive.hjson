@@ -30,7 +30,6 @@
         required: false
         wait: true
       }
-      verify: '''[role="menuitem"] [aria-label="Make a copy"]:not([data-tooltip])'''
       source: $[CLICK_INPUT_SOURCE]
       timeout: 15s
       attempts: 1
@@ -49,7 +48,7 @@
         scroll_into_view: true
         wait: true
       }
-      verify: '''[role="menuitem"] [aria-label="Make a copy"]:not([data-tooltip])'''
+      verify: "[role='menuitem'][aria-label^='Make a copy'], [role='menuitem'] [aria-label^='Make a copy']"
       source: $[CLICK_INPUT_SOURCE]
       timeout: 10s
       attempts: 3
@@ -63,7 +62,7 @@
     {
       action: click
       pos: {
-        selector: '''[role="menuitem"] [aria-label="Make a copy"]:not([data-tooltip])'''
+        selector: "[role='menuitem'][aria-label^='Make a copy'], [role='menuitem'] [aria-label^='Make a copy']"
         required: true
         scroll_into_view: true
         wait: true
