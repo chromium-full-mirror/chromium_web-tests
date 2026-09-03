@@ -1,0 +1,54 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query {
+  id: "slow_inputs_query"
+  table {
+    table_name: "slow_inputs_output"
+    module_name: "sql_packages.queries.slow_inputs"
+    column_names: "event_type"
+    column_names: "threshold_name"
+    column_names: "threshold_ms"
+    column_names: "threshold_us"
+    column_names: "slow_count"
+    column_names: "total_count"
+    column_names: "slow_percent"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.percent_inputs_slower_than"
+  dimensions: "event_type"
+  dimensions: "threshold_name"
+  value: "slow_percent"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "slow_inputs_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.num_inputs_slower_than"
+  dimensions: "event_type"
+  dimensions: "threshold_name"
+  value: "slow_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "slow_inputs_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.num_inputs"
+  dimensions: "event_type"
+  value: "total_count"
+  query: {
+    inner_query_id: "slow_inputs_query"
+    filters {
+      column_name: "threshold_name"
+      op: EQUAL
+      string_rhs: "100ms"
+    }
+  }
+}

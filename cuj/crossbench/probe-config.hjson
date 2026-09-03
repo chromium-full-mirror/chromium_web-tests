@@ -22,6 +22,7 @@
         ./common-metrics/battery_start_percent.textproto
         ./common-metrics/system_info.textproto
         ./common-metrics/browser_info.textproto
+        ./common-metrics/slow_inputs.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }
