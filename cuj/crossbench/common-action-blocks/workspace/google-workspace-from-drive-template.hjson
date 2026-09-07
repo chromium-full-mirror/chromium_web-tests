@@ -8,20 +8,13 @@
       blocks: {
         setup: $[SETUP_ACTIONS]
         copy-doc: {
-          template: ./copy-doc-from-drive.hjson
-          args: {
-            DESTINATION: _self
-          }
+          template: ./copy-workspace-file.hjson
           unbound_args: [
-            CLICK_INPUT_SOURCE
-            DOC_APP
-            DOC_NAME
-            DRIVE_FOLDER_URL
+            TEMPLATE_WORKSPACE_FILE_ID
           ]
         }
         comment: ./make-comment.hjson
         scroll: ../basic/scroll.hjson
-        cleanup: ./cleanup-doc.hjson
       }
     }
   }

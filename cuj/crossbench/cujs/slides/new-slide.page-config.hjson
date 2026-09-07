@@ -13,7 +13,12 @@
       SLIDES-CUJ: {
         login: google
         blocks: {
-          copy-slides: ./action-blocks/copy-slides.hjson
+          copy-slides: {
+            template: ../../common-action-blocks/workspace/copy-workspace-file.hjson
+            args: {
+              TEMPLATE_WORKSPACE_FILE_ID: 1BBkJAs8zEh0KxjHm2UeErLdBFSP5WOQIcbe8HsX_0iU
+            }
+          }
           scroll: ./action-blocks/scroll-slides.hjson
           new-slide: [
             // The loading mechanism of Google Slides' thumbnails is lazy loading.
@@ -140,7 +145,6 @@
               script: performance.mark('new-slide-deleted');
             }
           ]
-          cleanup: ../../common-action-blocks/workspace/cleanup-doc.hjson
         }
       }
     }

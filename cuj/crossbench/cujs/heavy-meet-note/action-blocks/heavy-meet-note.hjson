@@ -17,44 +17,31 @@
       Copy-Slides: {
         login: google
         setup: {
-          template: ../../../common-action-blocks/workspace/copy-doc.hjson
+          template: ../../../common-action-blocks/workspace/copy-workspace-file.hjson
           args: {
-            DOC_URL: https://docs.google.com/presentation/d/1ZG8bS0IlQyePSWlflh22_GJVrQsjMJntbL-oTz3crkM/edit#slide=id.g3182d87bbe9_0_0
-            TEST_NAME: heavy-slides
-            ARIA_DISABLED: ""
-            AFTER_MAKE_COPY_CLICK_ACTIONS: [
-              {
-                action: wait_for_element
-                selector: span[aria-label^='Entire presentation']
-                timeout: 15s
-              }
-              {
-                action: click
-                selector: span[aria-label^='Entire presentation']
-                source: $[CLICK_INPUT_SOURCE]
-                verify: "[aria-modal='true'] input[type='text']:focus"
-              }
-            ]
+            TEMPLATE_WORKSPACE_FILE_ID: 1BBkJAs8zEh0KxjHm2UeErLdBFSP5WOQIcbe8HsX_0iU
           }
-          unbound_args: [
-            CLICK_INPUT_SOURCE
-          ]
         }
       }
 
-      // 2. Copy Sheets (Setup Only - runs once)
+      // 2. Open new window and copy sheet (Setup Only - runs once)
+      Open-Sheets-Window: {
+        setup: {
+          actions: [
+            {
+              action: get
+              url: about:blank
+              target: _new_window
+            }
+          ]
+        }
+      }
       Copy-Sheets: {
         setup: {
-          template: ../../../common-action-blocks/workspace/copy-doc-from-drive.hjson
+          template: ../../../common-action-blocks/workspace/copy-workspace-file.hjson
           args: {
-            DRIVE_FOLDER_URL: https://drive.google.com/corp/drive/folders/1LPPeFRCOtfnBltyg931mSOjVt9-DzL_B
-            DOC_NAME: tbs-pssd-compendium-salary-disclosed-2023-en-utf-8-2024-05-31
-            DOC_APP: spreadsheets
-            DESTINATION: _new_window
+            TEMPLATE_WORKSPACE_FILE_ID: 1DMn6By1XeqEaI9FEuTW_oFmeHkwbPj_rjmjPeJhh6M8
           }
-          unbound_args: [
-            CLICK_INPUT_SOURCE
-          ]
         }
       }
 
@@ -90,7 +77,7 @@
               // 1. Switch to Slides tab and interact
               {
                 action: switch_tab
-                title: ^heavy-slides
+                url: docs.google.com/presentation
                 timeout: 15s
               }
               {
@@ -290,101 +277,6 @@
                 duration: 3s
               }
             ]
-          }
-        ]
-
-        // Teardown runs EXACTLY once at the very end of the entire run!
-        teardown: [
-          // Cleanup Slides
-          {
-            action: switch_tab
-            title: ^heavy-slides
-            timeout: 15s
-          }
-          {
-            action: wait
-            duration: 5s
-          }
-          {
-            action: click
-            pos: {
-              selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[role='menuitem'] [aria-label^='Move to trash']"
-          }
-          {
-            action: click
-            pos: {
-              selector: "[role='menuitem'] [aria-label^='Move to trash']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[data-mdc-dialog-action='ok']"
-          }
-          {
-            action: click
-            pos: {
-              selector: "[data-mdc-dialog-action='ok']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: body:not(:has([aria-modal='true'][role='alertdialog']))
-          }
-          {
-            action: wait
-            duration: 1s
-          }
-          {
-            action: wait_for_ready_state
-            ready_state: complete
-          }
-
-          // Cleanup Sheets
-          {
-            action: switch_tab
-            url: docs.google.com/spreadsheets
-            timeout: 15s
-          }
-          {
-            action: wait
-            duration: 5s
-          }
-          {
-            action: click
-            pos: {
-              selector: "#docs-file-menu[role='menuitem'][aria-disabled='false']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[role='menuitem'] [aria-label^='Move to trash']"
-          }
-          {
-            action: click
-            pos: {
-              selector: "[role='menuitem'] [aria-label^='Move to trash']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: "[data-mdc-dialog-action='ok']"
-          }
-          {
-            action: click
-            pos: {
-              selector: "[data-mdc-dialog-action='ok']"
-              required: true
-            }
-            source: $[CLICK_INPUT_SOURCE]
-            verify: body:not(:has([aria-modal='true'][role='alertdialog']))
-          }
-          {
-            action: wait
-            duration: 1s
-          }
-          {
-            action: wait_for_ready_state
-            ready_state: complete
           }
         ]
       }

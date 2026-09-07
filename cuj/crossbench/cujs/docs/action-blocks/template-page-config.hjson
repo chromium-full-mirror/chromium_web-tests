@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ../../../common-action-blocks/workspace/google-workspace-template.hjson
+  template: ../../../common-action-blocks/workspace/google-workspace-from-drive-template.hjson
   args: {
-    TEST_NAME: wbp-3
-    DOC_URL: https://docs.google.com/document/d/11E6jzIVCyJwWQQdJaqKEPWxcdKt3_-GDoUOWi20Wy6g/edit?hl=en&tab=t.0#heading=h.khmqmf7bmw9z
+    TEMPLATE_WORKSPACE_FILE_ID: 1vrieUduOtc7tin0bqOuVXCiY1w9Zx_KySwt5BINHq9g
     COMMENT_TEXT: This document is the foundation of American Literature!
     CLICK_INPUT_SOURCE: touch
     SCROLL_SELECTOR: "#kix-appview"

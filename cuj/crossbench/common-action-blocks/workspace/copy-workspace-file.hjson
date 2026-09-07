@@ -1,0 +1,19 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  actions: [
+    {
+      action: probe
+      probe: google_workspace
+      kwargs: {
+        action: copy_and_redirect
+        template_id: $[TEMPLATE_WORKSPACE_FILE_ID]
+      }
+    }
+    {
+      action: wait_for_ready_state
+      ready_state: complete
+    }
+  ]
+}

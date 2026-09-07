@@ -4,9 +4,7 @@
 {
   template: ../../../common-action-blocks/workspace/google-workspace-from-drive-template.hjson
   args: {
-    DRIVE_FOLDER_URL: https://drive.google.com/corp/drive/folders/1LPPeFRCOtfnBltyg931mSOjVt9-DzL_B
-    DOC_NAME: tbs-pssd-compendium-salary-disclosed-2023-en-utf-8-2024-05-31
-    DOC_APP: spreadsheets
+    TEMPLATE_WORKSPACE_FILE_ID: 1DMn6By1XeqEaI9FEuTW_oFmeHkwbPj_rjmjPeJhh6M8
     COMMENT_TEXT: Ontario sure has a lot of public employees!
     CLICK_INPUT_SOURCE: touch
     SCROLL_SELECTOR: "[class='goog-inline-block grid4-inner-container']"

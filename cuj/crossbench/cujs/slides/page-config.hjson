@@ -11,7 +11,12 @@
       SLIDES-CUJ: {
         login: google
         blocks: {
-          copy-slides: ./action-blocks/copy-slides.hjson
+          copy-slides: {
+            template: ../../common-action-blocks/workspace/copy-workspace-file.hjson
+            args: {
+              TEMPLATE_WORKSPACE_FILE_ID: 1BBkJAs8zEh0KxjHm2UeErLdBFSP5WOQIcbe8HsX_0iU
+            }
+          }
           scroll: ./action-blocks/scroll-slides.hjson
           find-text: {
             args: {
@@ -56,7 +61,6 @@
               CLICK_INPUT_SOURCE
             ]
           }
-          cleanup: ../../common-action-blocks/workspace/cleanup-doc.hjson
         }
       }
     }

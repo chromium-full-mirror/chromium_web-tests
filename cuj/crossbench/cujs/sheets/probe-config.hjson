@@ -10,6 +10,10 @@
       ../../common-metrics/scroll_duration.textproto
     ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
-    ADDITIONAL_PROBES: []
+    ADDITIONAL_PROBES: [
+      {
+        name: google_workspace
+      }
+    ]
   }
 }
