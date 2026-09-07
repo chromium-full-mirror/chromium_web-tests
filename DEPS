@@ -47,7 +47,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
-  'crossbench_revision': '84edffc57f708686da425e2e0bdcf377a3b78f1b',
+  'crossbench_revision': '6f48553507b15a1c60dae9f1f0c2af0585f2be0d',
 
   # Set to False to skip development-only hooks
   'checkout_web_tests_dev': True,
@@ -76,7 +76,6 @@ pre_deps_hooks = [
     'name': 'vpython3_common',
     'pattern': '.',
     'action': [ 'vpython3',
-                '-vpython-spec', '.vpython3',
                 '-vpython-tool', 'install',
     ],
   },

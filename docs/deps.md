@@ -14,11 +14,13 @@ roll-dep third_party/crossbench
 
 This will create a new commit with the updated dependency.
 
-### Step 2: Update .vpython3 Packages
+### Step 2: Update vpython.toml Packages
 
-The `.vpython3` file in the project root needs to be synchronized with the one
+The `vpython.toml` file in the project root needs to be synchronized with the one
 in the newly updated `crossbench` dependency. Copy the package versions from
-`third_party/crossbench/.vpython3` to the root `.vpython3` file.
+`third_party/crossbench/vpython.toml` to the root `vpython.toml` file.
+
+Then regenerate the vpython.toml.uv.lock file by running `gclient sync` again.
 
 ### Step 3: Update Poetry Dependencies
 

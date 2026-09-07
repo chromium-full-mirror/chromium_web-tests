@@ -6,6 +6,8 @@ cuj/crossbench/runner/results
 .venv
 venv
 .gemini
+!vpython.toml
+!vpython.toml.uv.lock
 
 # Directories added by gclient sync and the GN build
 /third_party/node
