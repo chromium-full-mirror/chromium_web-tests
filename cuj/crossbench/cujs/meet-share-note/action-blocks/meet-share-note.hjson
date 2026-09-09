@@ -1,0 +1,90 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  template: ../../../common-action-blocks/meet/meet-note-template.hjson
+  args: {
+    MEETING_SETUP_ACTIONS: [
+      // Switch to the Meet window to start presenting
+      {
+        action: switch_tab
+        url: https://meet.google.com
+        timeout: 15s
+      }
+      {
+        action: wait
+        duration: 2s
+      }
+      // Click the screen share / present button in Google Meet controls bar
+      {
+        action: click
+        position: {
+          selector: "[aria-label='Present now'], [aria-label='Share screen'], [aria-label='Share your screen'], button[aria-label*='Present'], button[aria-label*='Share screen']"
+          required: true
+          scroll_into_view: true
+          wait: true
+        }
+        source: touch
+        timeout: 10s
+      }
+      // Wait for SystemUI screen share picker dialog to appear
+      {
+        action: wait
+        duration: 3s
+      }
+      // Select the Docs tab in the SystemUI share picker
+      {
+        action: click
+        position: {
+          text: Untitled document - Google Docs
+          required: true
+        }
+        source: touch
+        timeout: 10s
+      }
+      {
+        action: wait
+        duration: 1s
+      }
+      // Click the Share confirmation button in the picker
+      {
+        action: click
+        position: {
+          res: ShareButton
+          required: true
+        }
+        source: touch
+        timeout: 10s
+      }
+      {
+        action: wait
+        duration: 3s
+      }
+      // Switch back to the Docs window to take notes
+      {
+        action: switch_tab
+        url: https://docs.google.com/document
+        timeout: 15s
+      }
+      {
+        action: wait
+        duration: 2s
+      }
+      // Ensure the canvas editor is focused
+      {
+        action: click
+        position: {
+          selector: div.kix-page-paginated.canvas-first-page
+          required: true
+          wait: true
+        }
+        source: touch
+        timeout: 10s
+      }
+    ]
+  }
+  unbound_args: [
+    NUM_BOTS
+    BACKGROUND_BLUR
+  ]
+}

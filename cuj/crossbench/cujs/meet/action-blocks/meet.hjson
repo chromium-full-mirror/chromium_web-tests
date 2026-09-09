@@ -12,6 +12,7 @@
             TTL_SECS: 240
             MEET_TARGET: _self
             POST_CREATION_ACTIONS: []
+            PERMISSION_ACTIONS: []
           }
           unbound_args: [
             NUM_BOTS

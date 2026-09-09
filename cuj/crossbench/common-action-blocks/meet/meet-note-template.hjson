@@ -1,0 +1,196 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  pages: {
+    Meet-Note: {
+      login: google
+      blocks: {
+        start-new-meeting: {
+          template: ./create-and-join-meeting.hjson
+          args: {
+            TTL_SECS: 240
+            MEET_TARGET: _self
+            CLICK_INPUT_SOURCE: touch
+            POST_CREATION_ACTIONS: []
+            PERMISSION_ACTIONS: [
+              // Dismiss the "Do you want people to see and hear you in the meeting?" popup if present.
+              {
+                action: click
+                position: {
+                  selector: usermedia
+                  required: false
+                  wait: true
+                }
+                timeout: 5s
+                source: touch
+              }
+              // Grant camera and microphone permissions on the Android system dialogue if present.
+              {
+                action: click
+                position: {
+                  text: Allow while visiting the site
+                  required: false
+                }
+                source: touch
+                timeout: 5s
+              }
+              {
+                action: wait
+                duration: 1s
+              }
+            ]
+          }
+          unbound_args: [
+            NUM_BOTS
+            BACKGROUND_BLUR
+          ]
+        }
+        open-new-docs: {
+          actions: [
+            {
+              action: get
+              url: https://docs.new
+              ready_state: complete
+              target: _new_window
+              timeout: 2m
+            }
+          ]
+        }
+        setup-notes: {
+          actions: [
+            {
+              action: wait
+              duration: 5s
+            }
+            // Focus the docs canvas editor directly (Google Docs no longer has title input in default compact header)
+            {
+              action: click
+              position: {
+                selector: div.kix-page-paginated.canvas-first-page
+                required: true
+                wait: true
+              }
+              source: touch
+            }
+          ]
+        }
+        share-notes: {
+          actions: $[MEETING_SETUP_ACTIONS]
+        }
+        take-notes: {
+          args: {
+            NOTE_TEXT: "the quick brown fox jumps over the lazy dog. "
+            NOTE_DURATION: 20s
+          }
+          template: {
+            actions: [
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+              {
+                action: text_input
+                text: $[NOTE_TEXT]
+                duration: $[NOTE_DURATION]
+                source: keyboard
+              }
+            ]
+          }
+        }
+        cleanup: [
+          {
+            action: wait
+            duration: 5s
+          }
+
+          // If the menus are hidden in compact mode, expand them
+          {
+            action: click
+            pos: {
+              selector: "#viewModeButton[aria-label*='Show the menus']"
+              required: false
+              scroll_into_view: true
+              wait: true
+            }
+            source: touch
+            timeout: 5s
+          }
+          {
+            action: wait
+            duration: 1s
+          }
+          // Delete the sheet/doc we created
+          {
+            action: click
+            pos: {
+              selector: "#docs-file-menu[role='menuitem'][aria-disabled='false'], #docs-file-menu"
+              required: true
+              scroll_into_view: true
+              wait: true
+            }
+            source: touch
+            attempts: 3
+            timeout: 15s
+            verify: "[role='menuitem'][aria-disabled='false'] [aria-label='Move to trash t'], [aria-label='Move to trash t']"
+          }
+          {
+            action: click
+            pos: {
+              selector: "[role='menuitem'][aria-disabled='false'] [aria-label='Move to trash t'], [aria-label='Move to trash t']"
+              required: true
+              wait: true
+            }
+            source: touch
+            attempts: 3
+            timeout: 10s
+            verify: "[data-mdc-dialog-action='ok']"
+          }
+          // Click "Go to Docs home screen" on the "File moved to trash" popup
+          {
+            action: click
+            pos: {
+              selector: "[data-mdc-dialog-action='ok']"
+              required: true
+              wait: true
+            }
+            source: touch
+            attempts: 3
+            timeout: 10s
+          }
+          // Wait for the homepage to load
+          {
+            action: wait_for_ready_state
+            ready_state: complete
+          }
+        ]
+      }
+    }
+  }
+}
