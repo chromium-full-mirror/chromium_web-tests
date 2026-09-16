@@ -32,16 +32,7 @@
         action: wait
         duration: 3s
       }
-      // Select the Docs tab in the SystemUI share picker
-      {
-        action: click
-        position: {
-          text: Untitled document - Google Docs
-          required: true
-        }
-        source: touch
-        timeout: 10s
-      }
+      $[...SHARE_DIALOG_ACTIONS]
       {
         action: wait
         duration: 1s
@@ -50,6 +41,7 @@
       {
         action: click
         position: {
+          pkg: com.android.systemui
           res: ShareButton
           required: true
         }
@@ -84,6 +76,7 @@
     ]
   }
   unbound_args: [
+    SHARE_DIALOG_ACTIONS
     NUM_BOTS
     BACKGROUND_BLUR
   ]

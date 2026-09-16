@@ -1,0 +1,25 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  template: ./meet-share-note.hjson
+  args: {
+    SHARE_DIALOG_ACTIONS: [
+      // Select the Docs tab in the SystemUI share picker
+      {
+        action: click
+        position: {
+          pkg: com.android.systemui
+          text: Untitled document - Google Docs
+          required: true
+        }
+        source: touch
+        timeout: 10s
+      }
+    ]
+  }
+  unbound_args: [
+    NUM_BOTS
+    BACKGROUND_BLUR
+  ]
+}

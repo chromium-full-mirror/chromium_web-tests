@@ -2,11 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 {
-  template: ./share-tab.hjson
+  template: ./action-blocks/share-display.hjson
   args: {
+    NUM_BOTS: 48
     BACKGROUND_BLUR: "false"
   }
-  unbound_args: [
-    NUM_BOTS
-  ]
 }

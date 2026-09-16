@@ -1,0 +1,40 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  template: ./meet-share-note.hjson
+  args: {
+    SHARE_DIALOG_ACTIONS: [
+      // Switch to "Share entire screen" mode in the SystemUI share picker
+      {
+        action: click
+        position: {
+          pkg: com.android.systemui
+          res: ShareEntireScreenOption
+          required: true
+        }
+        source: touch
+        timeout: 10s
+      }
+      {
+        action: wait
+        duration: 1s
+      }
+      // Select the internal display in the display list
+      {
+        action: click
+        position: {
+          pkg: com.android.systemui
+          text: Internal Display
+          required: true
+        }
+        source: touch
+        timeout: 10s
+      }
+    ]
+  }
+  unbound_args: [
+    NUM_BOTS
+    BACKGROUND_BLUR
+  ]
+}
