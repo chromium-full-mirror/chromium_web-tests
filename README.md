@@ -13,8 +13,8 @@ Install `golang` (required for WPR and presubmit upload checks)
 sudo apt-get install golang
 ```
 
-### Google Cloud SDK (gsutil)
-You need to have `gsutil` installed and authenticated to download WPR archives used in benchmarks.
+### Google Cloud SDK
+You need to have `gcloud storage` installed and authenticated to download WPR archives used in benchmarks.
 
 1. Install [Google Cloud SDK](https://cloud.google.com/sdk/docs/install).
 2. Authenticate your account:

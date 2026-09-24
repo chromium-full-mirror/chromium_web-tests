@@ -125,7 +125,7 @@ To replace web pages in the archive:
 When finished updating the archive (e.g., `existing.wprgo`):
 1.  Upload the archive to Google Cloud Storage:
     ```bash
-    gsutil cp existing.wprgo gs://chrome-partner-telemetry/cros/cuj/crossbench/page-click-scroll-$TIMESTAMP.wprgo
+    gcloud storage cp existing.wprgo gs://chrome-partner-telemetry/cros/cuj/crossbench/page-click-scroll-$TIMESTAMP.wprgo
     ```
     (Replace `$TIMESTAMP` with a relevant identifier, e.g., the current date `YYYYMMDD` or a version number.)
 
