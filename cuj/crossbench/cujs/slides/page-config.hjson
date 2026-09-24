@@ -52,6 +52,19 @@
               }
             ]
           }
+          close-popup: {
+            // Close pop-up with "Record yourself presenting".
+            actions: [
+              {
+                action: click
+                position: {
+                  selector: "[role='dialog'] button[aria-label='Close']"
+                  required: false
+                  wait: true
+                }
+              }
+            ]
+          }
           comment: {
             template: ../../common-action-blocks/workspace/make-comment.hjson
             args: {
