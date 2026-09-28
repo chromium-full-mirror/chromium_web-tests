@@ -19,14 +19,7 @@ Always run tests using the repository's pre-configured **`vpython3`** environmen
 
 ### Command Invocation
 
-Before running any test on Android/ADB (especially after a crash or cancellation), always clear the browser's state completely to ensure a 100% fresh, clean out-of-the-box startup:
-```bash
-adb shell 'for u in $(pm list users | grep -o "{[0-9]*:" | tr -d "{:"); do am force-stop --user $u com.android.chrome; pm clear --user $u com.android.chrome; done' && \
-adb shell rm -f /data/local/tmp/chrome-command-line && \
-adb shell rm -rf /data/local/tmp/chrome_user_data
-```
-
-Then, run tests from the runner directory:
+Run tests from the runner directory:
 ```bash
 cd cuj/crossbench/runner
 vpython3 run.py --platform adb --tests <test_pattern> --variants <variant_pattern> --secrets ~/secrets.hjson

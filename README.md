@@ -36,42 +36,9 @@ cd web-tests
 ```
 Don't forget to run `gclient sync` every time you pull new changes from origin.
 
-### Poetry
-web-tests uses [poetry](https://python-poetry.org/)
-to manage python dependencies.
-```bash
-sudo apt install python3.11 python3-poetry
-```
-
-Alternatively, install poetry in a python venv:
-```bash
-python3 -m venv web-tests-venv
-source web-tests-venv/bin/activate
-pip install poetry
-```
-
-Check that you have poetry on your path and make sure you have the right
-`$PATH` settings.
-```bash
-poetry --help || echo "Please update your \$PATH to include poetry bin location";
-# Depending on your setup, add one of the following to your $PATH:
-echo "`python3 -m site --user-base`/bin";
-python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))";
-```
-
-Install the necessary dependencies from the lock file using poetry:
-
-```bash
-cd cuj/crossbench/runner
-export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
-poetry env use 3.11
-poetry install
-```
-Setting PYTHON_KEYRING_BACKEND to keyring.backends.null.Keyring disables keyring
-and prevents `poetry install` from getting stuck waiting for user input in the
-GUI.
-
 ## Running Tests
+
+Python dependencies are managed automatically using `vpython3` (included with `depot_tools`).
 
 ### Android
 Before running a test against an android target, make sure your device is connected through `adb`:
@@ -84,7 +51,7 @@ adb devices
 Replace `<DEVICE ID>` below with the actual device ID from `adb devices`:
 ```bash
 cd cuj/crossbench/runner
-poetry run python run.py --platform adb --device <DEVICE ID>
+vpython3 run.py --platform adb --device <DEVICE ID>
 ```
 
 ### ChromeOS
@@ -93,7 +60,7 @@ Before running a test against a ChromeOS target, make sure passwordless SSH is a
 Replace `<DEVICE>` below with the IP address or hostname of your device:
 ```bash
 cd cuj/crossbench/runner
-poetry run python run.py --platform cros --device <DEVICE>
+vpython3 run.py --platform cros --device <DEVICE>
 ```
 
 ### Local
@@ -101,7 +68,7 @@ poetry run python run.py --platform cros --device <DEVICE>
 
 ```bash
 cd cuj/crossbench/runner
-poetry run python run.py --platform local
+vpython3 run.py --platform local
 ```
 
 ### Specifying Tests and Variants
@@ -109,12 +76,12 @@ The minimal invocation of the runner will attempt to run all benchmarks, CUJs, a
 
 To run a subset of tests, use the `--tests` flag. `--tests` supports Python regex format for matching the test names.
 ```bash
-poetry run python run.py --platform adb --device <DEVICE ID> --tests speedometer.*
+vpython3 run.py --platform adb --device <DEVICE ID> --tests speedometer.*
 ```
 
 To specify only certain variants of a test, you can use the `--variants` flag. `--variants` also supports Python regex format for matching variants.
 ```bash
-poetry run python run.py --platform adb --device <DEVICE ID> --tests local-conference --variants 16p
+vpython3 run.py --platform adb --device <DEVICE ID> --tests local-conference --variants 16p
 ```
 
 ### Specifying Browsers
@@ -124,18 +91,18 @@ By default the runner will use 'Chrome' if the `--browser` flag is not specified
 Some CUJs require secrets to perform privileged actions (such as a test account username/password, or auth tokens for the Google Meet Bond API). Place your secrets in `secrets.hjson` and pass the file to the runner:
 
 ```bash
-poetry run python run.py --platform adb --device <DEVICE ID> --secrets /home/me/secrets.hjson --tests docs
+vpython3 run.py --platform adb --device <DEVICE ID> --secrets /home/me/secrets.hjson --tests docs
 ```
 
 ### Looping Tests
 Tests can be repeated for a number of iterations or for a specified amount of time using the `--playback` flag. This flag is supported by crossbench and will iterate the post-setup sections of a CUJ and collect metrics for the entire invocation (instead of splitting metrics by iteration).
 
 ```bash
-poetry run python run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 50x
+vpython3 run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 50x
 ```
 
 ```bash
-poetry run python run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 2h
+vpython3 run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 2h
 ```
 
 # Contributing
