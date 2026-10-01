@@ -37,6 +37,7 @@ def execute_crossbench(
     secrets_file: Path | None = None,
     setup_delay: str | None = None,
     startup_delay: str | None = None,
+    stories: str | None = None,
 ) -> None:
   with tempfile.NamedTemporaryFile() as browser_config_file:
     browser_config_file.write(browser_config.encode("utf-8"))
@@ -77,6 +78,10 @@ def execute_crossbench(
     if startup_delay:
       crossbench_args.append("--startup-delay")
       crossbench_args.append(str(startup_delay))
+
+    if stories:
+      crossbench_args.append("--stories")
+      crossbench_args.append(str(stories))
 
     if debug:
       crossbench_args.append("--debug")
@@ -307,6 +312,7 @@ def run_test(
             page_config_file=inv_state.config.test.page_config,
             setup_delay=inv_state.config.setup_delay,
             startup_delay=inv_state.config.startup_delay,
+            stories=inv_state.config.stories,
             secrets_file=run_config.secrets,
             log_buffer=log_buffer,
         )

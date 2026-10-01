@@ -80,6 +80,7 @@ class TestInvocationConfig:
   playback: str | None = None
   setup_delay: str | None = None
   startup_delay: str | None = None
+  stories: str | None = None
 
 
 @dataclasses.dataclass
@@ -110,6 +111,7 @@ class TestGroup(ConfigObject):
   playback: str | None = None
   setup_delay: str | None = None
   startup_delay: str | None = None
+  stories: str | None = None
 
   @classmethod
   @override
@@ -132,6 +134,8 @@ class TestGroup(ConfigObject):
         "setup_delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "startup_delay", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "stories", type=ObjectParser.non_empty_str, required=False)
     return parser
 
   @classmethod
@@ -157,16 +161,21 @@ class TestGroupConfig(ConfigObject):
     raise ValueError("Cannot parse TestGroupConfig from string")
 
   @classmethod
-  def from_cmdline_flags(cls, tests: str, variants: str, playback: str | None,
+  def from_cmdline_flags(cls,
+                         tests: str,
+                         variants: str,
+                         playback: str | None,
                          setup_delay: str | None,
-                         startup_delay: str | None) -> TestGroupConfig:
+                         startup_delay: str | None,
+                         stories: str | None = None) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
             filter_regex=tests,
             variants_filter_regex=variants,
             playback=playback,
             setup_delay=setup_delay,
-            startup_delay=startup_delay)
+            startup_delay=startup_delay,
+            stories=stories)
     ])
 
 
@@ -187,6 +196,7 @@ class CliConfig:
   playback: str | None
   setup_delay: str | None
   startup_delay: str | None
+  stories: str | None
   wait_for_debugger: bool
   no_symlinks: bool
   list_tests: bool
@@ -208,6 +218,8 @@ class CliConfig:
         "--startup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--setup-delay", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "--stories", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--tests", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument(
@@ -275,6 +287,7 @@ class CliConfig:
         playback=parsed.playback,
         setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,
+        stories=parsed.stories,
         secrets=secrets_file,
         upload=parsed.upload,
         out_dir=out_dir_path,
