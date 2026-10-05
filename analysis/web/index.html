@@ -100,8 +100,18 @@ found in the LICENSE file.
                         <span id="gcs-current-path" style="font-family: monospace; flex: 1; word-break: break-all;">/</span>
                         <button id="gcs-close-btn" class="btn secondary-btn">Cancel</button>
                     </div>
+                    <div class="gcs-filter-row">
+                        <input type="text" id="gcs-filter-input" class="gcs-filter-input" placeholder="Filter" title="Enter: add all matching files">
+                        <button id="gcs-select-all-btn" class="btn secondary-btn">Select all</button>
+                        <button id="gcs-clear-selection-btn" class="btn secondary-btn">Clear</button>
+                    </div>
                     <div class="gcs-browser-list" id="gcs-browser-list" style="overflow-y: auto; flex: 1;">
                         <!-- Items injected by JS -->
+                    </div>
+                    <div class="gcs-footer">
+                        <span id="gcs-selection-count" class="gcs-selection-count"></span>
+                        <span class="gcs-hint">Click: select / Shift+click: range / Double-click: add file / Enter: add matches</span>
+                        <button id="gcs-add-selected-btn" class="btn primary-btn" disabled>Add</button>
                     </div>
                 </div>
             </div>

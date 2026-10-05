@@ -428,6 +428,48 @@ header {
 .gcs-item.file::before {
     content: "📄";
 }
+.gcs-item.file {
+    user-select: none;
+}
+.gcs-item.file.selected {
+    background-color: rgba(99, 102, 241, 0.18);
+}
+.gcs-item.file input[type="checkbox"] {
+    margin: 0;
+    accent-color: #6366f1;
+}
+.gcs-filter-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+.gcs-filter-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+}
+.gcs-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--card-border);
+}
+.gcs-selection-count {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.gcs-hint {
+    flex: 1;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
 
 /* Spinner */
 .loader-spinner {
