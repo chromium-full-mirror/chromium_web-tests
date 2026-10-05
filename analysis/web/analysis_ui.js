@@ -33,6 +33,23 @@ export function initAnalysisDashboard(dataModel) {
   renderMetricsPanel(dataModel);
 }
 
+// analyzeTestMetrics() runs a permutation test for every metric of a test
+// (seconds for ~20k metrics). Its output depends only on the data model and
+// the test name, so cache it and let filter toggles reuse the result.
+let analysisCacheModel = null;
+const analysisCache = new Map();
+
+function getCachedTestAnalysis(testName, dataModel) {
+  if (analysisCacheModel !== dataModel) {
+    analysisCacheModel = dataModel;
+    analysisCache.clear();
+  }
+  if (!analysisCache.has(testName)) {
+    analysisCache.set(testName, analyzeTestMetrics(testName, dataModel));
+  }
+  return analysisCache.get(testName);
+}
+
 function extractMetadata(source) {
   if (!source) {
     return {
@@ -405,7 +422,7 @@ function renderMetricsPanel(dataModel) {
     return;
   }
 
-  let results = analyzeTestMetrics(testName, dataModel);
+  let results = getCachedTestAnalysis(testName, dataModel);
 
   let importantMetrics = [];
   if (!allMetrics) {
