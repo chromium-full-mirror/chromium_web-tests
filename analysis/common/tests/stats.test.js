@@ -55,6 +55,49 @@ describe('stats', () => {
       const pVal = permutationTest(left, right, 1000);
       assert.ok(pVal > 0.1, `Expected high pVal (> 0.1), got ${pVal}`);
     });
+
+    it('should return the exact p-value for small samples', () => {
+      // 5 vs 5 has C(10, 5) = 252 splits; only the observed split and its
+      // mirror are as extreme as fully separated groups.
+      const left = [1, 2, 3, 4, 5];
+      const right = [11, 12, 13, 14, 15];
+      assert.strictEqual(permutationTest(left, right), 2 / 252);
+    });
+
+    it('should be robust to a large common offset', () => {
+      // Large baseline with tiny differences, e.g. memory in MB.
+      const left = [0, 0.01, 0.02, 0.03, 0.04].map((x) => 5000 + x);
+      const right = [0.1, 0.11, 0.12, 0.13, 0.14].map((x) => 5000 + x);
+      assert.strictEqual(permutationTest(left, right), 2 / 252);
+      assert.strictEqual(permutationTest(right, left), 2 / 252);
+
+      const left2 = [0, 1, 2, 3, 4].map((x) => 1e6 + x * 1e-4);
+      const right2 = [10, 11, 12, 13, 14].map((x) => 1e6 + x * 1e-4);
+      assert.strictEqual(permutationTest(left2, right2), 2 / 252);
+    });
+
+    it('should count the observed split for unequal sizes', () => {
+      // 4 vs 5 has C(9, 4) = 126 splits and only the observed one is as
+      // extreme, so p must be 1/126 (never 0).
+      const left = [0, 1, 2, 3].map((x) => 1e6 + x * 1e-4);
+      const right = [10, 11, 12, 13, 14].map((x) => 1e6 + x * 1e-4);
+      assert.strictEqual(permutationTest(left, right), 1 / 126);
+    });
+
+    it('should return 1.0 for the same values in a different order', () => {
+      // Summing in a different order can differ by 1 ULP.
+      const left = [0.1, 0.2, 0.3, 0.4, 0.7];
+      const right = [0.7, 0.4, 0.3, 0.2, 0.1];
+      assert.strictEqual(permutationTest(left, right), 1.0);
+    });
+
+    it('should return a low p-value via Monte Carlo with an offset', () => {
+      // 10 vs 10 has C(20, 10) = 184756 splits, more than the resamples.
+      const left = Array.from({length: 10}, (_, i) => 5000 + i * 1e-3);
+      const right = Array.from({length: 10}, (_, i) => 5000.1 + i * 1e-3);
+      const pVal = permutationTest(left, right, 2000);
+      assert.ok(pVal < 0.01, `Expected pVal < 0.01, got ${pVal}`);
+    });
   });
 
   describe('holmBonferroni()', () => {
