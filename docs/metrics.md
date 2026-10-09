@@ -67,9 +67,29 @@ are automatically populated by Perfetto to track CPU usage. The SQL query in
 tables to calculate CPU time statistics.
 
 The configuration for what data is collected is located in
-`cuj/crossbench/trace-config/detailed-trace-config.pbtxt`. By enabling data
-sources like `"linux.sys_stats"`, we ensure that these events are available for
-querying.
+`cuj/crossbench/trace-config/` (such as `detailed-trace-config.pbtxt`). By
+enabling data sources like `"linux.sys_stats"`, we ensure that these events are
+available for querying.
+
+#### Chrome UMA Histograms (`org.chromium.histogram_sample`)
+
+Chrome UMA histograms are captured via the `"org.chromium.histogram_sample"`
+data source in the trace config files under `cuj/crossbench/trace-config/` and
+automatically summarized by `uma_histogram_summaries.sql`.
+
+**Do not manually edit the generated `*.pbtxt` files.** Instead, edit the
+corresponding `*.template.pbtxt` file in `cuj/crossbench/trace-config/` (where
+`histogram_name` supports wildcard patterns such as `EventLatency.*`) and
+regenerate the `.pbtxt` configs using
+[`tools/update_trace_config_histograms.py`](../tools/update_trace_config_histograms.py)
+and a local Chromium checkout:
+
+```bash
+vpython3 tools/update_trace_config_histograms.py --chromium-src /path/to/chromium/src
+```
+
+See [`cuj/crossbench/trace-config/README.md`](../cuj/crossbench/trace-config/README.md)
+for more details.
 
 ## Creating a New Metric
 

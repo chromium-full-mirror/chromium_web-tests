@@ -20,6 +20,7 @@ FROM chrome_histograms AS hist
 WHERE
   hist.name IN (
     'Graphics.Smoothness.PercentDroppedFrames3.AllSequences',
+    'Graphics.Smoothness.PercentDroppedFrames4.AllSequences',
     'Graphics.Smoothness.Jank3.AllSequences'
   )
   AND hist.ts

@@ -35,7 +35,8 @@ FROM (
 );
 
 -- Tracks slow input events across EventLatency.TotalLatency (combined) and all
--- specific event subtypes (EventLatency.*.TotalLatency, e.g. KeyPressed, MousePressed).
+-- specific event subtypes (EventLatency.*.TotalLatency and EventLatency.*.TotalLatency2,
+-- e.g. KeyPressed, MousePressed, GestureScrollUpdate.Wheel).
 -- Calculates the percentage of events exceeding each latency threshold (100ms to 200ms in 10ms increments).
 -- EventLatency histograms in Chrome record sample values in microseconds.
 CREATE PERFETTO TABLE slow_inputs_output AS
@@ -49,12 +50,21 @@ WITH
           14,
           length(name) - 26
         )
+        WHEN name LIKE 'EventLatency.%.TotalLatency2' THEN substr(
+          name,
+          14,
+          length(name) - 27
+        )
         ELSE name
       END AS event_type,
       value
     FROM chrome_histograms
     WHERE
-      name LIKE 'EventLatency.%TotalLatency'
+      (name LIKE 'EventLatency.%TotalLatency'
+      OR name LIKE 'EventLatency.%TotalLatency2')
+      -- GestureScrollUpdate.Touchscreen emits both TotalLatency and TotalLatency2
+      -- for each event; exclude TotalLatency2 to avoid double-counting.
+      AND name != 'EventLatency.GestureScrollUpdate.Touchscreen.TotalLatency2'
   ),
   threshold_counts AS (
     SELECT
