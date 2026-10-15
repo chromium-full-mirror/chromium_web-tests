@@ -38,6 +38,7 @@ def execute_crossbench(
     setup_delay: str | None = None,
     startup_delay: str | None = None,
     stories: str | None = None,
+    wpr_path: str | None = None,
 ) -> None:
   with tempfile.NamedTemporaryFile() as browser_config_file:
     browser_config_file.write(browser_config.encode("utf-8"))
@@ -98,6 +99,11 @@ def execute_crossbench(
 
     for arg in shlex.split(additional_crossbench_args):
       crossbench_args.append(arg)
+
+    # The command-line value of wpr takes precedence over any --wpr from cb-args
+    if wpr_path:
+      crossbench_args.append("--wpr")
+      crossbench_args.append(wpr_path)
 
     log_buffer.write(f"Running crossbench with args: {crossbench_args}\n")
 
@@ -314,6 +320,7 @@ def run_test(
             startup_delay=inv_state.config.startup_delay,
             stories=inv_state.config.stories,
             secrets_file=run_config.secrets,
+            wpr_path=run_config.wpr,
             log_buffer=log_buffer,
         )
         if current_results_path.is_dir():

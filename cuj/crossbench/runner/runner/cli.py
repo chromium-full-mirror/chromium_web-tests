@@ -138,6 +138,7 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       adb_bin=cli_config.adb_bin,
       browser=cli_config.browser,
       secrets=cli_config.secrets,
+      wpr=cli_config.wpr,
       upload=cli_config.upload,
       results_root=results_root,
       tag=cli_config.tag,

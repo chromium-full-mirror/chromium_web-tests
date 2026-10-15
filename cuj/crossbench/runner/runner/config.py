@@ -197,6 +197,7 @@ class CliConfig:
   setup_delay: str | None
   startup_delay: str | None
   stories: str | None
+  wpr: str | None
   wait_for_debugger: bool
   no_symlinks: bool
   list_tests: bool
@@ -225,6 +226,8 @@ class CliConfig:
     parser.add_argument(
         "--variants", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument("--secrets", type=Path, required=False)
+    parser.add_argument(
+        "--wpr", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument("--upload", action="store_true", default=False)
     parser.add_argument("--out-dir", type=Path, required=False)
     parser.add_argument(
@@ -271,6 +274,15 @@ class CliConfig:
     secrets_file: Path | None = parsed.secrets.resolve(
     ) if parsed.secrets else None
 
+    wpr: str | None = None
+    if parsed.wpr:
+      if parsed.wpr.startswith("gs://"):
+        wpr = parsed.wpr
+      else:
+        wpr_file = Path(parsed.wpr).expanduser().resolve()
+        if not wpr_file.is_file():
+          parser.error(f"--wpr archive not found: {wpr_file}")
+        wpr = str(wpr_file)
 
     out_dir_path: Path | None = parsed.out_dir.resolve(
     ) if parsed.out_dir else None
@@ -289,6 +301,7 @@ class CliConfig:
         startup_delay=parsed.startup_delay,
         stories=parsed.stories,
         secrets=secrets_file,
+        wpr=wpr,
         upload=parsed.upload,
         out_dir=out_dir_path,
         results_prefix=parsed.results_prefix,
@@ -308,6 +321,7 @@ class RunConfig:
   adb_bin: Path | None
   browser: str | None
   secrets: Path | None
+  wpr: str | None
   upload: bool
   results_root: Path
   tag: str | None
