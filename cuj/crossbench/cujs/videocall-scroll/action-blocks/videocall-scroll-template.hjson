@@ -1,0 +1,57 @@
+// Copyright 2026 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+{
+  pages: {
+    Video-Scroll: {
+      setup: [
+        $[...EXTRA_SETUP_ACTIONS]
+        {
+          action: get
+          url: https://storage.googleapis.com/chromiumos-test-assets-public/power_VideoCall/power_VideoCall.webrtc.html?preset=high
+          ready_state: complete
+          target: _self
+        }
+        {
+          action: wait_for_condition
+          condition: return Array.from(document.getElementsByTagName('video')).every(v => v.currentTime >= 0.001)
+        }
+        {
+          action: get
+          url: https://html.spec.whatwg.org/
+          ready_state: complete
+          target: _new_window
+          timeout: 2m
+        }
+      ]
+      actions: [
+        {
+          action: js
+          script:
+            '''
+            window.scrollTo(0, 0);
+            performance.mark('scroll-begin');
+            '''
+        }
+        {
+          action: scroll
+          source: touch
+          distance: 15000
+          duration: 15s
+        }
+        {
+          action: js
+          script:
+            '''
+            performance.mark('scroll-end', {detail: document.querySelector('html').scrollTop});
+            performance.measure('scroll', 'scroll-begin', 'scroll-end');
+            '''
+        }
+        {
+          action: wait
+          duration: 0.5s
+        }
+      ]
+    }
+  }
+}
