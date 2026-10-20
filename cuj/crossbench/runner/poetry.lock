@@ -410,7 +410,7 @@ mobly = "1.13"
 numpy = "1.26.4"
 ordered-set = "4.1.0"
 pandas = "2.2.3"
-perfetto = "0.16.0"
+perfetto = "0.58.2"
 platformdirs = "4.9.2"
 protobuf = "7.36.0"
 psutil = "7.2.1"
@@ -2092,14 +2092,14 @@ files = [
 
 [[package]]
 name = "perfetto"
-version = "0.16.0"
+version = "0.58.2"
 description = "Python APIs and bindings for Perfetto (perfetto.dev)"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "perfetto-0.16.0-py3-none-any.whl", hash = "sha256:7da26220635d80fd6a8401f3c75499d180cc48ebd257dad147090ec88b6417c1"},
-    {file = "perfetto-0.16.0.tar.gz", hash = "sha256:b345af38cc6113f76566b9194cabcc7cc1731e8142f1c869240c0983a501b1e0"},
+    {file = "perfetto-0.58.2-py3-none-any.whl", hash = "sha256:024d37db3e1938a0247311337daf419c7204af757fb303cdc1dca46fa8d83cfe"},
+    {file = "perfetto-0.58.2.tar.gz", hash = "sha256:54e0e8616dcd9fc1e087914d747370375aeb2f8dacf68ae7ead8c3c5e596a0c7"},
 ]
 
 [package.dependencies]
@@ -2108,6 +2108,7 @@ protobuf = "*"
 [package.extras]
 numpy = ["numpy"]
 pandas = ["pandas"]
+polars = ["polars"]
 
 [[package]]
 name = "platformdirs"
