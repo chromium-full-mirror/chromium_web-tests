@@ -92,12 +92,12 @@
             }
             attempts: 3
             source: $[CLICK_INPUT_SOURCE]
-            verify: xpath///div[text() = 'Open in new tab']
+            verify: xpath///div[@role='menu']//div[text() = 'Open in new tab']
           }
           {
             action: click
             position: {
-              selector: xpath///div[text() = 'Open in new tab']
+              selector: xpath///div[@role='menu']//div[text() = 'Open in new tab']
               scroll_into_view: true
             }
             attempts: 3
