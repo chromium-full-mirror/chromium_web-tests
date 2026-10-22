@@ -47,7 +47,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tsproxy
   # and whatever else without interference from each other.
-  'crossbench_revision': 'f6345429776fa1081c6312cacba341a0a2b5c9fc',
+  'crossbench_revision': 'c52c2e97a6d6fe7014d7432624ffafabe0a90386',
 
   # Set to False to skip development-only hooks
   'checkout_web_tests_dev': True,
