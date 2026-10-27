@@ -10,7 +10,7 @@
         ttl_secs: $[TTL_SECS]
       }
       target: $[MEET_TARGET]
-      timeout: 30s
+      timeout: 90s
     }
     {
       action: js
@@ -41,6 +41,9 @@
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: xpath///span[contains(text(), 'Settings')]
+      attempts: 3
+      timeout: 5s
     }
     // Wait for menu animation to finish
     {
@@ -57,6 +60,8 @@
       }
       source: $[CLICK_INPUT_SOURCE]
       verify: button[aria-label='Video']
+      attempts: 3
+      timeout: 5s
     }
     // Wait for the settings window animation to finish
     {
@@ -71,6 +76,9 @@
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: "[aria-label='Send resolution (maximum)'][aria-haspopup='listbox']"
+      attempts: 3
+      timeout: 5s
     }
     {
       action: click
@@ -155,6 +163,9 @@
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: xpath///*[@role='menuitem' and contains(., 'Backgrounds and effects')]
+      attempts: 3
+      timeout: 5s
     }
     // Wait for animations to finish
     {
@@ -169,6 +180,9 @@
         wait: true
       }
       source: $[CLICK_INPUT_SOURCE]
+      verify: xpath///*[@aria-label='Blur your background']
+      attempts: 3
+      timeout: 5s
     }
     // Wait for animations to finish
     {

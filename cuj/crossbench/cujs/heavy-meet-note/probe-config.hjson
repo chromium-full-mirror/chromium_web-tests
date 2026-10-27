@@ -4,7 +4,9 @@
 {
   template: ../../probe-config.hjson
   args: {
-    METRIC_DEFINITIONS: []
+    METRIC_DEFINITIONS: [
+      ../../common-metrics/meet_jank.textproto
+    ]
     TRACE_CONFIG: ../../trace-config/detailed-trace-config.pbtxt
     ADDITIONAL_PROBES: [
       {
