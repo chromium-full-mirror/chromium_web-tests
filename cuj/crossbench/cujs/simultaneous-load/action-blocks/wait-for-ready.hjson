@@ -23,13 +23,13 @@
   "wait-$[INDEX_PREFIX]3": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*ebay.*
+      PAGE_URL: .*ebay\.html.*
     }
   }
   "wait-$[INDEX_PREFIX]4": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*google.*
+      PAGE_URL: .*google\.html.*
     }
   }
   "wait-$[INDEX_PREFIX]5": {
@@ -41,25 +41,25 @@
   "wait-$[INDEX_PREFIX]6": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*bbc.*
+      PAGE_URL: .*bbc\.html.*
     }
   }
   "wait-$[INDEX_PREFIX]7": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*yahoo.*
+      PAGE_URL: .*yahoo\.html.*
     }
   }
   "wait-$[INDEX_PREFIX]8": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*stackoverflow.*
+      PAGE_URL: .*stackoverflow\.html.*
     }
   }
   "wait-$[INDEX_PREFIX]9": {
     template: ./switch-wait-close.hjson
     args: {
-      PAGE_URL: .*wikipedia.*
+      PAGE_URL: .*wikipedia\.html.*
     }
   }
 }
