@@ -5,12 +5,15 @@
 import * as readline from 'readline';
 import {execFile} from 'child_process';
 import {promisify} from 'util';
-import {readFile} from 'fs/promises';
+import {readFile, stat, unlink} from 'fs/promises';
 import {randomUUID} from 'crypto';
 
 import {mcpToolSchemas, executeMcpTool} from '../common/mcp_tools.js';
 
 const execFileAsync = promisify(execFile);
+
+// In-memory cache of raw dataset JSON strings keyed by path/URI.
+const rawDatasetCache = new Map();
 
 /**
  * Helper to fetch a dataset from a local path or a gs:// URI using gcloud storage.
@@ -18,22 +21,43 @@ const execFileAsync = promisify(execFile);
 async function loadDataset(path) {
   if (!path) return null;
   if (path.startsWith('gs://')) {
+    const cached = rawDatasetCache.get(path);
+    if (cached) {
+      return cached.data;
+    }
+    const tmpPath = `/tmp/mcp_dataset_${randomUUID()}.json`;
     try {
       // Use gcloud storage to a tmp file to avoid maxBuffer issues
-      const tmpPath = `/tmp/mcp_dataset_${randomUUID()}.json`;
       await execFileAsync('gcloud', ['storage', 'cp', path, tmpPath]);
       const data = await readFile(tmpPath, 'utf-8');
+      rawDatasetCache.set(path, {mtimeMs: null, size: data.length, data});
       return data;
     } catch (e) {
       throw new Error(
           `Failed to load dataset from GCS (${path}): ${e.message}`,
       );
+    } finally {
+      await unlink(tmpPath).catch(() => {});
     }
   }
 
   // Try treating as local file path
   try {
+    const fileStat = await stat(path);
+    const cached = rawDatasetCache.get(path);
+    if (
+      cached &&
+      cached.mtimeMs === fileStat.mtimeMs &&
+      cached.size === fileStat.size
+    ) {
+      return cached.data;
+    }
     const data = await readFile(path, 'utf-8');
+    rawDatasetCache.set(path, {
+      mtimeMs: fileStat.mtimeMs,
+      size: fileStat.size,
+      data,
+    });
     return data;
   } catch (e) {
     throw new Error(

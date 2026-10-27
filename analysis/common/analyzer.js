@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import {mean, permutationTest, holmBonferroni} from './stats.js';
+import {mean, stddev, permutationTest, holmBonferroni} from './stats.js';
 import {
   getDisplayName,
   getAggregationMode,
@@ -90,8 +90,12 @@ export function analyzeTestMetrics(testName, dataModel) {
     const groupValuesList = groupDataList.map((data) =>
       data ? data.values : [],
     );
+    const groupCounts = groupValuesList.map((values) => values.length);
     const groupMeans = groupValuesList.map((values) =>
       values.length > 0 ? mean(values) : null,
+    );
+    const groupStddevs = groupValuesList.map((values) =>
+      values.length > 1 ? stddev(values) : 0,
     );
 
     const units = groupDataList.find((data) => data != null)?.units || '';
@@ -146,6 +150,7 @@ export function analyzeTestMetrics(testName, dataModel) {
           isRegression,
           isImprovement,
           pValue,
+          rawSignificant: pValue !== null && pValue <= 0.05,
           missingData: compMissingData,
           insufficientData: compInsufficientData,
         });
@@ -156,7 +161,9 @@ export function analyzeTestMetrics(testName, dataModel) {
       metricName: displayName,
       originalMetricName: metricName,
       aggMode: getAggregationMode(metricName),
+      groupCounts,
       groupMeans,
+      groupStddevs,
       groupValuesList,
       comparisons,
       improvementDirection,
@@ -172,11 +179,15 @@ export function analyzeTestMetrics(testName, dataModel) {
   return results;
 }
 
-export function filterSignificantChanges(results) {
+export function filterSignificantChanges(results, options = {}) {
+  const {includeRawSignificant = false} = options;
   return results.filter((m) => {
     if (!m.comparisons || m.comparisons.length === 0) return true;
     return m.comparisons.some(
-        (c) => c.significant === true || c.pValue === null,
+        (c) =>
+          c.significant === true ||
+        (includeRawSignificant && c.rawSignificant === true) ||
+        c.pValue === null,
     );
   });
 }
@@ -200,10 +211,14 @@ export function filterMetrics(results, options = {}) {
     importantMetrics = [],
     displayAll = false,
     significantOnly = false,
+    includeRawSignificant = false,
     searchQuery = '',
   } = options;
 
-  let filtered = results;
+  let filtered = results.map((r) => ({
+    ...r,
+    comparisons: r.comparisons ? r.comparisons.map((c) => ({...c})) : undefined,
+  }));
 
   // Filter by aggMode
   if (aggMode !== 'all') {
@@ -272,11 +287,26 @@ export function filterMetrics(results, options = {}) {
 
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
-    filtered = filtered.filter((r) => r.metricName.toLowerCase().includes(q));
+    filtered = filtered.filter(
+        (r) =>
+          r.metricName.toLowerCase().includes(q) ||
+        (r.originalMetricName &&
+          r.originalMetricName.toLowerCase().includes(q)),
+    );
+  }
+
+  // Re-evaluate Holm-Bonferroni significance on the filtered hypothesis family
+  // so multiple-testing correction is not diluted across hundreds of unfiltered
+  // UMA histogram buckets and unused aggregation modes.
+  const withComparisons = filtered.filter(
+      (r) => Array.isArray(r.comparisons) && r.comparisons.length > 0,
+  );
+  if (withComparisons.length > 0) {
+    holmBonferroni(withComparisons);
   }
 
   if (significantOnly) {
-    filtered = filterSignificantChanges(filtered);
+    filtered = filterSignificantChanges(filtered, {includeRawSignificant});
   }
 
   return filtered;

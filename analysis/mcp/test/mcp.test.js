@@ -291,4 +291,46 @@ describe('MCP Server', () => {
     assert.strictEqual(parsed.summary.totalRegressions, 1);
     assert.strictEqual(parsed.summary.totalImprovements, 1);
   });
+
+  it('get_significant_changes works across all common tests when testName is omitted', async () => {
+    const sample1Path = join(
+        __dirname,
+        '../../common/tests/sample_1.metrics.json',
+    );
+    const sample2Path = join(
+        __dirname,
+        '../../common/tests/sample_2.metrics.json',
+    );
+
+    const result = await sendRequest('tools/call', {
+      name: 'get_significant_changes',
+      arguments: {
+        datasetGroups: [
+          {name: 'Group 1', paths: [sample1Path]},
+          {name: 'Group 2', paths: [sample2Path]},
+        ],
+      },
+    });
+
+    const parsed = JSON.parse(result.content[0].text);
+    assert.ok(parsed.tests['test_suite_A']);
+    assert.strictEqual(parsed.summary.totalRegressions, 1);
+  });
+
+  it('analyze_test supports searchQuery and returns groupCounts and groupStddevs', async () => {
+    const result = await sendRequest('tools/call', {
+      name: 'analyze_test',
+      arguments: {
+        testName: 'test_A',
+        datasetGroups: testDatasetGroups,
+        searchQuery: 'scor',
+      },
+    });
+
+    const parsed = JSON.parse(result.content[0].text);
+    assert.strictEqual(parsed.length, 1);
+    assert.strictEqual(parsed[0].metricName, 'score');
+    assert.deepStrictEqual(parsed[0].groupCounts, [1, 1]);
+    assert.deepStrictEqual(parsed[0].groupStddevs, [0, 0]);
+  });
 });

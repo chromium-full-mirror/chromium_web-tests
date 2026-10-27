@@ -7,6 +7,13 @@ export function mean(arr) {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
+export function stddev(arr) {
+  if (arr.length < 2) return 0;
+  const m = mean(arr);
+  const sumSq = arr.reduce((acc, v) => acc + (v - m) * (v - m), 0);
+  return Math.sqrt(sumSq / (arr.length - 1));
+}
+
 // Number of ways to choose k of n, or Infinity once it exceeds `limit`.
 function binomialUpTo(n, k, limit) {
   k = Math.min(k, n - k);

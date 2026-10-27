@@ -50,18 +50,21 @@ export function extractAggMode(metricName) {
   for (const rawMode of ALL_MODES) {
     const canonicalMode = ALIASES[rawMode] || rawMode;
 
-    // Check for suffix -mode
-    if (displayName.endsWith('-' + rawMode)) {
+    // Check for suffix -mode or .mode (e.g. -avg, -p90, .avg, .p90)
+    if (
+      displayName.endsWith('-' + rawMode) ||
+      displayName.endsWith('.' + rawMode)
+    ) {
       return {
         displayName: displayName.slice(0, -(rawMode.length + 1)),
         aggMode: canonicalMode,
       };
     }
 
-    // Check for embedded mode with separators (e.g. .p50_ or .mean_)
-    const match = displayName.match(new RegExp(`([.\\-_])${rawMode}([.\\-_])`));
+    // Check for cpu_usage_stat embedded mode (e.g. .p50_cputime- or .mean_cputime-)
+    const match = displayName.match(new RegExp(`\\.${rawMode}(_cputime\\b)`));
     if (match) {
-      const newName = displayName.replace(match[0], match[1]);
+      const newName = displayName.replace(match[0], '.' + match[1].slice(1));
       return {
         displayName: newName,
         aggMode: canonicalMode,
@@ -122,9 +125,15 @@ export function parseDataset(jsonInput) {
         const testMap = map.get(testName);
         const metricName = metric.metric;
 
-        const commonMetricsPrefix = 'cuj.common-metrics.';
-        if (metricName.startsWith(commonMetricsPrefix)) {
-          const keyValString = metricName.substring(commonMetricsPrefix.length);
+        const metadataPrefixes = [
+          'cuj.common-metrics.system_info.',
+          'cuj.common-metrics.browser_info.',
+        ];
+        const matchedPrefix = metadataPrefixes.find((p) =>
+          metricName.startsWith(p),
+        );
+        if (matchedPrefix) {
+          const keyValString = metricName.substring(matchedPrefix.length);
           const firstDashIdx = keyValString.indexOf('-');
           if (firstDashIdx !== -1) {
             const fullKey = keyValString.substring(0, firstDashIdx);
@@ -132,7 +141,12 @@ export function parseDataset(jsonInput) {
 
             const keyParts = fullKey.split('.');
             const actualKey = keyParts[keyParts.length - 1];
-            map.metadata[actualKey] = value;
+            if (value !== '') {
+              map.metadata[actualKey] = value;
+            }
+            // String-dimension system_info/browser_info entries have dummy_value=1.0;
+            // do not insert them as numeric performance metrics.
+            continue;
           } else if (metric.values && metric.values.length > 0) {
             const keyParts = keyValString.split('.');
             const actualKey = keyParts[keyParts.length - 1];

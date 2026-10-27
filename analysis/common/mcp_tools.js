@@ -81,6 +81,17 @@ export const mcpToolSchemas = [
           items: {type: 'string'},
           description: 'List of important metric names to filter by.',
         },
+        searchQuery: {
+          type: 'string',
+          description:
+            'Optional case-insensitive substring to search across metric names.',
+        },
+        displayAll: {
+          type: 'boolean',
+          description:
+            'If true, returns all metrics for the test instead of filtering ' +
+            'to importantMetrics. Defaults to false (or true when searchQuery is set).',
+        },
       },
       required: ['testName', 'datasetGroups'],
     },
@@ -116,6 +127,16 @@ export const mcpToolSchemas = [
             `Filter for aggregated metrics. Options: ` +
             `'${AGG_MODES.join('\', \'')}'. Default 'all'.`,
         },
+        searchQuery: {
+          type: 'string',
+          description:
+            'Optional case-insensitive substring to search across metric names.',
+        },
+        displayAll: {
+          type: 'boolean',
+          description:
+            'If true, analyzes all metrics instead of only importantMetrics.',
+        },
       },
       required: ['datasetGroups'],
     },
@@ -123,15 +144,17 @@ export const mcpToolSchemas = [
   {
     name: 'get_significant_changes',
     description:
-      'Analyze a specific test and filter the results to only ' +
-      'show metrics with a statistically significant change. ' +
-      'Ideal for constructing highlight reports.',
+      'Analyze a specific test (or all common tests if testName is omitted) ' +
+      'and filter the results to only show metrics with a statistically ' +
+      'significant change. Ideal for constructing highlight reports.',
     inputSchema: {
       type: 'object',
       properties: {
         testName: {
           type: 'string',
-          description: 'Name of the test to query (e.g. jetstream_2.2).',
+          description:
+            'Optional name of a specific test to query (e.g. jetstream_2.2). ' +
+            'If omitted, analyzes all common baseline tests.',
         },
         datasetGroups: datasetGroupsSchema,
 
@@ -141,8 +164,29 @@ export const mcpToolSchemas = [
             `Filter for aggregated metrics. Options: ` +
             `'${AGG_MODES.join('\', \'')}'. Default 'all'.`,
         },
+        importantMetrics: {
+          type: 'array',
+          items: {type: 'string'},
+          description: 'Optional list of metric names/substrings to filter by.',
+        },
+        searchQuery: {
+          type: 'string',
+          description:
+            'Optional case-insensitive substring to search across metric names.',
+        },
+        displayAll: {
+          type: 'boolean',
+          description:
+            'If true, checks all metrics for significance instead of only importantMetrics.',
+        },
+        includeRawSignificant: {
+          type: 'boolean',
+          description:
+            'If true, also includes metrics with raw pValue <= 0.05 even when ' +
+            'small sample size (e.g. N <= 5) prevents passing Holm-Bonferroni.',
+        },
       },
-      required: ['testName', 'datasetGroups'],
+      required: ['datasetGroups'],
     },
   },
 ];
@@ -183,6 +227,25 @@ export function mcpSchemaToGeminiSchema(mcpSchema) {
   };
 }
 
+let cachedDataModel = null;
+let cachedGroupsSignature = null;
+const cachedTestAnalysis = new Map();
+
+function matchesCachedSignature(datasetGroups, rawStringsByGroup) {
+  if (!cachedGroupsSignature) return false;
+  if (cachedGroupsSignature.length !== datasetGroups.length) return false;
+  for (let i = 0; i < datasetGroups.length; i++) {
+    const entry = cachedGroupsSignature[i];
+    if (entry.name !== datasetGroups[i].name) return false;
+    const rawStrings = rawStringsByGroup[i];
+    if (entry.rawStrings.length !== rawStrings.length) return false;
+    for (let j = 0; j < rawStrings.length; j++) {
+      if (entry.rawStrings[j] !== rawStrings[j]) return false;
+    }
+  }
+  return true;
+}
+
 async function loadDatasets(args, loadDatasetFn) {
   const datasetGroups = args.datasetGroups || [];
 
@@ -190,18 +253,44 @@ async function loadDatasets(args, loadDatasetFn) {
     throw new Error('datasetGroups array must contain at least one group.');
   }
 
-  const dataModel = {groups: []};
+  const rawStringsByGroup = [];
   for (const group of datasetGroups) {
     const rawStrings = await Promise.all(
         group.paths.map((p) => loadDatasetFn(p)),
     );
+    rawStringsByGroup.push(rawStrings);
+  }
+
+  if (
+    cachedDataModel &&
+    matchesCachedSignature(datasetGroups, rawStringsByGroup)
+  ) {
+    return cachedDataModel;
+  }
+
+  const dataModel = {groups: []};
+  for (let i = 0; i < datasetGroups.length; i++) {
     dataModel.groups.push({
-      name: group.name,
-      _rawStrings: rawStrings,
+      name: datasetGroups[i].name,
+      _rawStrings: rawStringsByGroup[i],
     });
   }
 
-  return buildDataModel(dataModel);
+  cachedDataModel = buildDataModel(dataModel);
+  cachedGroupsSignature = datasetGroups.map((g, i) => ({
+    name: g.name,
+    rawStrings: rawStringsByGroup[i],
+  }));
+  cachedTestAnalysis.clear();
+
+  return cachedDataModel;
+}
+
+function getCachedTestMetrics(testName, dataModel) {
+  if (!cachedTestAnalysis.has(testName)) {
+    cachedTestAnalysis.set(testName, analyzeTestMetrics(testName, dataModel));
+  }
+  return cachedTestAnalysis.get(testName);
 }
 
 export async function executeMcpTool(name, args, loadDatasetFn) {
@@ -227,15 +316,20 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
 
   if (name === 'analyze_test') {
     const dataModel = await loadDatasets(args, loadDatasetFn);
-    const results = analyzeTestMetrics(args.testName, dataModel);
+    const results = getCachedTestMetrics(args.testName, dataModel);
 
     const importantMetrics =
       args.importantMetrics || getImportantMetricsForTest(args.testName);
+    const displayAll =
+      args.displayAll !== undefined ?
+        Boolean(args.displayAll) :
+        Boolean(args.searchQuery && !args.importantMetrics);
 
     const filteredResults = filterMetrics(results, {
       aggMode: args.aggMode || 'all',
       importantMetrics,
-      displayAll: false,
+      displayAll,
+      searchQuery: args.searchQuery || '',
     });
 
     // Strip groupValuesList to reduce JSON size for the LLM
@@ -287,30 +381,40 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
 
   if (name === 'analyze_all_tests' || name === 'get_significant_changes') {
     const dataModel = await loadDatasets(args, loadDatasetFn);
-    const testsToAnalyze =
-      name === 'get_significant_changes' ?
-        [args.testName] :
-        getBaselineTests(dataModel);
+    const testsToAnalyze = args.testName ?
+      [args.testName] :
+      getBaselineTests(dataModel);
+
+    const includeRawSignificant = Boolean(args.includeRawSignificant);
+    const displayAll =
+      args.displayAll !== undefined ?
+        Boolean(args.displayAll) :
+        Boolean(args.searchQuery && !args.importantMetrics);
 
     const allResults = {
       summary: {
         totalRegressions: 0,
         totalImprovements: 0,
         totalUnknownDirection: 0,
+        totalRawRegressions: 0,
+        totalRawImprovements: 0,
       },
       tests: {},
     };
 
     for (const testName of testsToAnalyze) {
-      const importantMetrics = getImportantMetricsForTest(testName);
+      const importantMetrics =
+        args.importantMetrics || getImportantMetricsForTest(testName);
 
-      const results = analyzeTestMetrics(testName, dataModel);
+      const results = getCachedTestMetrics(testName, dataModel);
 
       const filteredResults = filterMetrics(results, {
         aggMode: args.aggMode || 'all',
         importantMetrics,
-        displayAll: false,
+        displayAll,
+        searchQuery: args.searchQuery || '',
         significantOnly: name === 'get_significant_changes',
+        includeRawSignificant,
       });
 
       if (filteredResults.length > 0) {
@@ -330,6 +434,12 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
                   allResults.summary.totalImprovements++;
                 } else allResults.summary.totalUnknownDirection++;
               }
+              if (comp.rawSignificant) {
+                if (comp.isRegression) allResults.summary.totalRawRegressions++;
+                else if (comp.isImprovement) {
+                  allResults.summary.totalRawImprovements++;
+                }
+              }
             }
           }
         }
@@ -339,7 +449,11 @@ export async function executeMcpTool(name, args, loadDatasetFn) {
           // (some might sneak in if they had missing data comparisons)
           allResults.tests[testName] = filteredResults.filter((m) => {
             if (!m.comparisons) return false;
-            return m.comparisons.some((c) => c.significant === true);
+            return m.comparisons.some(
+                (c) =>
+                  c.significant === true ||
+                (includeRawSignificant && c.rawSignificant === true),
+            );
           });
 
           if (allResults.tests[testName].length === 0) {
