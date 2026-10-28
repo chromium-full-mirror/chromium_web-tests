@@ -252,19 +252,22 @@ data_sources: {
       # After editing, regenerate long-running-trace-config.pbtxt by running:
       #   vpython3 tools/update_trace_config_histograms.py --chromium-src <path>
       histograms {
-        histogram_name: "Browser.Tabs.TotalSwitchDuration3"
+        histogram_name: "Browser.MainThreadsCongestion"
       }
       histograms {
-        histogram_name: "WebVitals.FirstContentfulPaint3"
+        histogram_name: "Browser.MainThreadsCongestion.RunningOnly"
+      }
+      histograms {
+        histogram_name: "Browser.Tabs.TabSwitchResult3*"
+      }
+      histograms {
+        histogram_name: "Browser.Tabs.TotalIncompleteSwitchDuration3*"
+      }
+      histograms {
+        histogram_name: "Browser.Tabs.TotalSwitchDuration3*"
       }
       histograms {
         histogram_name: "Discarding.DiscardLatency"
-      }
-      histograms {
-        histogram_name: "Discarding.DiscardingProtectedTab"
-      }
-      histograms {
-        histogram_name: "Discarding.DiscardingProtectedTab2"
       }
       histograms {
         histogram_name: "Discarding.DiscardingFocusedTab"
@@ -273,31 +276,127 @@ data_sources: {
         histogram_name: "Discarding.DiscardingFocusedTab2"
       }
       histograms {
-        histogram_name: "EventLatency.KeyPressed.TotalLatency"
+        histogram_name: "Discarding.DiscardingProtectedTab"
       }
       histograms {
-        histogram_name: "EventLatency.MouseMoved.TotalLatency"
+        histogram_name: "Discarding.DiscardingProtectedTab2"
       }
       histograms {
-        histogram_name: "EventLatency.MousePressed.TotalLatency"
+        histogram_name: "Event.ScrollJank.*"
+      }
+      histograms {
+        histogram_name: "EventLatency.*"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.Checkerboarding3.AllSequences"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.Checkerboarding4.AllSequences"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.Jank3.AllAnimations"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.Jank3.AllInteractions"
       }
       histograms {
         histogram_name: "Graphics.Smoothness.Jank3.AllSequences"
       }
       histograms {
+        histogram_name: "Graphics.Smoothness.PercentDroppedFrames3.AllAnimations"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.PercentDroppedFrames3.AllInteractions"
+      }
+      histograms {
         histogram_name: "Graphics.Smoothness.PercentDroppedFrames3.AllSequences"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.PercentDroppedFrames4.AllAnimations"
+      }
+      histograms {
+        histogram_name: "Graphics.Smoothness.PercentDroppedFrames4.AllInteractions"
       }
       histograms {
         histogram_name: "Graphics.Smoothness.PercentDroppedFrames4.AllSequences"
       }
       histograms {
+        histogram_name: "Memory.Browser.PrivateMemoryFootprint"
+      }
+      histograms {
+        histogram_name: "Memory.Gpu.PrivateMemoryFootprint"
+      }
+      histograms {
+        histogram_name: "Memory.PartitionAlloc.MemoryReclaim"
+      }
+      histograms {
+        histogram_name: "Memory.PartitionAlloc.PeriodicPurge.Subsampled"
+      }
+      histograms {
+        histogram_name: "Memory.Renderer.PrivateMemoryFootprint"
+      }
+      histograms {
+        histogram_name: "Memory.Total.PrivateMemoryFootprint"
+      }
+      histograms {
+        histogram_name: "PageLoad.Experimental.NavigationTiming.NavigationStartToFirstResponseStart"
+      }
+      histograms {
+        histogram_name: "PageLoad.InteractiveTiming.FirstInputDelay4"
+      }
+      histograms {
+        histogram_name: "PageLoad.InteractiveTiming.InputDelay3"
+      }
+      histograms {
+        histogram_name: "PageLoad.InteractiveTiming.ProcessingTime"
+      }
+      histograms {
+        histogram_name: "PageLoad.InteractiveTiming.TimeToNextPaint"
+      }
+      histograms {
         histogram_name: "PageLoad.InteractiveTiming.UserInteractionLatency.HighPercentile2.MaxEventDuration"
+      }
+      histograms {
+        histogram_name: "PageLoad.InteractiveTiming.WorstUserInteractionLatency.MaxEventDuration"
       }
       histograms {
         histogram_name: "PageLoad.PaintTiming.NavigationToFirstContentfulPaint"
       }
       histograms {
         histogram_name: "PageLoad.PaintTiming.NavigationToLargestContentfulPaint2"
+      }
+      histograms {
+        histogram_name: "Startup.Android.Cold.TimeToFirstContentfulPaint3.Tabbed"
+      }
+      histograms {
+        histogram_name: "Startup.Android.Cold.TimeToFirstVisibleContent4"
+      }
+      histograms {
+        histogram_name: "Startup.FirstWebContents.FirstContentfulPaint"
+      }
+      histograms {
+        histogram_name: "Startup.FirstWebContents.LargestContentfulPaint"
+      }
+      histograms {
+        histogram_name: "Startup.FirstWebContents.NonEmptyPaint3"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.DecodedFramesPerSecond"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.DroppedFrames.*"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.HarmonicFrameRate"
+      }
+      histograms {
+        histogram_name: "WebRTC.Video.RenderFramesPerSecond"
+      }
+      histograms {
+        histogram_name: "WebVitals.FirstContentfulPaint3"
+      }
+      histograms {
+        histogram_name: "WebVitals.InteractionToNextPaint2"
       }
     }
   }

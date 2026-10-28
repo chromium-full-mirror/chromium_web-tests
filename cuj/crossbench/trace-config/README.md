@@ -12,6 +12,10 @@ This directory contains the Perfetto trace configuration files used by
   Lower-overhead trace config with larger ring buffers and a smaller subset of
   low-frequency UMA histograms for long-running / stress CUJs (e.g.
   `memory-pressure`, `tab-stress`, `videocall`).
+- **`ring-buffer-trace-config.template.pbtxt`** (generates **`ring-buffer-trace-config.pbtxt`**):
+  In-memory ring-buffer trace config (with `unique_session_name` and without
+  `write_into_file`) so rolling snapshots can be cloned mid-run via
+  `perfetto --clone-by-name`.
 
 ## Modifying Trace Configs & Chrome UMA Histograms
 
