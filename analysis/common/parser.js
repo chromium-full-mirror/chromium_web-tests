@@ -18,6 +18,8 @@ export const AGG_MODES = [
 ];
 
 const UMA_PREFIXES = [
+  'multiwindow-memory-stress.uma.lower_is_better-',
+  'multiwindow-memory-stress.uma.higher_is_better-',
   'cuj.uma.lower_is_better-',
   'cuj.uma.higher_is_better-',
   'cuj.uma_histogram_summaries-',
