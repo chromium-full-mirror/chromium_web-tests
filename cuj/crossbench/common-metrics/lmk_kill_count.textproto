@@ -2,17 +2,33 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+query {
+  id: "lmk_kill_count_query"
+  table {
+    table_name: "lmk_kill_count_output"
+    module_name: "sql_packages.queries.lmk_kill_count"
+    column_names: "it_id"
+    column_names: "kill_count"
+    column_names: "chrome_kill_count"
+  }
+}
+
 metric_spec: {
   id: "cuj.common-metrics.lmk_kill_count"
   dimensions: "it_id"
   value: "kill_count"
   polarity: LOWER_IS_BETTER
-  query {
-    table {
-      table_name: "lmk_kill_count_output"
-      module_name: "sql_packages.queries.lmk_kill_count"
-      column_names: "it_id"
-      column_names: "kill_count"
-    }
+  query: {
+    inner_query_id: "lmk_kill_count_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.chrome_lmk_kill_count"
+  dimensions: "it_id"
+  value: "chrome_kill_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "lmk_kill_count_query"
   }
 }
