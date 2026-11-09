@@ -14,7 +14,7 @@ query {
 }
 
 metric_spec: {
-  id: "no-crosbolt.cuj.common-metrics.dom_complete_by_tab"
+  id: "cuj.common-metrics.dom_complete_by_tab"
   dimensions: "id"
   dimensions: "it_id"
   value: "dom_complete"
@@ -25,7 +25,7 @@ metric_spec: {
 }
 
 metric_spec: {
-  id: "no-crosbolt.cuj.common-metrics.dom_interactive_by_tab"
+  id: "cuj.common-metrics.dom_interactive_by_tab"
   dimensions: "id"
   dimensions: "it_id"
   value: "dom_interactive"

@@ -14,7 +14,7 @@ query: {
 }
 
 metric_spec: {
-  id: "no-crosbolt.cuj.common-metrics.tab_open_latency_by_tab"
+  id: "cuj.common-metrics.tab_open_latency_by_tab"
   dimensions: "it_id"
   dimensions: "id"
   value: "open_latency"
