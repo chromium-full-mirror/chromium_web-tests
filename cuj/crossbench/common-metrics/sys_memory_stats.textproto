@@ -1,0 +1,151 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query {
+  id: "sys_memory_stats_query"
+  table {
+    table_name: "sys_memory_stats_output"
+    module_name: "sql_packages.queries.sys_memory_stats"
+    column_names: "mem_free_min_mb"
+    column_names: "mem_free_avg_mb"
+    column_names: "mem_available_min_mb"
+    column_names: "mem_available_avg_mb"
+    column_names: "swap_used_max_mb"
+    column_names: "swap_used_avg_mb"
+    column_names: "dirty_max_mb"
+    column_names: "writeback_max_mb"
+    column_names: "gpu_memory_max_mb"
+    column_names: "pswpin_pages"
+    column_names: "pswpout_pages"
+    column_names: "pgpgin_kb"
+    column_names: "pgpgout_kb"
+    column_names: "pgfault_count"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.mem_free_mb.min"
+  value: "mem_free_min_mb"
+  polarity: HIGHER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.mem_free_mb.avg"
+  value: "mem_free_avg_mb"
+  polarity: HIGHER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.mem_available_mb.min"
+  value: "mem_available_min_mb"
+  polarity: HIGHER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.mem_available_mb.avg"
+  value: "mem_available_avg_mb"
+  polarity: HIGHER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.swap_used_mb.max"
+  value: "swap_used_max_mb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.swap_used_mb.avg"
+  value: "swap_used_avg_mb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.dirty_mb.max"
+  value: "dirty_max_mb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.writeback_mb.max"
+  value: "writeback_max_mb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.gpu_memory_mb.max"
+  value: "gpu_memory_max_mb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.pswpin_pages"
+  value: "pswpin_pages"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.pswpout_pages"
+  value: "pswpout_pages"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.pgpgin_kb"
+  value: "pgpgin_kb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.pgpgout_kb"
+  value: "pgpgout_kb"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.sys_memory_stats.pgfault_count"
+  value: "pgfault_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "sys_memory_stats_query"
+  }
+}
