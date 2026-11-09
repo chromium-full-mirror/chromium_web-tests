@@ -1,0 +1,56 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query {
+  id: "psi_stats_query"
+  table {
+    table_name: "psi_stats_output"
+    module_name: "sql_packages.queries.psi_stats"
+    column_names: "resource"
+    column_names: "total_stall_ms"
+    column_names: "avg_stall_pct"
+    column_names: "max_window_stall_pct"
+    column_names: "p90_window_stall_pct"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.psi_stats.total_stall_ms"
+  dimensions: "resource"
+  value: "total_stall_ms"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "psi_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.psi_stats.avg_stall_pct"
+  dimensions: "resource"
+  value: "avg_stall_pct"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "psi_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.psi_stats.max_window_stall_pct"
+  dimensions: "resource"
+  value: "max_window_stall_pct"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "psi_stats_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.psi_stats.p90_window_stall_pct"
+  dimensions: "resource"
+  value: "p90_window_stall_pct"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "psi_stats_query"
+  }
+}

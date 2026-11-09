@@ -25,6 +25,7 @@
         ./common-metrics/slow_inputs.textproto
         ./common-metrics/d_state_stalls.textproto
         ./common-metrics/sys_memory_stats.textproto
+        ./common-metrics/psi_stats.textproto
         $[...METRIC_DEFINITIONS]
       ]
     }
