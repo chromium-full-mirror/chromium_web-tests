@@ -17,6 +17,7 @@ WITH
       count(*) AS "count",
       sum(hist.value) AS "total",
       max(hist.value) AS "max",
+      percentile(hist.value, 99) AS "p99",
       percentile(hist.value, 95) AS "p95",
       percentile(hist.value, 90) AS "p90",
       percentile(hist.value, 75) AS "p75",
@@ -55,6 +56,8 @@ FROM (
   FROM summaries
   UNION ALL
   SELECT hist_name, enum_name, 'max' AS agg_type, "max" AS value FROM summaries
+  UNION ALL
+  SELECT hist_name, enum_name, 'p99' AS agg_type, "p99" AS value FROM summaries
   UNION ALL
   SELECT hist_name, enum_name, 'p95' AS agg_type, "p95" AS value FROM summaries
   UNION ALL
