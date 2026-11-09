@@ -1,0 +1,78 @@
+# Copyright 2026 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+query {
+  id: "d_state_stalls_query"
+  table {
+    table_name: "d_state_stalls_output"
+    module_name: "sql_packages.queries.d_state_stalls"
+    column_names: "process_group"
+    column_names: "stall_count"
+    column_names: "total_ms"
+    column_names: "max_ms"
+    column_names: "over_10ms_count"
+    column_names: "over_50ms_count"
+    column_names: "over_100ms_count"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.stall_count"
+  dimensions: "process_group"
+  value: "stall_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.total_ms"
+  dimensions: "process_group"
+  value: "total_ms"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.max_ms"
+  dimensions: "process_group"
+  value: "max_ms"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.over_10ms_count"
+  dimensions: "process_group"
+  value: "over_10ms_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.over_50ms_count"
+  dimensions: "process_group"
+  value: "over_50ms_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
+
+metric_spec: {
+  id: "cuj.common-metrics.d_state_stalls.over_100ms_count"
+  dimensions: "process_group"
+  value: "over_100ms_count"
+  polarity: LOWER_IS_BETTER
+  query: {
+    inner_query_id: "d_state_stalls_query"
+  }
+}
