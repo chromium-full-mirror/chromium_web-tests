@@ -61,24 +61,29 @@ def CheckChange(input_api, output_api):
       version="3.2")
 
   # ---------------------------------------------------------------------------
-  # MyPy:
+  # Pyrefly:
   # ---------------------------------------------------------------------------
-  mypy_files_to_check: list[str] = MypyFilesToCheck(input_api,
-                                                    modified_py_files)
-  tests.append(
-      input_api.Command(
-          name="mypy",
-          cmd=[
-              input_api.python3_executable,
-              "-m",
-              "mypy",
-              "--check-untyped-defs",
-              "--pretty",
-          ] + mypy_files_to_check,
-          message=output_api.PresubmitError,
-          kwargs={},
-          python3=True,
-      ))
+  typer_files_to_check: list[str] = TyperFilesToCheck(input_api,
+                                                      modified_py_files)
+  if typer_files_to_check and (platform.system() != "Linux" or
+                               platform.machine() == "x86_64"):
+    repo_root = Path(input_api.change.RepositoryRoot())
+    tests.append(
+        input_api.Command(
+            name="pyrefly",
+            cmd=[
+                input_api.python3_executable,
+                "-m",
+                "pyrefly",
+                "check",
+                f"--python-interpreter-path={input_api.python3_executable}",
+                f"--search-path={repo_root / 'third_party' / 'crossbench'}",
+                f"--search-path={repo_root / 'protoc' / 'gen'}",
+            ] + typer_files_to_check,
+            message=output_api.PresubmitError,
+            kwargs={},
+            python3=True,
+        ))
 
   # ---------------------------------------------------------------------------
   # JS eslint:
@@ -176,12 +181,14 @@ def ModifiedFiles(input_api, filename_pattern: str) -> list[str] | None:
   return files_to_check
 
 
-def MypyFilesToCheck(input_api, modified_py_files) -> list[str]:
-  mypy_files_to_check = {"PRESUBMIT.py"}
-  mypy_files_to_check.update(modified_py_files)
+def TyperFilesToCheck(input_api,
+                      modified_py_files: list[str] | None) -> list[str]:
+  typer_files_to_check = {"PRESUBMIT.py"}
+  if modified_py_files:
+    typer_files_to_check.update(modified_py_files)
 
   result = []
-  for file in mypy_files_to_check:
+  for file in typer_files_to_check:
     if GlobalSkipChecks(input_api, file):
       continue
     result.append(file)
