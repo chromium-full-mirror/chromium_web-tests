@@ -152,8 +152,9 @@ def CheckChange(input_api, output_api):
               "/tmp",
               # TODO(b/531933642): Loadline and Web power are incompatible with
               # --dry-run, as they run with multiple browser sessions.
+              # alice has no page-config.hjson and requires --page-config.
               "--tests",
-              "^(?!.*loadline|web-power).*$"
+              "^(?!.*loadline|web-power|alice).*$"
           ],
           message=output_api.PresubmitError,
           kwargs={},

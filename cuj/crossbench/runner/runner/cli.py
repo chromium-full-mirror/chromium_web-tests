@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+import dataclasses
 import json
 import logging
 import re
@@ -22,7 +23,7 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from runner.config import (CliConfig, RunConfig, Test, TestGroup,
+from runner.config import (CliConfig, Cuj, RunConfig, Test, TestGroup,
                            TestGroupConfig, TestInvocationConfig,
                            TestInvocationState)
 from runner.gather_metrics import generate_metrics_json
@@ -39,7 +40,9 @@ LOG_PANEL_HEIGHT = LOG_MAX_VISIBLE_LINES + 2
 
 def generate_test_invocations(
     groups: list[TestGroup],
-    all_tests: list[Test]) -> list[TestInvocationConfig]:
+    all_tests: list[Test],
+    list_only: bool = False,
+) -> list[TestInvocationConfig]:
   test_invocations: list[TestInvocationConfig] = []
 
   for group in groups:
@@ -60,11 +63,31 @@ def generate_test_invocations(
     for group in groups:
       if re.fullmatch(group.filter_regex, test.name) and re.fullmatch(
           group.variants_filter_regex, test.variant):
+        if not list_only:
+          if isinstance(test, Cuj):
+            if test.page_config is None and group.page_config is None:
+              raise ValueError(
+                  f"Test '{test.full_name}' has no page-config.hjson and "
+                  "requires a page_config (--page-config) to be provided.")
+            if test.page_config is not None and group.page_config is not None:
+              raise ValueError(
+                  f"Test '{test.full_name}' already defines "
+                  f"{test.page_config}; cannot also specify page_config.")
+          elif group.page_config is not None:
+            raise ValueError(
+                f"Test '{test.full_name}' is a benchmark and does not "
+                "support page_config.")
         test_invocations.append(
-            TestInvocationConfig(test, group.min_successes,
-                                 group.max_consecutive_failures, group.playback,
-                                 group.setup_delay, group.startup_delay,
-                                 group.stories))
+            TestInvocationConfig(
+                test,
+                group.min_successes,
+                group.max_consecutive_failures,
+                group.playback,
+                group.setup_delay,
+                group.startup_delay,
+                group.stories,
+                group.page_config,
+            ))
 
   return test_invocations
 
@@ -114,10 +137,21 @@ def generate_run_config(argv: list[str]) -> RunConfig:
         latest_results.unlink(missing_ok=True)
         latest_results.symlink_to(results_root, target_is_directory=True)
 
-    groups = []
+    groups: list[TestGroup] = []
     for test_str, variant_str in cli_config.tests:
       if Path(test_str).is_file():
-        groups.extend(TestGroupConfig.parse(test_str).groups)
+        file_groups = TestGroupConfig.parse(test_str).groups
+        if cli_config.page_config is not None:
+          updated_groups: list[TestGroup] = []
+          for group in file_groups:
+            if group.page_config is not None:
+              raise ValueError(
+                  "--page-config cannot be combined with a test group that "
+                  "already defines page_config.")
+            updated_groups.append(
+                dataclasses.replace(group, page_config=cli_config.page_config))
+          file_groups = updated_groups
+        groups.extend(file_groups)
       else:
         groups.extend(
             TestGroupConfig.from_cmdline_flags(
@@ -126,11 +160,15 @@ def generate_run_config(argv: list[str]) -> RunConfig:
                 playback=cli_config.playback,
                 setup_delay=cli_config.setup_delay,
                 startup_delay=cli_config.startup_delay,
-                stories=cli_config.stories).groups)
+                stories=cli_config.stories,
+                page_config=cli_config.page_config).groups)
     test_group_config = TestGroupConfig(groups=groups)
 
-    tests = generate_test_invocations(test_group_config.groups,
-                                      enumerate_all_tests())
+    tests = generate_test_invocations(
+        test_group_config.groups,
+        enumerate_all_tests(),
+        list_only=cli_config.list_tests,
+    )
 
   return RunConfig(
       platform=cli_config.platform,

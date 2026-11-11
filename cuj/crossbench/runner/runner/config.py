@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import dataclasses
 import enum
 import logging
@@ -12,10 +13,19 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Self
 
+from crossbench.benchmarks.loading.config.pages import PagesConfig
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
 from rich.spinner import Spinner
 from typing_extensions import override
+
+
+def parse_inline_page_config(value: object) -> dict[str, Any]:
+  if isinstance(value, str):
+    value = ObjectParser.inline_hjson(value)
+  page_config_dict = dict(ObjectParser.non_empty_dict(value, "page_config"))
+  PagesConfig.parse(copy.deepcopy(page_config_dict))
+  return page_config_dict
 
 
 class TestVariantAction(argparse.Action):
@@ -64,7 +74,7 @@ class Benchmark(Test):
 
 @dataclasses.dataclass(frozen=True)
 class Cuj(Test):
-  page_config: Path
+  page_config: Path | None = None
 
   @property
   @override
@@ -81,6 +91,7 @@ class TestInvocationConfig:
   setup_delay: str | None = None
   startup_delay: str | None = None
   stories: str | None = None
+  page_config: dict[str, Any] | None = None
 
 
 @dataclasses.dataclass
@@ -112,6 +123,7 @@ class TestGroup(ConfigObject):
   setup_delay: str | None = None
   startup_delay: str | None = None
   stories: str | None = None
+  page_config: dict[str, Any] | None = None
 
   @classmethod
   @override
@@ -136,6 +148,8 @@ class TestGroup(ConfigObject):
         "startup_delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "stories", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "page_config", type=parse_inline_page_config, required=False)
     return parser
 
   @classmethod
@@ -161,13 +175,16 @@ class TestGroupConfig(ConfigObject):
     raise ValueError("Cannot parse TestGroupConfig from string")
 
   @classmethod
-  def from_cmdline_flags(cls,
-                         tests: str,
-                         variants: str,
-                         playback: str | None,
-                         setup_delay: str | None,
-                         startup_delay: str | None,
-                         stories: str | None = None) -> TestGroupConfig:
+  def from_cmdline_flags(
+      cls,
+      tests: str,
+      variants: str,
+      playback: str | None,
+      setup_delay: str | None,
+      startup_delay: str | None,
+      stories: str | None = None,
+      page_config: dict[str, Any] | None = None,
+  ) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
             filter_regex=tests,
@@ -175,7 +192,8 @@ class TestGroupConfig(ConfigObject):
             playback=playback,
             setup_delay=setup_delay,
             startup_delay=startup_delay,
-            stories=stories)
+            stories=stories,
+            page_config=page_config)
     ])
 
 
@@ -197,6 +215,7 @@ class CliConfig:
   setup_delay: str | None
   startup_delay: str | None
   stories: str | None
+  page_config: dict[str, Any] | None
   wpr: str | None
   wait_for_debugger: bool
   no_symlinks: bool
@@ -221,6 +240,8 @@ class CliConfig:
         "--setup-delay", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "--stories", type=ObjectParser.non_empty_str, required=False)
+    parser.add_argument(
+        "--page-config", type=parse_inline_page_config, required=False)
     parser.add_argument(
         "--tests", type=ObjectParser.non_empty_str, action=TestVariantAction)
     parser.add_argument(
@@ -300,6 +321,7 @@ class CliConfig:
         setup_delay=parsed.setup_delay,
         startup_delay=parsed.startup_delay,
         stories=parsed.stories,
+        page_config=parsed.page_config,
         secrets=secrets_file,
         wpr=wpr,
         upload=parsed.upload,

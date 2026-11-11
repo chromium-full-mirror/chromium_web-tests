@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import urllib
+from collections.abc import Mapping
 from datetime import datetime as dt
 from pathlib import Path
 from typing import Any
@@ -34,6 +35,7 @@ def execute_crossbench(
     log_buffer: LogCapture | DirectLogCapture | NullLogCapture,
     playback: str | None = None,
     page_config_file: Path | None = None,
+    inline_page_config: Mapping[str, Any] | None = None,
     secrets_file: Path | None = None,
     setup_delay: str | None = None,
     startup_delay: str | None = None,
@@ -51,7 +53,10 @@ def execute_crossbench(
     crossbench_args.append("--out-dir")
     crossbench_args.append(str(results_path))
 
-    if page_config_file:
+    if inline_page_config:
+      crossbench_args.append("--page-config")
+      crossbench_args.append(json.dumps(dict(inline_page_config)))
+    elif page_config_file:
       crossbench_args.append("--page-config")
       crossbench_args.append(str(page_config_file))
 
@@ -316,6 +321,7 @@ def run_test(
             results_path=current_results_path,
             playback=inv_state.config.playback,
             page_config_file=inv_state.config.test.page_config,
+            inline_page_config=inv_state.config.page_config,
             setup_delay=inv_state.config.setup_delay,
             startup_delay=inv_state.config.startup_delay,
             stories=inv_state.config.stories,
