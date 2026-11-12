@@ -109,6 +109,8 @@ def generate_test_invocations(
                 group.stories,
                 group.page_config,
                 group.record_video,
+                group.bypass_oobe,
+                group.clear_browser_cache,
             ))
 
   return test_invocations
@@ -164,7 +166,9 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       if Path(test_str).is_file():
         file_groups = TestGroupConfig.parse(test_str).groups
         if (cli_config.page_config is not None or
-            cli_config.record_video is not None):
+            cli_config.record_video is not None or
+            cli_config.bypass_oobe is not None or
+            cli_config.clear_browser_cache is not None):
           updated_groups: list[TestGroup] = []
           for group in file_groups:
             if (cli_config.page_config is not None and
@@ -184,6 +188,13 @@ def generate_run_config(argv: list[str]) -> RunConfig:
                     record_video=(cli_config.record_video
                                   if cli_config.record_video is not None else
                                   group.record_video),
+                    bypass_oobe=(cli_config.bypass_oobe
+                                 if cli_config.bypass_oobe is not None else
+                                 group.bypass_oobe),
+                    clear_browser_cache=(cli_config.clear_browser_cache
+                                         if cli_config.clear_browser_cache
+                                         is not None else
+                                         group.clear_browser_cache),
                 ))
           file_groups = updated_groups
         groups.extend(file_groups)
@@ -197,7 +208,9 @@ def generate_run_config(argv: list[str]) -> RunConfig:
                 startup_delay=cli_config.startup_delay,
                 stories=cli_config.stories,
                 page_config=cli_config.page_config,
-                record_video=cli_config.record_video).groups)
+                record_video=cli_config.record_video,
+                bypass_oobe=cli_config.bypass_oobe,
+                clear_browser_cache=cli_config.clear_browser_cache).groups)
     test_group_config = TestGroupConfig(groups=groups)
 
     tests = generate_test_invocations(

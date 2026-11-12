@@ -89,6 +89,8 @@ class TestInvocationConfig:
   stories: str | None = None
   page_config: dict[str, Any] | None = None
   record_video: bool = False
+  bypass_oobe: bool = True
+  clear_browser_cache: bool = True
 
 
 @dataclasses.dataclass
@@ -122,6 +124,8 @@ class TestGroup(ConfigObject):
   stories: str | None = None
   page_config: dict[str, Any] | None = None
   record_video: bool = False
+  bypass_oobe: bool = True
+  clear_browser_cache: bool = True
 
   @classmethod
   @override
@@ -154,6 +158,14 @@ class TestGroup(ConfigObject):
         type=ObjectParser.bool,
         required=False,
         default=False)
+    parser.add_argument(
+        "bypass_oobe", type=ObjectParser.bool, required=False, default=True)
+    parser.add_argument(
+        "clear_browser_cache",
+        aliases=("clear_cache",),
+        type=ObjectParser.bool,
+        required=False,
+        default=True)
     return parser
 
   @classmethod
@@ -189,6 +201,8 @@ class TestGroupConfig(ConfigObject):
       stories: str | None = None,
       page_config: dict[str, Any] | None = None,
       record_video: bool | None = None,
+      bypass_oobe: bool | None = None,
+      clear_browser_cache: bool | None = None,
   ) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
@@ -199,7 +213,10 @@ class TestGroupConfig(ConfigObject):
             startup_delay=startup_delay,
             stories=stories,
             page_config=page_config,
-            record_video=bool(record_video))
+            record_video=bool(record_video),
+            bypass_oobe=(True if bypass_oobe is None else bypass_oobe),
+            clear_browser_cache=(
+                True if clear_browser_cache is None else clear_browser_cache))
     ])
 
 
@@ -227,6 +244,8 @@ class CliConfig:
   no_symlinks: bool
   list_tests: bool
   record_video: bool | None = None
+  bypass_oobe: bool | None = None
+  clear_browser_cache: bool | None = None
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -275,6 +294,20 @@ class CliConfig:
         default=None,
         help=("Enable full-screen video recording via Crossbench VideoProbe "
               "(default: False)."))
+    parser.add_argument(
+        "--bypass-oobe",
+        dest="bypass_oobe",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=("Dismiss Android SetupWizard OOBE automatically before tests "
+              "(default: True)."))
+    parser.add_argument(
+        "--clear-browser-cache",
+        dest="clear_browser_cache",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=("Clear browser cache and app data before each session "
+              "(default: True)."))
     parser.add_argument("--list", action="store_true", default=False)
 
     parsed = parser.parse_args(argv)
@@ -349,6 +382,8 @@ class CliConfig:
         no_symlinks=parsed.no_symlinks,
         list_tests=parsed.list,
         record_video=parsed.record_video,
+        bypass_oobe=parsed.bypass_oobe,
+        clear_browser_cache=parsed.clear_browser_cache,
     )
 
 

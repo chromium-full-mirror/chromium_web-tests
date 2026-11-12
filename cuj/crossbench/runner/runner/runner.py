@@ -41,6 +41,8 @@ def execute_crossbench(
     page_config_file: Path | None = None,
     inline_page_config: Mapping[str, Any] | None = None,
     record_video: bool = False,
+    bypass_oobe: bool = True,
+    clear_browser_cache: bool = True,
     secrets_file: Path | None = None,
     setup_delay: str | None = None,
     startup_delay: str | None = None,
@@ -86,6 +88,26 @@ def execute_crossbench(
 
     crossbench_args.append("--viewport=maximized")
 
+    extra_cb_args = shlex.split(additional_crossbench_args)
+
+    if not clear_browser_cache and not any(
+        arg.startswith((
+            "--keep-browser-cache",
+            "--no-clear-browser-cache",
+            "--clear-browser-cache",
+        )) for arg in extra_cb_args):
+      crossbench_args.append("--keep-browser-cache")
+
+    if platform == TargetPlatform.ANDROID and not bypass_oobe:
+      if not any(
+          arg.startswith(("--start-browser", "--no-start-browser"))
+          for arg in extra_cb_args):
+        crossbench_args.append("--no-start-browser")
+        if not any(
+            arg.startswith(("--no-splash", "--nosplash", "--splash"))
+            for arg in extra_cb_args):
+          crossbench_args.append("--no-splash")
+
     if secrets_file:
       crossbench_args.append("--secrets")
       crossbench_args.append(str(secrets_file))
@@ -119,8 +141,7 @@ def execute_crossbench(
 
     crossbench_args.append("--throw")
 
-    for arg in shlex.split(additional_crossbench_args):
-      crossbench_args.append(arg)
+    crossbench_args.extend(extra_cb_args)
 
     # The command-line value of wpr takes precedence over any --wpr from cb-args
     if wpr_path:
@@ -168,8 +189,13 @@ def execute_crossbench(
       raise RuntimeError(f"Crossbench failed with exit code {returncode}")
 
 
-def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
-                               extensions: Any) -> dict[str, Any]:
+def get_android_browser_config(
+    run_config: RunConfig,
+    browser_flags_file: Path,
+    extensions: Any,
+    bypass_oobe: bool = True,
+    clear_browser_cache: bool = True,
+) -> dict[str, Any]:
   # Default to normal chrome for android
   browser_string = "chrome"
 
@@ -178,7 +204,10 @@ def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
 
   driver_config: dict[str, Any] = {
       "type": "adb",
-      "device_id": run_config.device
+      "device_id": run_config.device,
+      "settings": {
+          "bypass_oobe": bypass_oobe,
+      },
   }
   if run_config.adb_bin:
     driver_config["adb_bin"] = str(run_config.adb_bin)
@@ -190,14 +219,19 @@ def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,
               "browser": browser_string,
               "flags": ["flags"],
               "extensions": extensions,
+              "clear_cache": clear_browser_cache,
               "driver": driver_config
           }
       }
   }
 
 
-def get_chromeos_browser_config(run_config: RunConfig, browser_flags_file: Path,
-                                extensions: Any) -> dict[str, Any]:
+def get_chromeos_browser_config(
+    run_config: RunConfig,
+    browser_flags_file: Path,
+    extensions: Any,
+    clear_browser_cache: bool = True,
+) -> dict[str, Any]:
   # Default to normal chrome for ChromeOS
   browser_string = "/opt/google/chrome/chrome"
 
@@ -213,6 +247,7 @@ def get_chromeos_browser_config(run_config: RunConfig, browser_flags_file: Path,
               "browser": browser_string,
               "flags": ["flags"],
               "extensions": extensions,
+              "clear_cache": clear_browser_cache,
               "driver": {
                   "type": "chromeos-ssh",
                   "settings": {
@@ -226,8 +261,12 @@ def get_chromeos_browser_config(run_config: RunConfig, browser_flags_file: Path,
   }
 
 
-def get_local_browser_config(run_config: RunConfig, browser_flags_file: Path,
-                             extensions: Any) -> dict[str, Any]:
+def get_local_browser_config(
+    run_config: RunConfig,
+    browser_flags_file: Path,
+    extensions: Any,
+    clear_browser_cache: bool = True,
+) -> dict[str, Any]:
 
   # Default to normal chrome for local
   browser_string = "chrome"
@@ -242,13 +281,18 @@ def get_local_browser_config(run_config: RunConfig, browser_flags_file: Path,
               "browser": browser_string,
               "flags": ["flags"],
               "extensions": extensions,
+              "clear_cache": clear_browser_cache,
           }
       }
   }
 
 
-def get_mac_browser_config(run_config: RunConfig, browser_flags_file: Path,
-                           extensions: Any) -> dict[str, Any]:
+def get_mac_browser_config(
+    run_config: RunConfig,
+    browser_flags_file: Path,
+    extensions: Any,
+    clear_browser_cache: bool = True,
+) -> dict[str, Any]:
   # Default to normal chrome for Mac
   browser_string = "chrome"
 
@@ -262,27 +306,50 @@ def get_mac_browser_config(run_config: RunConfig, browser_flags_file: Path,
               "browser": browser_string,
               "flags": ["flags"],
               "extensions": extensions,
+              "clear_cache": clear_browser_cache,
           }
       }
   }
 
 
-def get_browser_config(run_config: RunConfig, browser_flags_file: Path,
-                       extensions: Any) -> str:
+def get_browser_config(
+    run_config: RunConfig,
+    browser_flags_file: Path,
+    extensions: Any,
+    bypass_oobe: bool = True,
+    clear_browser_cache: bool = True,
+) -> str:
   # TODO support different chrome versions (i.e. dev/beta)
 
   if run_config.platform == TargetPlatform.ANDROID:
-    config_dict = get_android_browser_config(run_config, browser_flags_file,
-                                             extensions)
+    config_dict = get_android_browser_config(
+        run_config,
+        browser_flags_file,
+        extensions,
+        bypass_oobe=bypass_oobe,
+        clear_browser_cache=clear_browser_cache,
+    )
   elif run_config.platform == TargetPlatform.CHROME_OS:
-    config_dict = get_chromeos_browser_config(run_config, browser_flags_file,
-                                              extensions)
+    config_dict = get_chromeos_browser_config(
+        run_config,
+        browser_flags_file,
+        extensions,
+        clear_browser_cache=clear_browser_cache,
+    )
   elif run_config.platform == TargetPlatform.LOCAL:
-    config_dict = get_local_browser_config(run_config, browser_flags_file,
-                                           extensions)
+    config_dict = get_local_browser_config(
+        run_config,
+        browser_flags_file,
+        extensions,
+        clear_browser_cache=clear_browser_cache,
+    )
   elif run_config.platform == TargetPlatform.MAC:
-    config_dict = get_mac_browser_config(run_config, browser_flags_file,
-                                         extensions)
+    config_dict = get_mac_browser_config(
+        run_config,
+        browser_flags_file,
+        extensions,
+        clear_browser_cache=clear_browser_cache,
+    )
   else:
     raise ValueError(f"Unsupported platform type: {run_config.platform}")
 
@@ -322,9 +389,13 @@ def run_test(
 
   with change_cwd(inv_state.config.test.path):
     extensions = load_extensions(inv_state.config.test.extensions)
-    browser_config = get_browser_config(run_config,
-                                        inv_state.config.test.browser_flags,
-                                        extensions)
+    browser_config = get_browser_config(
+        run_config,
+        inv_state.config.test.browser_flags,
+        extensions,
+        bypass_oobe=inv_state.config.bypass_oobe,
+        clear_browser_cache=inv_state.config.clear_browser_cache,
+    )
 
     while True:
       timestamp = dt.now().strftime("%Y-%m-%d_%H%M%S")
@@ -348,6 +419,8 @@ def run_test(
             page_config_file=inv_state.config.test.page_config,
             inline_page_config=inv_state.config.page_config,
             record_video=inv_state.config.record_video,
+            bypass_oobe=inv_state.config.bypass_oobe,
+            clear_browser_cache=inv_state.config.clear_browser_cache,
             setup_delay=inv_state.config.setup_delay,
             startup_delay=inv_state.config.startup_delay,
             stories=inv_state.config.stories,
