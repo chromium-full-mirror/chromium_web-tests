@@ -108,6 +108,7 @@ def generate_test_invocations(
                 group.startup_delay,
                 group.stories,
                 group.page_config,
+                group.record_video,
             ))
 
   return test_invocations
@@ -162,10 +163,12 @@ def generate_run_config(argv: list[str]) -> RunConfig:
     for test_str, variant_str in cli_config.tests:
       if Path(test_str).is_file():
         file_groups = TestGroupConfig.parse(test_str).groups
-        if cli_config.page_config is not None:
+        if (cli_config.page_config is not None or
+            cli_config.record_video is not None):
           updated_groups: list[TestGroup] = []
           for group in file_groups:
-            if group.page_config is not None:
+            if (cli_config.page_config is not None and
+                group.page_config is not None):
               logging.warning(
                   "Overriding page_config in test group '%s' from '%s' with "
                   "--page-config.",
@@ -173,7 +176,15 @@ def generate_run_config(argv: list[str]) -> RunConfig:
                   test_str,
               )
             updated_groups.append(
-                dataclasses.replace(group, page_config=cli_config.page_config))
+                dataclasses.replace(
+                    group,
+                    page_config=(cli_config.page_config
+                                 if cli_config.page_config is not None else
+                                 group.page_config),
+                    record_video=(cli_config.record_video
+                                  if cli_config.record_video is not None else
+                                  group.record_video),
+                ))
           file_groups = updated_groups
         groups.extend(file_groups)
       else:
@@ -185,7 +196,8 @@ def generate_run_config(argv: list[str]) -> RunConfig:
                 setup_delay=cli_config.setup_delay,
                 startup_delay=cli_config.startup_delay,
                 stories=cli_config.stories,
-                page_config=cli_config.page_config).groups)
+                page_config=cli_config.page_config,
+                record_video=cli_config.record_video).groups)
     test_group_config = TestGroupConfig(groups=groups)
 
     tests = generate_test_invocations(

@@ -88,6 +88,7 @@ class TestInvocationConfig:
   startup_delay: str | None = None
   stories: str | None = None
   page_config: dict[str, Any] | None = None
+  record_video: bool = False
 
 
 @dataclasses.dataclass
@@ -120,6 +121,7 @@ class TestGroup(ConfigObject):
   startup_delay: str | None = None
   stories: str | None = None
   page_config: dict[str, Any] | None = None
+  record_video: bool = False
 
   @classmethod
   @override
@@ -146,6 +148,12 @@ class TestGroup(ConfigObject):
         "stories", type=ObjectParser.non_empty_str, required=False)
     parser.add_argument(
         "page_config", type=parse_inline_page_config, required=False)
+    parser.add_argument(
+        "record_video",
+        aliases=("screen_recording",),
+        type=ObjectParser.bool,
+        required=False,
+        default=False)
     return parser
 
   @classmethod
@@ -180,6 +188,7 @@ class TestGroupConfig(ConfigObject):
       startup_delay: str | None,
       stories: str | None = None,
       page_config: dict[str, Any] | None = None,
+      record_video: bool | None = None,
   ) -> TestGroupConfig:
     return TestGroupConfig(groups=[
         TestGroup(
@@ -189,7 +198,8 @@ class TestGroupConfig(ConfigObject):
             setup_delay=setup_delay,
             startup_delay=startup_delay,
             stories=stories,
-            page_config=page_config)
+            page_config=page_config,
+            record_video=bool(record_video))
     ])
 
 
@@ -216,6 +226,7 @@ class CliConfig:
   wait_for_debugger: bool
   no_symlinks: bool
   list_tests: bool
+  record_video: bool | None = None
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -256,6 +267,14 @@ class CliConfig:
         "--wait-for-debugger", action="store_true", default=False)
     parser.add_argument(
         "--no-symlinks", action="store_true", default=False)
+    parser.add_argument(
+        "--record-video",
+        "--screen-recording",
+        dest="record_video",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=("Enable full-screen video recording via Crossbench VideoProbe "
+              "(default: False)."))
     parser.add_argument("--list", action="store_true", default=False)
 
     parsed = parser.parse_args(argv)
@@ -329,6 +348,7 @@ class CliConfig:
         wait_for_debugger=parsed.wait_for_debugger,
         no_symlinks=parsed.no_symlinks,
         list_tests=parsed.list,
+        record_video=parsed.record_video,
     )
 
 

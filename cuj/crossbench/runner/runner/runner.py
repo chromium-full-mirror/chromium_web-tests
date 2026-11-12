@@ -40,6 +40,7 @@ def execute_crossbench(
     playback: str | None = None,
     page_config_file: Path | None = None,
     inline_page_config: Mapping[str, Any] | None = None,
+    record_video: bool = False,
     secrets_file: Path | None = None,
     setup_delay: str | None = None,
     startup_delay: str | None = None,
@@ -71,6 +72,14 @@ def execute_crossbench(
     if platform == TargetPlatform.ANDROID:
       crossbench_args.append("--probe")
       crossbench_args.append("logcat")
+
+    if record_video:
+      video_opts = ("generate_timestrip:false,merge_runs:false,"
+                    "max_height:480,bit_rate:1000000,time_limit:0")
+      if platform == TargetPlatform.ANDROID:
+        video_opts += ",codec_name:'c2.android.avc.encoder'"
+      crossbench_args.append("--probe")
+      crossbench_args.append(f"video:{{{video_opts}}}")
 
     crossbench_args.append("--browser-config")
     crossbench_args.append(str(browser_config_file.name))
@@ -338,6 +347,7 @@ def run_test(
             playback=inv_state.config.playback,
             page_config_file=inv_state.config.test.page_config,
             inline_page_config=inv_state.config.page_config,
+            record_video=inv_state.config.record_video,
             setup_delay=inv_state.config.setup_delay,
             startup_delay=inv_state.config.startup_delay,
             stories=inv_state.config.stories,
