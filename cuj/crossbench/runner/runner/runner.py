@@ -33,6 +33,7 @@ def execute_crossbench(
     no_symlinks: bool,
     results_path: Path,
     log_buffer: LogCapture | DirectLogCapture | NullLogCapture,
+    platform: TargetPlatform | None = None,
     playback: str | None = None,
     page_config_file: Path | None = None,
     inline_page_config: Mapping[str, Any] | None = None,
@@ -63,6 +64,10 @@ def execute_crossbench(
     if probe_config_file:
       crossbench_args.append("--probe-config")
       crossbench_args.append(str(probe_config_file))
+
+    if platform == TargetPlatform.ANDROID:
+      crossbench_args.append("--probe")
+      crossbench_args.append("logcat")
 
     crossbench_args.append("--browser-config")
     crossbench_args.append(str(browser_config_file.name))
@@ -319,6 +324,7 @@ def run_test(
             dry_run=run_config.dry_run,
             no_symlinks=run_config.no_symlinks,
             results_path=current_results_path,
+            platform=run_config.platform,
             playback=inv_state.config.playback,
             page_config_file=inv_state.config.test.page_config,
             inline_page_config=inv_state.config.page_config,
