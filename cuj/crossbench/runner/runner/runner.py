@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import codecs
+import io
 import json
 import os
 import shlex
@@ -122,31 +124,38 @@ def execute_crossbench(
 
     env = dict(os.environ)
     env["PYTHONUNBUFFERED"] = "1"
+    if (isinstance(log_buffer, LogCapture) or
+        sys.stdout.isatty()) and not env.get("NO_COLOR"):
+      env.setdefault("FORCE_COLOR", "1")
 
+    decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
     log_file_tmp = results_path.with_name(results_path.name +
                                           "_raw_crossbench_logs.txt")
-    with log_file_tmp.open("w", encoding="utf-8") as raw_log_file:
-      with subprocess.Popen(
-          cmd,
-          stdout=subprocess.PIPE,
-          stderr=subprocess.STDOUT,
-          text=True,
-          errors="replace",
-          env=env,
-      ) as process:
-        if process.stdout:
-          for line in process.stdout:
-            log_buffer.write(line)
-            raw_log_file.write(line)
+    with (
+        log_file_tmp.open("w", encoding="utf-8", newline="") as raw_log_file,
+        subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            env=env,
+        ) as process,
+    ):
+      if isinstance(process.stdout, io.BufferedReader):
+        while data := process.stdout.read1(4096):
+          chunk = decoder.decode(data, final=False)
+          if chunk:
+            log_buffer.write(chunk)
+            raw_log_file.write(chunk)
+        if tail := decoder.decode(b"", final=True):
+          log_buffer.write(tail)
+          raw_log_file.write(tail)
+      returncode = process.wait()
 
-        process.wait()
+    results_path.mkdir(parents=True, exist_ok=True)
+    log_file_tmp.rename(results_path / "raw_crossbench_logs.txt")
 
-        results_path.mkdir(parents=True, exist_ok=True)
-        log_file_tmp.rename(results_path / "raw_crossbench_logs.txt")
-
-        if process.returncode != 0:
-          raise RuntimeError(
-              f"Crossbench failed with exit code {process.returncode}")
+    if returncode != 0:
+      raise RuntimeError(f"Crossbench failed with exit code {returncode}")
 
 
 def get_android_browser_config(run_config: RunConfig, browser_flags_file: Path,

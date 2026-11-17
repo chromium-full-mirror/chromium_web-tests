@@ -124,6 +124,25 @@ def CheckChange(input_api, output_api):
       ))
 
   # ---------------------------------------------------------------------------
+  # Runner Unit Tests:
+  # ---------------------------------------------------------------------------
+  tests.append(
+      input_api.Command(
+          name="runner unit tests",
+          cmd=[
+              input_api.python3_executable,
+              "-m",
+              "pytest",
+              str(
+                  Path(input_api.change.RepositoryRoot()) / "cuj" /
+                  "crossbench" / "runner" / "tests"),
+          ],
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=True,
+      ))
+
+  # ---------------------------------------------------------------------------
   # isort:
   # ---------------------------------------------------------------------------
   SortImports(input_api, output_api, results, modified_py_files)

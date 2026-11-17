@@ -12,6 +12,10 @@ from collections import deque
 from rich.logging import RichHandler
 
 
+def _clean_cr(line: str) -> str:
+  return line.rstrip("\r").rsplit("\r", 1)[-1]
+
+
 def setup_logging() -> None:
   logging.basicConfig(
       level=logging.INFO,
@@ -39,15 +43,19 @@ class LogCapture:
       self.buffer += text
       while "\n" in self.buffer:
         line, self.buffer = self.buffer.split("\n", 1)
-        self.lines.append(line)
+        self.lines.append(line.rsplit("\r", 1)[-1])
+      if "\r" in self.buffer:
+        trailing_cr = "\r" if self.buffer.endswith("\r") else ""
+        base = self.buffer[:-1] if trailing_cr else self.buffer
+        self.buffer = base.rsplit("\r", 1)[-1] + trailing_cr
 
   def flush(self) -> None:
     pass
 
   def get_text(self) -> str:
     with self.lock:
-      return "\n".join(
-          list(self.lines) + ([self.buffer] if self.buffer else []))
+      active = _clean_cr(self.buffer)
+      return "\n".join(list(self.lines) + ([active] if active else []))
 
 
 class DirectLogCapture:
@@ -71,7 +79,7 @@ class DirectLogCapture:
 
 class NullLogCapture:
   """Silences all log output.
-  
+
   Used during parallel dry-runs (like presubmit) where concurrent logs
   would otherwise become hopelessly jumbled.
   """
