@@ -135,6 +135,39 @@ def CheckChange(input_api, output_api):
               ModifiedFiles(input_api, filename_pattern="*"))
 
   # ---------------------------------------------------------------------------
+  # CUJ README sync checks:
+  # ---------------------------------------------------------------------------
+  CheckCujReadmeModified(input_api, output_api, results)
+  tests.append(
+      input_api.Command(
+          name="check-cuj-readmes unit tests",
+          cmd=[
+              input_api.python3_executable,
+              "-m",
+              "pytest",
+              str(
+                  Path(input_api.change.RepositoryRoot()) / "tools" /
+                  "check_cuj_readmes_test.py"),
+          ],
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=True,
+      ))
+  tests.append(
+      input_api.Command(
+          name="cuj-readme-sync",
+          cmd=[
+              input_api.python3_executable,
+              str(
+                  Path(input_api.change.RepositoryRoot()) / "tools" /
+                  "check_cuj_readmes.py"),
+          ],
+          message=output_api.PresubmitError,
+          kwargs={},
+          python3=True,
+      ))
+
+  # ---------------------------------------------------------------------------
   # crossbench:
   # ---------------------------------------------------------------------------
   runner_path = str(
@@ -241,6 +274,40 @@ def FormatFiles(input_api, output_api, results, modified_files):
               "Unformatted file:",
               items=[str(full_path)],
               long_text="Please update your commit with the formatted file."))
+
+
+def CheckCujReadmeModified(input_api, output_api, results) -> None:
+  repo_root = Path(input_api.change.RepositoryRoot())
+  cujs_with_test_changes: set[str] = set()
+  cujs_with_readme_changes: set[str] = set()
+
+  for affected_file in input_api.AffectedFiles(include_deletes=True):
+    parts = Path(affected_file.LocalPath()).parts
+    if len(parts) < 4 or parts[:3] != ("cuj", "crossbench", "cujs"):
+      continue
+    cuj_name = parts[3]
+    if not (repo_root / "cuj" / "crossbench" / "cujs" / cuj_name).is_dir():
+      continue
+    if len(parts) == 5 and parts[4] == "README.md":
+      cujs_with_readme_changes.add(cuj_name)
+    else:
+      cujs_with_test_changes.add(cuj_name)
+
+  unupdated_cujs = sorted(cujs_with_test_changes - cujs_with_readme_changes)
+  if unupdated_cujs:
+    results.append(
+        output_api.PresubmitPromptWarning(
+            "CUJ files were modified without updating their README.md:",
+            items=[
+                f"cuj/crossbench/cujs/{cuj}/README.md" for cuj in unupdated_cujs
+            ],
+            long_text=(
+                "Please verify that each affected CUJ's README.md still "
+                "accurately describes its variants, workflow, and metrics/"
+                "invariants (if this change only heals selectors without "
+                "changing test behavior, you may proceed)."),
+        ))
+
 
 def CheckChangeOnUpload(input_api, output_api):
   return CheckChange(input_api, output_api)

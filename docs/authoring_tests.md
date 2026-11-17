@@ -211,3 +211,32 @@ is always required, even if it's identical to the base config.
 
 - `cuj/crossbench/cujs/MyCUJ/page-config.hjson` (base config, 1 hour)
 - `cuj/crossbench/cujs/MyCUJ/2hour.page-config.hjson` (variant config, 2 hours)
+
+## `README.md` (Required for CUJs)
+
+Every CUJ directory (`cuj/crossbench/cujs/<cuj_name>/README.md`) must include a
+`README.md` documenting the test's intent, variants, end-to-end workflow, and
+behavioral invariants so both developers and automated test-healing agents
+preserve the original benchmark intent.
+
+Each CUJ `README.md` must contain four `##` sections:
+
+1. **`## Overview`**: High-level user journey and browser/OS subsystems tested.
+2. **`## Variants`**: A Markdown table with `Variant` and `Config File` columns
+   listing every `*page-config.hjson` file in the directory (using `` `default` ``
+   for an unprefixed `page-config.hjson`) and how variants differ from one
+   another.
+3. **`## Workflow`**: Prerequisites/setup, main actions (including `--playback`
+   behavior), and teardown steps.
+4. **`## Metrics & Invariants`**: Behavioral guarantees, native input rules, and
+   User Timing / Perfetto SQL contracts that must not be broken when healing
+   selectors or test steps.
+
+Presubmit (`PRESUBMIT.py` via `tools/check_cuj_readmes.py`) enforces that every
+CUJ has a valid `README.md`, that the `## Variants` table stays in exact 1-to-1
+sync as variants are added, renamed, or removed, and that referenced relative
+file paths exist. To run this check locally:
+
+```bash
+vpython3 tools/check_cuj_readmes.py
+```
