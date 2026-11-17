@@ -26,12 +26,24 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from runner.config import (CliConfig, Cuj, RunConfig, Test, TestGroup,
-                           TestGroupConfig, TestInvocationConfig,
-                           TestInvocationState)
+
+from runner.config import (
+    CliConfig,
+    Cuj,
+    RunConfig,
+    Test,
+    TestGroup,
+    TestGroupConfig,
+    TestInvocationConfig,
+    TestInvocationState,
+)
 from runner.gather_metrics import generate_metrics_json
-from runner.logging import (DirectLogCapture, LogCapture, NullLogCapture,
-                            setup_logging)
+from runner.logging import (
+    DirectLogCapture,
+    LogCapture,
+    NullLogCapture,
+    setup_logging,
+)
 from runner.paths import RESULTS
 from runner.runner import run_test
 from runner.test_discovery import enumerate_all_tests

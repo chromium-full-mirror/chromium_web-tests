@@ -45,6 +45,7 @@ import json
 from pathlib import Path
 
 from protos.perfetto.trace_summary import file_pb2, v2_metric_pb2
+
 from runner.test_discovery import enumerate_all_tests
 
 

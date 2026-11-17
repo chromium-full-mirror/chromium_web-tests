@@ -143,7 +143,7 @@ def CheckChange(input_api, output_api):
       ))
 
   # ---------------------------------------------------------------------------
-  # isort:
+  # Sort Python imports (ruff I):
   # ---------------------------------------------------------------------------
   SortImports(input_api, output_api, results, modified_py_files)
 
@@ -252,8 +252,20 @@ def SortImports(input_api, output_api, results, modified_py_files):
   for py_file in (modified_py_files or []):
     full_py_path = Path(input_api.change.RepositoryRoot()) / py_file
     original_contents = input_api.ReadFile(str(full_py_path), "r")
-    subprocess.run([input_api.python_executable, "-m", "isort", full_py_path],
-                   check=True)
+    subprocess.run(
+        [
+            input_api.python3_executable,
+            "-m",
+            "ruff",
+            "check",
+            "--select=I",
+            "--line-length=80",
+            "--fix",
+            str(full_py_path),
+        ],
+        check=True,
+        capture_output=True,
+    )
     formatted_contents = input_api.ReadFile(str(full_py_path), "r")
     if original_contents != formatted_contents:
       results.append(

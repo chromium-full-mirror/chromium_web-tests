@@ -20,6 +20,7 @@ from typing import Any
 
 from crossbench import hjson as cb_hjson
 from crossbench.helper.cwd import change_cwd
+
 from runner.config import RunConfig, TargetPlatform, TestInvocationState
 from runner.logging import DirectLogCapture, LogCapture, NullLogCapture
 from runner.paths import WEB_TESTS_ROOT
