@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import dataclasses
 import enum
 import logging
@@ -13,7 +12,6 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Self
 
-from crossbench.benchmarks.loading.config.pages import PagesConfig
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
 from rich.spinner import Spinner
@@ -23,9 +21,7 @@ from typing_extensions import override
 def parse_inline_page_config(value: object) -> dict[str, Any]:
   if isinstance(value, str):
     value = ObjectParser.inline_hjson(value)
-  page_config_dict = dict(ObjectParser.non_empty_dict(value, "page_config"))
-  PagesConfig.parse(copy.deepcopy(page_config_dict))
-  return page_config_dict
+  return dict(ObjectParser.non_empty_dict(value, "page_config"))
 
 
 class TestVariantAction(argparse.Action):

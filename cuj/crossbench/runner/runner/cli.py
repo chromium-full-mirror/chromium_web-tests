@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import dataclasses
 import json
 import logging
@@ -18,6 +19,8 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 import debugpy
+from crossbench.benchmarks.loading.config.pages import PagesConfig
+from crossbench.helper.cwd import change_cwd
 from rich.console import Console, Group
 from rich.live import Live
 from rich.panel import Panel
@@ -69,10 +72,16 @@ def generate_test_invocations(
               raise ValueError(
                   f"Test '{test.full_name}' has no page-config.hjson and "
                   "requires a page_config (--page-config) to be provided.")
-            if test.page_config is not None and group.page_config is not None:
-              raise ValueError(
-                  f"Test '{test.full_name}' already defines "
-                  f"{test.page_config}; cannot also specify page_config.")
+            if group.page_config is not None:
+              if test.page_config is not None:
+                logging.warning(
+                    "Overriding page config '%s' for test '%s' with inline "
+                    "page_config.",
+                    test.page_config,
+                    test.full_name,
+                )
+              with change_cwd(test.path):
+                PagesConfig.parse(copy.deepcopy(group.page_config))
           elif group.page_config is not None:
             raise ValueError(
                 f"Test '{test.full_name}' is a benchmark and does not "
@@ -145,9 +154,12 @@ def generate_run_config(argv: list[str]) -> RunConfig:
           updated_groups: list[TestGroup] = []
           for group in file_groups:
             if group.page_config is not None:
-              raise ValueError(
-                  "--page-config cannot be combined with a test group that "
-                  "already defines page_config.")
+              logging.warning(
+                  "Overriding page_config in test group '%s' from '%s' with "
+                  "--page-config.",
+                  group.filter_regex,
+                  test_str,
+              )
             updated_groups.append(
                 dataclasses.replace(group, page_config=cli_config.page_config))
           file_groups = updated_groups
