@@ -1,8 +1,10 @@
 # texproto can be directly copied from https://ui.perfetto.dev/#!/record?p=instructions
 # under the "recording command' settings.
 unique_session_name: "ring_buffer_aot"
+# Holds start-of-trace metadata (packages_list, system_info, trace_metadata2)
+# and periodic ClockSnapshot packets across multi-hour runs.
 buffers {
-  size_kb: 512
+  size_kb: 4096
   fill_policy: RING_BUFFER
   name: "default"
 }
@@ -25,6 +27,13 @@ buffers {
   size_kb: 163840
   fill_policy: RING_BUFFER
   name: "track_event"
+}
+# Dedicated buffer for whitelisted Chrome UMA histogram samples so high-volume
+# track_event slices do not overwrite UMA metrics during multi-hour runs.
+buffers {
+  size_kb: 65536
+  fill_policy: RING_BUFFER
+  name: "chrome_histograms"
 }
 # Buffer dedicated for linux.ftrace. It's OK that the trace data is
 # overwritten. If there are ftrace events that are of interest, use
@@ -187,7 +196,7 @@ data_sources: {
 data_sources: {
   config {
     name: "org.chromium.trace_metadata2"
-    target_buffer_name: "track_event"
+    target_buffer_name: "default"
   }
 }
 data_sources: {
@@ -246,7 +255,7 @@ data_sources: {
 data_sources: {
   config {
     name: "org.chromium.histogram_sample"
-    target_buffer_name: "track_event"
+    target_buffer_name: "chrome_histograms"
     # Only add histograms with low sampling rates here.
     chromium_histogram_samples {
       # Wildcard patterns (* and ?) are supported here.
@@ -403,3 +412,6 @@ data_sources: {
   }
 }
 flush_period_ms: 30000
+incremental_state_config {
+  clear_period_ms: 10000
+}

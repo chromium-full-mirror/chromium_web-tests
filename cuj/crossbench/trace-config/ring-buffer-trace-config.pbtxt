@@ -3,7 +3,7 @@
 # To update, edit the template file and run:
 #   vpython3 tools/update_trace_config_histograms.py --chromium-src <path>
 buffers {
-  size_kb: 512
+  size_kb: 4096
   fill_policy: RING_BUFFER
   name: "default"
 }
@@ -26,6 +26,11 @@ buffers {
   size_kb: 163840
   fill_policy: RING_BUFFER
   name: "track_event"
+}
+buffers {
+  size_kb: 65536
+  fill_policy: RING_BUFFER
+  name: "chrome_histograms"
 }
 buffers {
   size_kb: 40960
@@ -183,7 +188,7 @@ data_sources {
 data_sources {
   config {
     name: "org.chromium.trace_metadata2"
-    target_buffer_name: "track_event"
+    target_buffer_name: "default"
   }
 }
 data_sources {
@@ -242,7 +247,7 @@ data_sources {
 data_sources {
   config {
     name: "org.chromium.histogram_sample"
-    target_buffer_name: "track_event"
+    target_buffer_name: "chrome_histograms"
     chromium_histogram_samples {
       histograms {
         histogram_name: "Browser.MainThreadsCongestion"
@@ -776,4 +781,7 @@ data_sources {
   }
 }
 flush_period_ms: 30000
+incremental_state_config {
+  clear_period_ms: 10000
+}
 unique_session_name: "ring_buffer_aot"
