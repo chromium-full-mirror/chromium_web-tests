@@ -35,7 +35,12 @@ to `[]` and `system_ram_bytes` defaults to `null`).
     # Runner invocation config (from RunConfig)
     "platform": "adb",            # 'adb', 'cros', 'local', or 'mac'
     "requested_browser": "chrome-latest-beta",  # Raw --browser flag value
-    "tag": "press-repro"          # Optional --tag value
+    "tag": "press-repro",         # Optional --tag value
+    # Source revisions and base64-encoded unified git diffs
+    "web_tests_sha": "1111111...",    # Merge-base SHA with origin/main
+    "web_tests_diff": "ZGlmZi...",    # Base64 diff from web_tests_sha
+    "crossbench_sha": "6c1ab20...",   # Canonical upstream crossbench SHA
+    "crossbench_diff": "ZGlmZi..."    # Base64 crossbench patch diff
   },
   "metrics": [
     {
@@ -55,13 +60,16 @@ to `[]` and `system_ram_bytes` defaults to `null`).
 
 from __future__ import annotations
 
+import base64
 import datetime as dt
 import json
+import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from protos.perfetto.trace_summary import file_pb2, v2_metric_pb2
 
+from runner.paths import THIRD_PARTY_CROSSBENCH, WEB_TESTS_ROOT
 from runner.test_discovery import enumerate_all_tests
 
 if TYPE_CHECKING:
@@ -99,6 +107,9 @@ def _extract_system_metadata(pass_dir: Path, metadata: dict[str, Any]) -> bool:
   metadata["system_machine"] = details["machine"]
   if sys_mem := details.get("system_memory_bytes"):
     metadata["system_ram_bytes"] = sys_mem
+  if "crossbench" in details:
+    metadata["crossbench_sha"] = details["crossbench"].get(
+        "canonical_parent_hash", "")
 
   if "Android" in details:
     android = details["Android"]
@@ -125,6 +136,39 @@ def _extract_system_metadata(pass_dir: Path, metadata: dict[str, Any]) -> bool:
     metadata["cr_os_version"] = os_info["release"]
 
   return True
+
+
+def _git_bytes(repo_dir: Path, *args: str) -> bytes | None:
+  try:
+    return subprocess.run(
+        ["git", "-C", str(repo_dir), *args],
+        capture_output=True,
+        check=True,
+        timeout=5,
+    ).stdout
+  except (OSError, subprocess.SubprocessError):
+    return None
+
+
+def _repo_sha_and_diff(repo_dir: Path) -> tuple[str, str] | None:
+  base_out = _git_bytes(repo_dir, "merge-base", "HEAD", "origin/main")
+  if not base_out:
+    return None
+  sha = base_out.decode("utf-8").strip()
+  diff = _git_bytes(repo_dir, "diff", "--ignore-submodules", sha)
+  if diff is None:
+    return None
+  return sha, base64.b64encode(diff).decode("ascii")
+
+
+def _extract_git_metadata(metadata: dict[str, Any], has_cb_patch: bool) -> None:
+  if wt := _repo_sha_and_diff(WEB_TESTS_ROOT):
+    metadata["web_tests_sha"], metadata["web_tests_diff"] = wt
+  if not metadata["crossbench_sha"] or not has_cb_patch:
+    if cb := _repo_sha_and_diff(THIRD_PARTY_CROSSBENCH):
+      metadata["crossbench_sha"] = metadata["crossbench_sha"] or cb[0]
+      if not has_cb_patch:
+        metadata["crossbench_diff"] = cb[1]
 
 
 def _parse_v2_metrics(pb_file: Path, test_name: str, variant: str,
@@ -263,9 +307,18 @@ def generate_metrics_json(results_dir: Path,
           "",
       "tag":
           "",
+      "web_tests_sha":
+          "",
+      "web_tests_diff":
+          "",
+      "crossbench_sha":
+          "",
+      "crossbench_diff":
+          "",
   }
   found_browser = False
   found_system = False
+  has_cb_patch = False
 
   for test_dir in sorted(results_dir.glob("*")):
     if not test_dir.is_dir() or test_dir.name not in all_tests:
@@ -273,6 +326,11 @@ def generate_metrics_json(results_dir: Path,
     test_obj = all_tests[test_dir.name]
 
     for pass_dir in sorted(test_dir.glob("pass/*")):
+      patch_file = pass_dir / "patch.diff"
+      if not has_cb_patch and patch_file.is_file():
+        metadata["crossbench_diff"] = base64.b64encode(
+            patch_file.read_bytes()).decode("ascii")
+        has_cb_patch = True
       if not found_browser:
         found_browser = _extract_browser_metadata(pass_dir, metadata)
       if not found_system:
@@ -298,6 +356,8 @@ def generate_metrics_json(results_dir: Path,
     metadata["platform"] = str(run_config.platform)
     metadata["requested_browser"] = run_config.browser or ""
     metadata["tag"] = run_config.tag or ""
+
+  _extract_git_metadata(metadata, has_cb_patch)
 
   out_file = results_dir / "metrics.json"
   with out_file.open("w", encoding="utf-8") as f:

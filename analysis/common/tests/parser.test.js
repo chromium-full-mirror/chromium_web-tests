@@ -104,6 +104,10 @@ describe('parser', () => {
         platform: 'adb',
         requested_browser: 'chrome-latest-beta',
         tag: '',
+        web_tests_sha: '1111111111111111111111111111111111111111',
+        web_tests_diff: '',
+        crossbench_sha: '2222222222222222222222222222222222222222',
+        crossbench_diff: '',
       },
       metrics: [
         {

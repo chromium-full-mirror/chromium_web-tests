@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
+import base64
 import json
+import subprocess
 from pathlib import Path
 from unittest import mock
 
@@ -85,6 +87,10 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       encoding="utf-8",
   )
 
+  cb_parent_sha = "6c1ab20793af57297f3478e20b4291dbda579b58"
+  cb_patch = b"diff --git a/cb.py b/cb.py\n--- a/cb.py\n+++ b/cb.py\n+# edit\n"
+  (pass_dir / "patch.diff").write_bytes(cb_patch)
+
   fingerprint = (
       "Generic/device_a/device_a:17/AB1A.260101.001/12345678:userdebug/dev-keys"
   )
@@ -95,6 +101,11 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
           "os": {
               "system": "Linux",
               "release": "6.18.0-generic",
+          },
+          "crossbench": {
+              "version": "1.2026.02",
+              "current_hash": "9999999999999999999999999999999999999999",
+              "canonical_parent_hash": cb_parent_sha,
           },
           "Android": {
               "ro.build.fingerprint": fingerprint,
@@ -109,6 +120,17 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       encoding="utf-8",
   )
 
+  wt_sha = "1111111111111111111111111111111111111111"
+  wt_patch = b"diff --git a/run.py b/run.py\n+# local branch diff\n"
+
+  def fake_git(repo_dir: Path, *args: str) -> bytes | None:
+    del repo_dir
+    if args == ("merge-base", "HEAD", "origin/main"):
+      return f"{wt_sha}\n".encode()
+    if args == ("diff", "--ignore-submodules", wt_sha):
+      return wt_patch
+    return None
+
   run_cfg = _make_run_config(
       results_dir,
       platform=TargetPlatform.ANDROID,
@@ -116,9 +138,12 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       tag="press-repro",
   )
 
-  with mock.patch(
-      "runner.gather_metrics.enumerate_all_tests",
-      return_value=[_fake_benchmark("speedometer_3.1")],
+  with (
+      mock.patch(
+          "runner.gather_metrics.enumerate_all_tests",
+          return_value=[_fake_benchmark("speedometer_3.1")],
+      ),
+      mock.patch("runner.gather_metrics._git_bytes", side_effect=fake_git),
   ):
     generate_metrics_json(results_dir, run_config=run_cfg)
 
@@ -147,6 +172,10 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
   assert meta["platform"] == "adb"
   assert meta["requested_browser"] == "chrome-latest-beta"
   assert meta["tag"] == "press-repro"
+  assert meta["web_tests_sha"] == wt_sha
+  assert meta["web_tests_diff"] == base64.b64encode(wt_patch).decode("ascii")
+  assert meta["crossbench_sha"] == cb_parent_sha
+  assert meta["crossbench_diff"] == base64.b64encode(cb_patch).decode("ascii")
   assert output["metrics"] == [{
       "test_name": "speedometer_3.1",
       "variant": "",
@@ -188,6 +217,7 @@ def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
       }),
       encoding="utf-8",
   )
+  (pass_dir / "patch.diff").write_bytes(b"")
   (pass_dir / "cb.system.details.json").write_text(
       json.dumps({
           "machine": "x64",
@@ -207,9 +237,12 @@ def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
   run_cfg = _make_run_config(
       results_dir, platform=TargetPlatform.CHROME_OS, browser=None, tag=None)
 
-  with mock.patch(
-      "runner.gather_metrics.enumerate_all_tests",
-      return_value=[_fake_benchmark("jetstream_2.2")],
+  with (
+      mock.patch(
+          "runner.gather_metrics.enumerate_all_tests",
+          return_value=[_fake_benchmark("jetstream_2.2")],
+      ),
+      mock.patch("runner.gather_metrics._git_bytes", return_value=None),
   ):
     generate_metrics_json(results_dir, run_config=run_cfg)
 
@@ -230,6 +263,40 @@ def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
   assert meta["platform"] == "cros"
   assert meta["requested_browser"] == ""
   assert meta["tag"] == ""
+  assert meta["web_tests_sha"] == ""
+  assert meta["web_tests_diff"] == ""
+  assert meta["crossbench_sha"] == ""
+  assert meta["crossbench_diff"] == ""
+
+
+def test_git_metadata_falls_back_to_crossbench_repo(tmp_path: Path) -> None:
+  results_dir = tmp_path / "2026-11-20_120000"
+  results_dir.mkdir()
+
+  wt_sha = "2222222222222222222222222222222222222222"
+  cb_sha = "3333333333333333333333333333333333333333"
+
+  def fake_git(repo_dir: Path, *args: str) -> bytes | None:
+    if args == ("merge-base", "HEAD", "origin/main"):
+      sha = cb_sha if "crossbench" in str(repo_dir) else wt_sha
+      return f"{sha}\n".encode()
+    if args[:2] == ("diff", "--ignore-submodules"):
+      return b""
+    return None
+
+  with (
+      mock.patch("runner.gather_metrics.enumerate_all_tests", return_value=[]),
+      mock.patch("runner.gather_metrics._git_bytes", side_effect=fake_git),
+  ):
+    generate_metrics_json(results_dir)
+
+  meta = json.loads(
+      (results_dir / "metrics.json").read_text("utf-8"))["metadata"]
+  assert meta["web_tests_sha"] == wt_sha
+  assert meta["web_tests_diff"] == ""
+  assert meta["crossbench_sha"] == cb_sha
+  assert meta["crossbench_diff"] == ""
+
 
 
 def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
@@ -248,9 +315,15 @@ def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
       encoding="utf-8",
   )
 
-  with mock.patch(
-      "runner.gather_metrics.enumerate_all_tests",
-      return_value=[_fake_benchmark("speedometer_3.1")],
+  with (
+      mock.patch(
+          "runner.gather_metrics.enumerate_all_tests",
+          return_value=[_fake_benchmark("speedometer_3.1")],
+      ),
+      mock.patch(
+          "runner.gather_metrics.subprocess.run",
+          side_effect=FileNotFoundError("git binary not found"),
+      ),
   ):
     generate_metrics_json(results_dir)
 
@@ -267,4 +340,27 @@ def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
   assert meta["dut_board"] == ""
   assert meta["dut_model"] == ""
   assert meta["system_ram_bytes"] is None
+  assert meta["web_tests_sha"] == ""
+  assert meta["web_tests_diff"] == ""
+  assert meta["crossbench_sha"] == ""
+  assert meta["crossbench_diff"] == ""
   assert output["metrics"][0]["values"] == [40.0]
+
+
+def test_git_bytes_handles_called_process_error(tmp_path: Path) -> None:
+  results_dir = tmp_path / "empty_run"
+  results_dir.mkdir()
+
+  with (
+      mock.patch("runner.gather_metrics.enumerate_all_tests", return_value=[]),
+      mock.patch(
+          "runner.gather_metrics.subprocess.run",
+          side_effect=subprocess.CalledProcessError(128, ["git"]),
+      ),
+  ):
+    generate_metrics_json(results_dir)
+
+  output = json.loads((results_dir / "metrics.json").read_text("utf-8"))
+  assert output["metadata"]["run_id"] == "empty_run"
+  assert output["metadata"]["web_tests_sha"] == ""
+  assert output["metadata"]["web_tests_diff"] == ""
