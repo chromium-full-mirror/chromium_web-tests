@@ -9,13 +9,29 @@ JSON Schema:
 The output `metrics.json` uses a tabular (flat list) format for metrics
 to maximize compatibility with data analysis pipelines (like Pandas,
 BigQuery, etc.) and visualization tools, paired with top-level `"metadata"`.
+Unavailable string metadata fields default to `""` (`browser_flags` defaults
+to `[]` and `system_ram_bytes` defaults to `null`).
 
 {
   "metadata": {
     "run_id": "2026-07-16_161929",
     "generated_at_utc": "2026-07-16T16:19:29Z",
+    # Browser metadata (from stories/cb.results.json)
     "cr_version": "158.0.8127.36",
-    "cr_channel": "beta"
+    "cr_channel": "beta",
+    "browser_app_name": "com.chrome.beta",
+    "browser_flags": ["--enable-field-trial-config"],
+    # OS and DUT hardware metadata (from cb.system.details.json)
+    "cr_os_name": "Android",      # 'Android', 'CrOS', 'Linux', 'Darwin', etc.
+    "cr_os_version": "17",
+    "android_build_fingerprint": "Generic/device_a/...",  # Android only
+    "android_build_id": "AB1A.260101.001",                # Android only
+    "dut_board": "device_a",      # Android or CrOS board/device
+    "dut_model": "Generic Device",  # Android ro.product.model
+    "hwid": "HWID-GENERIC-001",   # Android ro.boot.product.hardware.id
+    "dut_sku": "SKU-GENERIC-99",  # Android hardware SKU
+    "system_machine": "x64",
+    "system_ram_bytes": 34359738368
   },
   "metrics": [
     {
@@ -65,6 +81,42 @@ def _extract_browser_metadata(pass_dir: Path, metadata: dict[str, Any]) -> bool:
   metadata["browser_app_name"] = (
       path if path in _ANDROID_PKG_CHANNELS else browser["app_name"])
   metadata["browser_flags"] = browser["flags"]
+  return True
+
+
+def _extract_system_metadata(pass_dir: Path, metadata: dict[str, Any]) -> bool:
+  details_file = next(pass_dir.rglob("cb.system.details.json"), None)
+  if details_file is None:
+    return False
+  details = json.loads(details_file.read_text(encoding="utf-8"))
+  metadata["system_machine"] = details["machine"]
+  if sys_mem := details.get("system_memory_bytes"):
+    metadata["system_ram_bytes"] = sys_mem
+
+  if "Android" in details:
+    android = details["Android"]
+    metadata["cr_os_name"] = "Android"
+    metadata["cr_os_version"] = android.get("ro.build.version.release", "")
+    metadata["android_build_fingerprint"] = android.get("ro.build.fingerprint",
+                                                        "")
+    metadata["android_build_id"] = android.get("ro.build.id", "")
+    metadata["dut_board"] = (
+        android.get("ro.product.board") or android.get("ro.product.device", ""))
+    metadata["dut_model"] = android.get("ro.product.model", "")
+    metadata["hwid"] = android.get("ro.boot.product.hardware.id", "")
+    metadata["dut_sku"] = (
+        android.get("ro.boot.hardware.sku") or
+        android.get("ro.boot.product.hardware.sku", ""))
+  elif "ChromeOS" in details:
+    cros = details["ChromeOS"]
+    metadata["cr_os_name"] = "CrOS"
+    metadata["cr_os_version"] = cros.get("CHROMEOS_RELEASE_VERSION", "")
+    metadata["dut_board"] = cros.get("CHROMEOS_RELEASE_BOARD", "")
+  else:
+    os_info = details["os"]
+    metadata["cr_os_name"] = os_info["system"]
+    metadata["cr_os_version"] = os_info["release"]
+
   return True
 
 
@@ -177,8 +229,29 @@ def generate_metrics_json(results_dir: Path) -> None:
       "browser_app_name":
           "",
       "browser_flags": [],
+      "cr_os_name":
+          "",
+      "cr_os_version":
+          "",
+      "android_build_fingerprint":
+          "",
+      "android_build_id":
+          "",
+      "dut_board":
+          "",
+      "dut_model":
+          "",
+      "hwid":
+          "",
+      "dut_sku":
+          "",
+      "system_machine":
+          "",
+      "system_ram_bytes":
+          None,
   }
   found_browser = False
+  found_system = False
 
   for test_dir in sorted(results_dir.glob("*")):
     if not test_dir.is_dir() or test_dir.name not in all_tests:
@@ -188,6 +261,8 @@ def generate_metrics_json(results_dir: Path) -> None:
     for pass_dir in sorted(test_dir.glob("pass/*")):
       if not found_browser:
         found_browser = _extract_browser_metadata(pass_dir, metadata)
+      if not found_system:
+        found_system = _extract_system_metadata(pass_dir, metadata)
 
       # 1. Parse JSON probe data (press benchmarks)
       json_file = pass_dir / f"{test_obj.name}.json"

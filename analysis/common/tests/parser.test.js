@@ -92,6 +92,15 @@ describe('parser', () => {
         cr_channel: 'beta',
         browser_app_name: 'com.chrome.beta',
         browser_flags: [],
+        cr_os_name: 'Android',
+        cr_os_version: '17',
+        android_build_fingerprint:
+          'Generic/device/device:DEV/XX.000000.000/0000000:userdebug/dev-keys',
+        android_build_id: 'XX.000000.000',
+        dut_board: 'device',
+        dut_model: 'Generic Device 14',
+        system_machine: 'x64',
+        system_ram_bytes: 34359738368,
       },
       metrics: [
         {
@@ -109,6 +118,8 @@ describe('parser', () => {
     const map = parseDataset(JSON.stringify(sampleJson));
     assert.strictEqual(map.metadata['cr_version'], '158.0.8127.36');
     assert.strictEqual(map.metadata['cr_channel'], 'beta');
+    assert.strictEqual(map.metadata['android_build_id'], 'XX.000000.000');
+    assert.strictEqual(map.metadata['dut_board'], 'device');
     assert.deepStrictEqual(
         map.get('speedometer_3.1').get('Score').values,
         [38.4, 39.1],

@@ -61,6 +61,30 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       encoding="utf-8",
   )
 
+  fingerprint = (
+      "Generic/device_a/device_a:17/AB1A.260101.001/12345678:userdebug/dev-keys"
+  )
+  (pass_dir / "cb.system.details.json").write_text(
+      json.dumps({
+          "machine": "x64",
+          "system_memory_bytes": 32 * 1024**3,
+          "os": {
+              "system": "Linux",
+              "release": "6.18.0-generic",
+          },
+          "Android": {
+              "ro.build.fingerprint": fingerprint,
+              "ro.build.id": "AB1A.260101.001",
+              "ro.build.version.release": "17",
+              "ro.product.device": "device_a",
+              "ro.product.model": "Generic Device 14",
+              "ro.boot.product.hardware.id": "HWID-GENERIC-001",
+              "ro.boot.hardware.sku": "SKU-GENERIC-99",
+          },
+      }),
+      encoding="utf-8",
+  )
+
   with mock.patch(
       "runner.gather_metrics.enumerate_all_tests",
       return_value=[_fake_benchmark("speedometer_3.1")],
@@ -79,6 +103,16 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       "--allow-background-interventions",
       "--enable-field-trial-config",
   ]
+  assert meta["cr_os_name"] == "Android"
+  assert meta["cr_os_version"] == "17"
+  assert meta["android_build_fingerprint"] == fingerprint
+  assert meta["android_build_id"] == "AB1A.260101.001"
+  assert meta["dut_board"] == "device_a"
+  assert meta["dut_model"] == "Generic Device 14"
+  assert meta["hwid"] == "HWID-GENERIC-001"
+  assert meta["dut_sku"] == "SKU-GENERIC-99"
+  assert meta["system_machine"] == "x64"
+  assert meta["system_ram_bytes"] == 32 * 1024**3
   assert output["metrics"] == [{
       "test_name": "speedometer_3.1",
       "variant": "",
@@ -90,20 +124,87 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
   }]
 
 
+def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
+  results_dir = tmp_path / "2026-11-20_110000"
+  pass_dir = results_dir / "jetstream_2.2" / "pass" / "2026-11-20_110005"
+  stories_dir = pass_dir / "chrome_v151__opt_google_chrome_chrome" / "stories"
+  stories_dir.mkdir(parents=True)
+
+  (pass_dir / "jetstream_2.2.json").write_text(
+      json.dumps({
+          "chrome_v151__opt_google_chrome_chrome": {
+              "data": {
+                  "Total": {
+                      "values": [245.5],
+                  }
+              }
+          }
+      }),
+      encoding="utf-8",
+  )
+  (stories_dir / "cb.results.json").write_text(
+      json.dumps({
+          "browser": {
+              "app_name": "chrome",
+              "version": "151.0.7922.222",
+              "channel": "dev",
+              "path": "/opt/google/chrome/chrome",
+              "flags": [],
+          }
+      }),
+      encoding="utf-8",
+  )
+  (pass_dir / "cb.system.details.json").write_text(
+      json.dumps({
+          "machine": "x64",
+          "system_memory_bytes": 8093872128,
+          "os": {
+              "system": "Linux",
+              "release": "6.6.119",
+          },
+          "ChromeOS": {
+              "CHROMEOS_RELEASE_BOARD": "generic_board",
+              "CHROMEOS_RELEASE_VERSION": "16733.60.0",
+          },
+      }),
+      encoding="utf-8",
+  )
+
+  with mock.patch(
+      "runner.gather_metrics.enumerate_all_tests",
+      return_value=[_fake_benchmark("jetstream_2.2")],
+  ):
+    generate_metrics_json(results_dir)
+
+  meta = json.loads(
+      (results_dir / "metrics.json").read_text("utf-8"))["metadata"]
+  assert meta["cr_version"] == "151.0.7922.222"
+  assert meta["cr_channel"] == "dev"
+  assert meta["browser_app_name"] == "chrome"
+  assert meta["cr_os_name"] == "CrOS"
+  assert meta["cr_os_version"] == "16733.60.0"
+  assert meta["android_build_fingerprint"] == ""
+  assert meta["android_build_id"] == ""
+  assert meta["dut_board"] == "generic_board"
+  assert meta["dut_model"] == ""
+  assert meta["hwid"] == ""
+  assert meta["dut_sku"] == ""
+  assert meta["system_ram_bytes"] == 8093872128
+
+
 def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
   results_dir = tmp_path / "2026-11-20_130000"
   pass_dir = results_dir / "speedometer_3.1" / "pass" / "2026-11-20_130005"
   pass_dir.mkdir(parents=True)
 
   (pass_dir / "speedometer_3.1.json").write_text(
-      json.dumps(
-          {"chrome_v158": {
-              "data": {
-                  "Score": {
-                      "values": [40.0],
-                  }
+      json.dumps({"chrome_v158": {
+          "data": {
+              "Score": {
+                  "values": [40.0],
               }
-          }}),
+          }
+      }}),
       encoding="utf-8",
   )
 
@@ -122,4 +223,8 @@ def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
   assert meta["cr_channel"] == ""
   assert meta["browser_app_name"] == ""
   assert meta["browser_flags"] == []
+  assert meta["cr_os_name"] == ""
+  assert meta["dut_board"] == ""
+  assert meta["dut_model"] == ""
+  assert meta["system_ram_bytes"] is None
   assert output["metrics"][0]["values"] == [40.0]
