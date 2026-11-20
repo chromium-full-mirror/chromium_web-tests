@@ -305,7 +305,7 @@ def _run_scheduled_tests(run_config: RunConfig) -> bool:
     all_passed, tests_state = run_tests(run_config.tests, run_config)
     _write_results_json(tests_state, run_config)
 
-  generate_metrics_json(run_config.results_root)
+  generate_metrics_json(run_config.results_root, run_config=run_config)
 
   logging.info("Web tests results: %s", run_config.results_root)
 

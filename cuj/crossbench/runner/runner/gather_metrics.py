@@ -31,7 +31,11 @@ to `[]` and `system_ram_bytes` defaults to `null`).
     "hwid": "HWID-GENERIC-001",   # Android ro.boot.product.hardware.id
     "dut_sku": "SKU-GENERIC-99",  # Android hardware SKU
     "system_machine": "x64",
-    "system_ram_bytes": 34359738368
+    "system_ram_bytes": 34359738368,
+    # Runner invocation config (from RunConfig)
+    "platform": "adb",            # 'adb', 'cros', 'local', or 'mac'
+    "requested_browser": "chrome-latest-beta",  # Raw --browser flag value
+    "tag": "press-repro"          # Optional --tag value
   },
   "metrics": [
     {
@@ -54,11 +58,14 @@ from __future__ import annotations
 import datetime as dt
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from protos.perfetto.trace_summary import file_pb2, v2_metric_pb2
 
 from runner.test_discovery import enumerate_all_tests
+
+if TYPE_CHECKING:
+  from runner.config import RunConfig
 
 _ANDROID_PKG_CHANNELS: dict[str, str] = {
     "com.android.chrome": "stable",
@@ -214,7 +221,8 @@ def _parse_probe_json(json_file: Path, test_name: str,
   return metrics
 
 
-def generate_metrics_json(results_dir: Path) -> None:
+def generate_metrics_json(results_dir: Path,
+                          run_config: RunConfig | None = None) -> None:
   all_tests = {t.full_name: t for t in enumerate_all_tests()}
   metrics: list[dict[str, Any]] = []
   metadata: dict[str, Any] = {
@@ -249,6 +257,12 @@ def generate_metrics_json(results_dir: Path) -> None:
           "",
       "system_ram_bytes":
           None,
+      "platform":
+          "",
+      "requested_browser":
+          "",
+      "tag":
+          "",
   }
   found_browser = False
   found_system = False
@@ -279,6 +293,11 @@ def generate_metrics_json(results_dir: Path) -> None:
           metrics.extend(
               _parse_v2_metrics(pb_file, test_obj.name, test_obj.variant,
                                 browser))
+
+  if run_config is not None:
+    metadata["platform"] = str(run_config.platform)
+    metadata["requested_browser"] = run_config.browser or ""
+    metadata["tag"] = run_config.tag or ""
 
   out_file = results_dir / "metrics.json"
   with out_file.open("w", encoding="utf-8") as f:

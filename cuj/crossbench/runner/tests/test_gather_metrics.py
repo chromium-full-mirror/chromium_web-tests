@@ -8,8 +8,32 @@ import json
 from pathlib import Path
 from unittest import mock
 
-from runner.config import Benchmark
+from runner.config import Benchmark, RunConfig, TargetPlatform
 from runner.gather_metrics import generate_metrics_json
+
+
+def _make_run_config(
+    results_root: Path,
+    platform: TargetPlatform = TargetPlatform.ANDROID,
+    browser: str | None = None,
+    tag: str | None = None,
+) -> RunConfig:
+  return RunConfig(
+      platform=platform,
+      device="localhost:5555",
+      adb_bin=None,
+      browser=browser,
+      secrets=None,
+      wpr=None,
+      upload=False,
+      results_root=results_root,
+      tag=tag,
+      debug=False,
+      dry_run=False,
+      no_symlinks=True,
+      list_tests=False,
+      tests=[],
+  )
 
 
 def _fake_benchmark(name: str = "speedometer_3.1") -> Benchmark:
@@ -85,11 +109,18 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
       encoding="utf-8",
   )
 
+  run_cfg = _make_run_config(
+      results_dir,
+      platform=TargetPlatform.ANDROID,
+      browser="chrome-latest-beta",
+      tag="press-repro",
+  )
+
   with mock.patch(
       "runner.gather_metrics.enumerate_all_tests",
       return_value=[_fake_benchmark("speedometer_3.1")],
   ):
-    generate_metrics_json(results_dir)
+    generate_metrics_json(results_dir, run_config=run_cfg)
 
   output = json.loads((results_dir / "metrics.json").read_text("utf-8"))
   meta = output["metadata"]
@@ -113,6 +144,9 @@ def test_generate_metrics_json_press_benchmark_without_perfetto(
   assert meta["dut_sku"] == "SKU-GENERIC-99"
   assert meta["system_machine"] == "x64"
   assert meta["system_ram_bytes"] == 32 * 1024**3
+  assert meta["platform"] == "adb"
+  assert meta["requested_browser"] == "chrome-latest-beta"
+  assert meta["tag"] == "press-repro"
   assert output["metrics"] == [{
       "test_name": "speedometer_3.1",
       "variant": "",
@@ -170,11 +204,14 @@ def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
       encoding="utf-8",
   )
 
+  run_cfg = _make_run_config(
+      results_dir, platform=TargetPlatform.CHROME_OS, browser=None, tag=None)
+
   with mock.patch(
       "runner.gather_metrics.enumerate_all_tests",
       return_value=[_fake_benchmark("jetstream_2.2")],
   ):
-    generate_metrics_json(results_dir)
+    generate_metrics_json(results_dir, run_config=run_cfg)
 
   meta = json.loads(
       (results_dir / "metrics.json").read_text("utf-8"))["metadata"]
@@ -190,6 +227,9 @@ def test_generate_metrics_json_chromeos_press_benchmark(tmp_path: Path) -> None:
   assert meta["hwid"] == ""
   assert meta["dut_sku"] == ""
   assert meta["system_ram_bytes"] == 8093872128
+  assert meta["platform"] == "cros"
+  assert meta["requested_browser"] == ""
+  assert meta["tag"] == ""
 
 
 def test_generate_metrics_json_missing_optional_files(tmp_path: Path) -> None:
