@@ -84,6 +84,37 @@ describe('parser', () => {
     assert.strictEqual(map.metadata['browser_pss_total_mb'], undefined);
   });
 
+  it('should preserve enriched top-level metadata for press benchmarks without Perfetto', () => {
+    const sampleJson = {
+      metadata: {
+        run_id: 'press_2026-11-20_100000',
+        cr_version: '158.0.8127.36',
+        cr_channel: 'beta',
+        browser_app_name: 'com.chrome.beta',
+        browser_flags: [],
+      },
+      metrics: [
+        {
+          test_name: 'speedometer_3.1',
+          variant: '',
+          browser: 'chrome_v158_com.chrome.beta',
+          metric: 'Score',
+          values: [38.4, 39.1],
+          units: 'score',
+          improvement_direction: 'up',
+        },
+      ],
+    };
+
+    const map = parseDataset(JSON.stringify(sampleJson));
+    assert.strictEqual(map.metadata['cr_version'], '158.0.8127.36');
+    assert.strictEqual(map.metadata['cr_channel'], 'beta');
+    assert.deepStrictEqual(
+        map.get('speedometer_3.1').get('Score').values,
+        [38.4, 39.1],
+    );
+  });
+
   it('should accurately extract aggregation modes without mangling raw metric names', () => {
     assert.deepStrictEqual(
         extractAggMode('cuj.uma.lower_is_better-EventLatency.TotalLatency-p90'),
