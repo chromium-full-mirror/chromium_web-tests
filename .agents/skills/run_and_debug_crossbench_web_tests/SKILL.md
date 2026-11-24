@@ -222,7 +222,7 @@ When importing a template in a page config (e.g., inside `pages: { my-page: { te
 ### 4. Real-User Performance & Browser Flags
 To ensure Crossbench loading benchmarks and CUJs match real-user browser performance characteristics as closely as possible:
 * **Background Throttling:** Always ensure `--allow-background-interventions` is included in the browser flags (e.g. `common-flags.hjson`). This allows Chrome to throttle background tabs and discard memory exactly like a real user's browser.
-* **Finch Experiments:** Include `--enable-field-trial-config` in the browser flags to ensure tests execute with active production A/B experiment code paths rather than unoptimized baseline paths.
+* **Finch Experiments:** To run with production-like field trials, check out the variations test seeds (set `"checkout_variations_seed": True` in the `.gclient` `custom_vars`, then `gclient sync`) and pass `--variations-seed new` (or `existing`, or a path to a `seed.json`) to `run.py`, which adds `--variations-test-seed-path` to the browser flags. Without it, crossbench passes `--disable-field-trial-config`. `--enable-field-trial-config` only uses the testing config compiled into non-official builds.
 * **ChromeDriver Defaults:** By default, ChromeDriver injects several switches that alter performance (`--disable-background-timer-throttling`, `--disable-dev-shm-usage`, `--disable-backgrounding-occluded-windows`). Crossbench's `ChromiumBasedWebDriver` is pre-configured to exclude these switches via `excludeSwitches` to maintain real-user background throttling and fast RAM-backed IPC (`/dev/shm`).
 
 ### 5. Android Viewport Maximization

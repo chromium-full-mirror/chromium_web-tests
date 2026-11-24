@@ -51,6 +51,14 @@ vars = {
 
   # Set to False to skip development-only hooks
   'checkout_web_tests_dev': True,
+
+  # Check out the variations (Finch) test seeds used by --variations-seed.
+  'checkout_variations_seed': False,
+
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling the variations test seed
+  # and whatever else without interference from each other.
+  'variations_seed_version': '434JdIE9rUJVUk7oJtgjpFyci6LTsnp1qz6yB3NPKQkC',
 }
 
 # Only these hosts are allowed for dependencies in this DEPS file.
@@ -63,6 +71,16 @@ deps = {
   'third_party/crossbench': Var('crossbench_git') + '@' + Var('crossbench_revision'),
   'third_party/perfetto':
     Var('perfetto_git') + '@' + '72997b8161af6c848de5336d506ccaa631ac60cc',
+  'third_party/variations_seed': {
+    'packages': [
+      {
+        'package': 'chromium/chrome/test/data/variations/cipd',
+        'version': Var('variations_seed_version'),
+      },
+    ],
+    'condition': 'checkout_variations_seed',
+    'dep_type': 'cipd',
+  },
 }
 
 # Contains hooks necessary to run web-tests

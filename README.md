@@ -105,6 +105,17 @@ vpython3 run.py --platform adb --device <DEVICE ID> --tests tab-stress --variant
 vpython3 run.py --platform adb --device <DEVICE ID> --tests tab-stress --variants blank-tab --playback 2h
 ```
 
+### Field Trials (Finch)
+By default crossbench runs Chrome with `--disable-field-trial-config`. To run with a realistic, deterministic Finch configuration instead, use the test seeds that Chrome's [variations smoke tests](https://chromium.googlesource.com/chromium/src/+/HEAD/chrome/test/variations/README.md#what-version-of-seed-am-i-actually-testing) use (CIPD package `chromium/chrome/test/data/variations/cipd`). Each study in those seeds is reduced to its largest group.
+
+Set `"checkout_variations_seed": True` in your `.gclient` `custom_vars` and run `gclient sync`.
+
+Then pass `--variations-seed` to the runner:
+```bash
+vpython3 run.py --platform adb --device <DEVICE ID> --tests meet --variants 4p --variations-seed new
+```
+See `vpython3 run.py --help` for details. For unbranded builds, also add `--fake-variations-channel` to the browser flags so that channel-filtered studies apply.
+
 # Contributing
 
 To get started contributing to web-tests, refer to the [docs](./docs/).

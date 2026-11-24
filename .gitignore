@@ -11,6 +11,7 @@ venv
 
 # Directories added by gclient sync and the GN build
 /third_party/node
+/third_party/variations_seed
 
 macos-results
 .DS_store

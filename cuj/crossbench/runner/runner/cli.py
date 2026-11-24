@@ -233,7 +233,8 @@ def generate_run_config(argv: list[str]) -> RunConfig:
       dry_run=cli_config.dry_run,
       no_symlinks=cli_config.no_symlinks,
       list_tests=cli_config.list_tests,
-      tests=tests)
+      tests=tests,
+      variations_seed=cli_config.variations_seed)
 
 
 def check_submodules_status():

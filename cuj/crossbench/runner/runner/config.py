@@ -14,6 +14,7 @@ from typing import Any, Self
 
 from crossbench.config import ConfigEnum, ConfigObject, ConfigParser
 from crossbench.parse import NumberParser, ObjectParser
+from runner.paths import VARIATIONS_SEED
 from rich.spinner import Spinner
 from typing_extensions import override
 
@@ -220,6 +221,13 @@ class TestGroupConfig(ConfigObject):
     ])
 
 
+# --variations-seed names for the seeds in the variations CIPD package.
+VARIATIONS_SEEDS: dict[str, str] = {
+    "new": "single_group_per_study_prefer_new_behavior",
+    "existing": "single_group_per_study_prefer_existing_behavior",
+}
+
+
 @dataclasses.dataclass(frozen=True)
 class CliConfig:
   platform: TargetPlatform
@@ -246,6 +254,7 @@ class CliConfig:
   record_video: bool | None = None
   bypass_oobe: bool | None = None
   clear_browser_cache: bool | None = None
+  variations_seed: Path | None = None
 
   @classmethod
   def from_cmdline(cls, argv: list[str]) -> CliConfig:
@@ -309,6 +318,13 @@ class CliConfig:
         help=("Clear browser cache and app data before each session "
               "(default: True)."))
     parser.add_argument("--list", action="store_true", default=False)
+    parser.add_argument(
+        "--variations-seed",
+        help=("Run with a variations (Finch) test seed: 'new' "
+              "(single_group_per_study_prefer_new_behavior), 'existing' "
+              "(single_group_per_study_prefer_existing_behavior) or a path "
+              "to a seed.json file. The named seeds need the "
+              "checkout_variations_seed gclient var."))
 
     parsed = parser.parse_args(argv)
 
@@ -359,6 +375,22 @@ class CliConfig:
     adb_bin_path: Path | None = parsed.adb_bin.resolve(
     ) if parsed.adb_bin else None
 
+    variations_seed: Path | None = None
+    if parsed.variations_seed:
+      if parsed.variations_seed in VARIATIONS_SEEDS:
+        variations_seed = (
+            VARIATIONS_SEED / VARIATIONS_SEEDS[parsed.variations_seed] /
+            "seed.json")
+        if not variations_seed.is_file():
+          parser.error(
+              f"--variations-seed not found: {variations_seed}. Set "
+              "\"checkout_variations_seed\": True in the custom_vars of your "
+              ".gclient file and run 'gclient sync'.")
+      else:
+        variations_seed = Path(parsed.variations_seed).expanduser().resolve()
+        if not variations_seed.is_file():
+          parser.error(f"--variations-seed file not found: {variations_seed}")
+
     return CliConfig(
         platform=parsed.platform,
         device=parsed.device,
@@ -384,6 +416,7 @@ class CliConfig:
         record_video=parsed.record_video,
         bypass_oobe=parsed.bypass_oobe,
         clear_browser_cache=parsed.clear_browser_cache,
+        variations_seed=variations_seed,
     )
 
 
@@ -403,3 +436,4 @@ class RunConfig:
   no_symlinks: bool
   list_tests: bool
   tests: list[TestInvocationConfig]
+  variations_seed: Path | None = None

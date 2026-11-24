@@ -353,6 +353,14 @@ def get_browser_config(
   else:
     raise ValueError(f"Unsupported platform type: {run_config.platform}")
 
+  if run_config.variations_seed:
+    # Crossbench pushes the seed to remote devices.
+    for browser in config_dict["browsers"].values():
+      browser["flags"] += [
+          f"--variations-test-seed-path={run_config.variations_seed}",
+          "--accept-empty-variations-seed-signature",
+      ]
+
   return json.dumps(config_dict)
 
 
